@@ -1,0 +1,28 @@
+{
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "S22 and R5P",
+            "configurations": [
+                "S22",
+                "R5P",
+            ]
+        }
+    ],
+    "configurations": [
+        {
+            "name": "R5P",
+            "program": "lib/main.dart",
+            "deviceId": "59a65f97",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "S22",
+            "program": "lib/main.dart",
+            "deviceId": "emulator-5554",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
+}
