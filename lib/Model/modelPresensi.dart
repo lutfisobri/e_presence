@@ -1,5 +1,5 @@
 class modelPresensi {
-  final String data;
+  late final String data;
   modelPresensi(
     this.data,
   );

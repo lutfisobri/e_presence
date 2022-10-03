@@ -3,6 +3,7 @@ import 'package:e_presence/controller/User_Auth.dart';
 import 'package:e_presence/controller/User_Location.dart';
 import 'package:e_presence/controller/User_image.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../Model/modelPresensi.dart';
@@ -32,25 +33,30 @@ class _PresensiState extends State<DetailPresensi> {
     _chose = items[0];
   }
 
-  UserLocation userLocation = UserLocation();
-  stopServices() {
-    final berhenti = userLocation.setPosition();
-    berhenti.stop();
-  }
+  LocationService locationService = LocationService();
 
   @override
   void dispose() {
-    stopServices();
-    print("dispose");
+    locationService.subscription.cancel();
     super.dispose();
   }
 
+  double? distance;
+
   @override
   Widget build(BuildContext context) {
+    locationService.subscription.onData((data) {
+      setState(() {
+        distance = Geolocator.distanceBetween(
+          -8.124655,
+          113.336256,
+          data.latitude,
+          data.longitude,
+        );
+      });
+    });
     final mapel = Provider.of<API_controller>(context, listen: false);
-    final maps = Provider.of<UserLocation>(context, listen: false);
     final user = Provider.of<UserAuth>(context, listen: false);
-    maps.setPosition();
     final pickPhoto = Provider.of<userImage>(context, listen: false);
     final args = ModalRoute.of(context)!.settings.arguments;
     int index = int.parse(args.toString()) - 1;
@@ -105,17 +111,15 @@ class _PresensiState extends State<DetailPresensi> {
                       const SizedBox(
                         height: 20,
                       ),
-                      Consumer<UserLocation>(
-                        builder: (context, value, child) => Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const teks(text: "Status Area"),
-                            teks(
-                                text: maps.distance == null
-                                    ? "0 meter"
-                                    : "${maps.jarak.round()} meter"),
-                          ],
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const teks(text: "Status Area"),
+                          teks(
+                              text: distance == null
+                                  ? "0 meter"
+                                  : "${distance!.round()} meter"),
+                        ],
                       ),
                       const SizedBox(
                         height: 20,
@@ -237,7 +241,13 @@ class _PresensiState extends State<DetailPresensi> {
                     child: ElevatedButton(
                       onPressed: () {
                         UserAuth userAuth = UserAuth();
-                        userAuth.verificationPresensi(context, pickPhoto, maps);
+                        userAuth.verificationPresensi(
+                          context,
+                          pickPhoto,
+                          distance!,
+                          _chose!,
+                          items,
+                        );
                       },
                       style: ButtonStyle(
                         backgroundColor:

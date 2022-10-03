@@ -57,7 +57,7 @@ class _BerandaState extends State<Beranda> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                Text(
+                                Text( user.user == null ? "Loading" :
                                   "${user.user[0].name} - ${user.user[0].kelas}",
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -65,7 +65,7 @@ class _BerandaState extends State<Beranda> {
                             ),
                             CircleAvatar(
                               radius: 23,
-                              backgroundImage:
+                              backgroundImage: user.user == null ? null :
                                   NetworkImage(user.user[0].photoUrl),
                             ),
                           ],

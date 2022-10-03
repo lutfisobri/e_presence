@@ -12,7 +12,6 @@ void main(List<String> args) {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => API_controller()),
-        ChangeNotifierProvider(create: (_) => UserLocation()),
         ChangeNotifierProvider(create: (_) => userImage()),
         ChangeNotifierProvider(create: (_) => UserAuth()),
       ],
@@ -33,13 +32,12 @@ class _MainState extends State<Main> {
 
   loadData() async {
     userLocation.determinePosition();
-    userLocation.setPosition();
   }
 
   @override
   void initState() {
     super.initState();
-    // loadData();
+    loadData();
   }
 
   @override
@@ -53,10 +51,6 @@ class _MainState extends State<Main> {
       },
       debugShowCheckedModeBanner: false,
       home: SplashScreen(),
-      // home: ChangeNotifierProvider(
-      //   create: (context) => userLocation,
-      //   child: SplashScreen(),
-      // ),
     );
   }
 }

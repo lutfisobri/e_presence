@@ -1,4 +1,4 @@
-import 'package:e_presence/controller/User_Location.dart';
+import 'package:e_presence/Model/modelPresensi.dart';
 import 'package:e_presence/controller/User_image.dart';
 import 'package:flutter/material.dart';
 
@@ -8,8 +8,8 @@ class UserAuth with ChangeNotifier {
     print(Password);
   }
 
-  verificationPresensi(
-      BuildContext context, userImage pickPhoto, UserLocation maps) {
+  verificationPresensi(BuildContext context, userImage pickPhoto, double jarak,
+      modelPresensi mdl, List<modelPresensi> items) {
     const selfi = SnackBar(
       content: Text("Silahkan lakukan foto selfi untuk verifikasi"),
     );
@@ -20,9 +20,9 @@ class UserAuth with ChangeNotifier {
       content: Text("Nyalakan GPS untuk melakukan presensi"),
     );
     try {
-      maps.distance == null
+      jarak == null
           ? ScaffoldMessenger.of(context).showSnackBar(mapsNull)
-          : maps.distance!.round() > 10
+          : jarak.round() > 10
               ? ScaffoldMessenger.of(context).showSnackBar(jarakLebih)
               : pickPhoto.source == null
                   ? ScaffoldMessenger.of(context).showSnackBar(selfi)
@@ -32,7 +32,8 @@ class UserAuth with ChangeNotifier {
                         actions: [
                           TextButton(
                             onPressed: () {
-                              pickPhoto.reset();
+                              // mdl.data = items[0].data;
+                              pickPhoto.source = null;
                               Navigator.pop(context);
                             },
                             child: Text("Ok"),
