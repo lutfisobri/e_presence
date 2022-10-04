@@ -1,7 +1,5 @@
 import 'package:e_presence/controller/API_controller.dart';
-import 'package:e_presence/controller/User_Auth.dart';
-import 'package:e_presence/controller/User_Location.dart';
-import 'package:e_presence/controller/User_image.dart';
+import 'package:e_presence/controller/User_Controller.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -17,7 +15,7 @@ class DetailPresensi extends StatefulWidget {
 }
 
 class _PresensiState extends State<DetailPresensi> {
-  late modelPresensi? _chose;
+  modelPresensi? _chose;
 
   List<modelPresensi> items = [
     modelPresensi("Hadir"),
@@ -33,19 +31,15 @@ class _PresensiState extends State<DetailPresensi> {
     _chose = items[0];
   }
 
-  LocationService locationService = LocationService();
-
-  @override
-  void dispose() {
-    locationService.subscription.cancel();
-    super.dispose();
-  }
-
   double? distance;
 
   @override
   Widget build(BuildContext context) {
-    locationService.subscription.onData((data) {
+    final mapel = Provider.of<API_controller>(context, listen: false);
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    final args = ModalRoute.of(context)!.settings.arguments;
+    int index = int.parse(args.toString()) - 1;
+    user.subscription.onData((data) {
       setState(() {
         distance = Geolocator.distanceBetween(
           -8.124655,
@@ -55,228 +49,244 @@ class _PresensiState extends State<DetailPresensi> {
         );
       });
     });
-    final mapel = Provider.of<API_controller>(context, listen: false);
-    final user = Provider.of<UserAuth>(context, listen: false);
-    final pickPhoto = Provider.of<userImage>(context, listen: false);
-    final args = ModalRoute.of(context)!.settings.arguments;
-    int index = int.parse(args.toString()) - 1;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: Colors.black,
-        title: const Text("Presensi"),
-        centerTitle: false,
-      ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: Consumer<API_controller>(
-                  builder: (context, value, child) => Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Mata Pelajaran"),
-                          teks(text: mapel.jadwal[index].name),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Mulai"),
-                          teks(
+    return WillPopScope(
+      onWillPop: () async {
+        user.reset();
+        user.StreamDispose();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          foregroundColor: Colors.black,
+          title: const Text("Presensi"),
+          centerTitle: false,
+        ),
+        body: SafeArea(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Container(
+                  padding: const EdgeInsets.only(left: 16, right: 16),
+                  child: Consumer<API_controller>(
+                    builder: (context, value, child) => Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text("Mata Pelajaran"),
+                            teks(
+                              text: mapel.getJadwal[index].name,
+                              fontWeight: FontWeight.bold,
+                              size: 14,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text("Mulai"),
+                            teks(
                               text: DateFormat('dd MMMM yyyy - hh.mm').format(
-                                  DateTime.parse(mapel.jadwal[index].jam))),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text("Selesai"),
-                          teks(
+                                DateTime.parse(mapel.getJadwal[index].jam),
+                              ),
+                              fontWeight: FontWeight.bold,
+                              size: 14,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text("Selesai"),
+                            teks(
                               text: DateFormat('dd MMMM yyyy - hh.mm').format(
-                                  DateTime.parse(mapel.jadwal[index].jam))),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const teks(text: "Status Area"),
-                          teks(
+                                DateTime.parse(mapel.getJadwal[index].jam),
+                              ),
+                              fontWeight: FontWeight.bold,
+                              size: 14,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const teks(text: "Status Area"),
+                            teks(
                               text: distance == null
-                                  ? "0 meter"
-                                  : "${distance!.round()} meter"),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: colorGreen,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(11),
+                                  ? "1000 meter"
+                                  : "${distance!.round()} meter",
+                              fontWeight: FontWeight.bold,
+                              size: 14,
+                            ),
+                          ],
                         ),
-                        child: DropdownButton(
-                          value: _chose,
-                          items: items.map<DropdownMenuItem<modelPresensi>>(
-                            (e) {
-                              return DropdownMenuItem(
-                                value: e,
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: Text(e.data),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _chose = value;
-                            });
-                          },
-                          underline: Container(),
-                          isExpanded: true,
-                          icon: Container(
-                            padding: const EdgeInsets.only(right: 20),
-                            child: const Icon(Icons.arrow_drop_down),
-                          ),
+                        const SizedBox(
+                          height: 20,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Consumer<userImage>(
-                        builder: (context, value, child) => Card(
-                          shape: RoundedRectangleBorder(
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: colorGreen,
+                              width: 1,
+                            ),
                             borderRadius: BorderRadius.circular(11),
                           ),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(11),
-                            onTap: () {
-                              pickPhoto.pickImage();
+                          child: DropdownButton(
+                            value: _chose,
+                            items: items.map<DropdownMenuItem<modelPresensi>>(
+                              (e) {
+                                return DropdownMenuItem(
+                                  value: e,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding:
+                                            const EdgeInsets.only(left: 20),
+                                        child: Text(
+                                          e.data,
+                                          style: TextStyle(color: colorGreen),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                _chose = value;
+                              });
                             },
-                            child: pickPhoto.source == null
-                                ? Container(
-                                    width: double.infinity,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 20, bottom: 30),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Text("Tambah Foto"),
-                                          const SizedBox(
-                                            height: 20,
-                                          ),
-                                          Image.asset("assets/image/foto.png"),
-                                        ],
+                            underline: Container(),
+                            isExpanded: true,
+                            icon: Container(
+                              padding: const EdgeInsets.only(right: 20),
+                              child: Icon(
+                                Icons.arrow_drop_down,
+                                color: colorGreen,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Consumer<UserControlProvider>(
+                          builder: (context, value, child) => Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(color: colorGreen),
+                              borderRadius: BorderRadius.circular(11),
+                            ),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(11),
+                              onTap: () {
+                                user.pickImage();
+                              },
+                              child: user.source == null
+                                  ? Container(
+                                      height: 200,
+                                      width: double.infinity,
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 20, bottom: 30),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "Tambah Foto",
+                                              style: TextStyle(
+                                                color: colorGreen,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Image.asset(
+                                                "assets/image/foto.png"),
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      height: 200,
+                                      width: double.infinity,
+                                      child: Image.file(
+                                        user.path,
+                                        // scale: 5,
+                                        fit: BoxFit.scaleDown,
                                       ),
                                     ),
-                                  )
-                                : Container(
-                                    height: 200,
-                                    width: double.infinity,
-                                    child: Image.file(
-                                      pickPhoto.path,
-                                      // scale: 5,
-                                      fit: BoxFit.scaleDown,
-                                    ),
-                                  ),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      // Container(
-                      //   padding: const EdgeInsets.only(
-                      //       left: 25, right: 25, top: 10, bottom: 10),
-                      //   decoration: BoxDecoration(
-                      //     border: Border.all(color: colorGreen),
-                      //     borderRadius: BorderRadius.circular(11),
-                      //   ),
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //     children: const [
-                      //       Text("Photo"),
-                      //       Icon(Icons.check),
-                      //     ],
-                      //   ),
-                      // ),
-                    ],
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.only(left: 20, right: 20, top: 10),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        UserAuth userAuth = UserAuth();
-                        userAuth.verificationPresensi(
-                          context,
-                          pickPhoto,
-                          distance!,
-                          _chose!,
-                          items,
-                        );
-                      },
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll<Color>(colorGreen),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      padding:
+                          const EdgeInsets.only(left: 20, right: 20, top: 10),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          UserControlProvider userAuth = UserControlProvider();
+                          userAuth.verificationPresensi(
+                            context,
+                            distance!,
+                            _chose!,
+                            items,
+                          );
+                        },
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStatePropertyAll<Color>(colorGreen),
+                        ),
+                        child: const Text("SIMPAN"),
                       ),
-                      child: const Text("SIMPAN"),
                     ),
-                  ),
-                  Container(
-                    padding:
-                        const EdgeInsets.only(left: 20, right: 20, bottom: 10),
-                    width: double.infinity,
-                    child: OutlinedButton(
-                      style: ButtonStyle(
-                          foregroundColor:
-                              MaterialStatePropertyAll<Color>(colorGreen)),
-                      onPressed: () {
-                        setState(() {
-                          pickPhoto.source = null;
-                          _chose = items[0];
-                        });
-                      },
-                      child: const Text("RESET ULANG"),
+                    Container(
+                      padding: const EdgeInsets.only(
+                          left: 20, right: 20, bottom: 10),
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: ButtonStyle(
+                            foregroundColor:
+                                MaterialStatePropertyAll<Color>(colorGreen)),
+                        onPressed: () {
+                          setState(() {
+                            user.source = null;
+                            _chose = items[0];
+                          });
+                        },
+                        child: const Text("RESET ULANG"),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          ],
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

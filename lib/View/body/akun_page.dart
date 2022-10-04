@@ -1,3 +1,5 @@
+import 'package:e_presence/View/auth/login1.dart';
+import 'package:e_presence/View/child/changePassword.dart';
 import 'package:e_presence/View/child/edit_Profile.dart';
 import 'package:e_presence/controller/API_controller.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +22,13 @@ class akun_Page extends StatelessWidget {
             ListTile(
               // isThreeLine: true,
               leading: CircleAvatar(
-                backgroundImage: NetworkImage(api.user[0].photoUrl),
+                backgroundImage: NetworkImage(api.getUser[0].photoUrl),
               ),
-              title: Text(api.user[0].name),
-              subtitle: Text(api.user[0].username),
+              title: Text(
+                api.getUser[0].name,
+                style: TextStyle(fontSize: 15.7, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(api.getUser[0].username),
               trailing: GestureDetector(
                 child: const Icon(Icons.edit),
                 onTap: () {
@@ -38,19 +43,41 @@ class akun_Page extends StatelessWidget {
             const SizedBox(
               height: 30,
             ),
-            const Text("Akun"),
+            const Text(
+              "Akun",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(
               height: 20,
             ),
             Card(
               color: colorGreen,
               shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(100))),
-              child: const ListTile(
-                leading: Icon(Icons.edit),
-                title: Text("Ubah Kata Sandi"),
-                iconColor: Colors.white,
-                textColor: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(9))),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(9),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChangePassword(),
+                    ),
+                  );
+                },
+                child: const ListTile(
+                  leading: Icon(Icons.edit),
+                  title: Text(
+                    "Ubah Kata Sandi",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  iconColor: Colors.white,
+                  textColor: Colors.white,
+                ),
               ),
             ),
             const SizedBox(
@@ -59,12 +86,25 @@ class akun_Page extends StatelessWidget {
             Card(
               color: colorGreen,
               shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(100))),
-              child: GestureDetector(
-                onTap: () {},
+                  borderRadius: BorderRadius.all(Radius.circular(9))),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(9),
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => loginF(),
+                    ),
+                  );
+                },
                 child: const ListTile(
                   leading: Icon(Icons.logout),
-                  title: Text("Keluar"),
+                  title: Text(
+                    "Keluar",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   iconColor: Colors.white,
                   textColor: Colors.white,
                 ),

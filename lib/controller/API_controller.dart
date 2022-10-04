@@ -9,8 +9,8 @@ class API_controller with ChangeNotifier {
   List<modelUser> listUser = [];
   List<ModelJadwal> listJadwal = [];
 
-  get user => listUser;
-  get jadwal => listJadwal;
+  get getUser => listUser;
+  get getJadwal => listJadwal;
 
   clearJadwal() {
     listJadwal.clear();
