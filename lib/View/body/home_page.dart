@@ -18,112 +18,151 @@ class Home extends StatelessWidget {
   }
 
   final Color colorGreen = Color.fromARGB(255, 114, 182, 108);
+  final Color textColor = Color.fromARGB(255, 87, 87, 87);
 
   @override
   Widget build(BuildContext context) {
     DateTime date = DateTime.now();
     var time = DateFormat('EEEE, d MMMM y').format(date);
     final user = Provider.of<API_controller>(context, listen: false);
-    return Consumer<API_controller>(
-      builder: (context, value, child) => RefreshIndicator(
+    return Padding(
+      padding: const EdgeInsets.only(top: 26),
+      child: RefreshIndicator(
         onRefresh: () {
           return _refreshJadwal(user);
         },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(
-            left: 10,
-            right: 10,
-            bottom: 10,
-          ),
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Hari ini",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    time,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
+        child: ListView(
+          children: [
+            Container(
+              padding: const EdgeInsets.only(
+                // top: 24,
+                left: 20,
+                right: 20,
+                bottom: 16,
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              user.jadwal.isEmpty
-                  ? Container(
-                      height: MediaQuery.of(context).size.height * 0.7,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Text(
-                              "Yeay, tidak ada mata pelajaran",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
+              child: Consumer<API_controller>(
+                builder: (context, value, child) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Hari ini",
+                          style: TextStyle(
+                            fontSize: 19,
+                            color: textColor,
                           ),
-                        ],
-                      ),
-                    )
-                  : ListView.separated(
-                      separatorBuilder: (context, index) => Divider(),
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: user.jadwal.length,
-                      itemBuilder: (context, index) {
-                        var dateTime = DateTime.parse(user.jadwal[index].jam);
-                        return Container(
-                          height: 70,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              color: colorGreen,
-                              borderRadius: BorderRadius.circular(11)),
-                          child: ListTile(
-                            onTap: () {
-                              Navigator.pushNamed(
-                                  context, DetailPresensi.routeName,
-                                  arguments: user.jadwal[index].id);
-                            },
-                            leading: Image(
-                              height: 50,
-                              width: 50,
-                              fit: BoxFit.cover,
-                              image: NetworkImage(user.jadwal[index].logo),
-                            ),
-                            trailing: Column(
+                        ),
+                        Text(
+                          time,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: textColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 16,
+                    ),
+                    user.getJadwal.isEmpty
+                        ? Container(
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  user.jadwal[index].name,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
+                              children: const [
+                                Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Text(
+                                    "Yeay, tidak ada mata pelajaran",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w300,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(
-                                  height: 7,
-                                ),
-                                Text(
-                                  DateFormat('hh.mm - hh.mm').format(dateTime),
-                                  style: const TextStyle(color: Colors.white),
                                 ),
                               ],
                             ),
+                          )
+                        : ListView.separated(
+                            separatorBuilder: (context, index) => Container(
+                              height: 16,
+                            ),
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: user.getJadwal.length,
+                            itemBuilder: (context, index) {
+                              var dateTime = DateTime.parse(user.getJadwal[index].jam);
+                              // return ListTile(
+                              //   leading: CircleAvatar(
+                              //     backgroundImage: NetworkImage(user.getJadwal[index].logo),
+                              //   ),
+                              //   title: Text(user.getJadwal[index].name,),
+                              //   subtitle: Text(DateFormat('hh.mm - hh.mm').format(dateTime)),
+                              // );
+                              return Container(
+                                height: 70,
+                                alignment: Alignment.center,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      // color: colorGreen,
+                                      offset: Offset(0, 8),
+                                      blurRadius: 20,
+                                    ),
+                                  ],
+                                  // color: colorGreen,
+                                  borderRadius: BorderRadius.circular(11),
+                                ),
+                                child: ListTile(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, DetailPresensi.routeName,
+                                        arguments: user.getJadwal[index].id);
+                                  },
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(11),
+                                    child: Image(
+                                      height: 50,
+                                      width: 50,
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(user.getJadwal[index].logo),
+                                    ),
+                                  ),
+                                  trailing: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        user.getJadwal[index].name,
+                                        style: const TextStyle(
+                                            // color: Colors.white,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w400),
+                                      ),
+                                      // const SizedBox(
+                                      //   height: 1,
+                                      // ),
+                                      Text(
+                                        DateFormat('hh.mm - hh.mm').format(dateTime),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                        // style: const TextStyle(color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-            ],
-          ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

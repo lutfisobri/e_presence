@@ -8,8 +8,7 @@ class modelUser {
     required this.password,
     required this.kelas,
     required this.id,
-    }
-  );
+  });
 
   factory modelUser.formJson(Map<String, dynamic> json) {
     return modelUser(

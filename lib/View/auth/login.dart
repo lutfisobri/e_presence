@@ -1,6 +1,5 @@
-import 'package:e_presence/controller/User_Auth.dart';
+import 'package:e_presence/controller/User_Controller.dart';
 import 'package:flutter/material.dart';
-
 import '../../Widgets/Login/btnLogin.dart';
 import '../../Widgets/Login/formLogin.dart';
 import '../../Widgets/Login/formPassword.dart';
@@ -109,7 +108,7 @@ class LoginPage extends StatelessWidget {
                           height: 10,
                         ),
                         buttonLogin(onPres: () {
-                          UserAuth auth = UserAuth();
+                          UserControlProvider auth = UserControlProvider();
                           auth.getUser(username.text, password.text);
                         }),
                       ],

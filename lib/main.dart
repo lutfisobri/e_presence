@@ -1,9 +1,7 @@
 import 'package:e_presence/View/child/DetailPresensi.dart';
 import 'package:e_presence/View/splashScreen.dart';
 import 'package:e_presence/controller/API_controller.dart';
-import 'package:e_presence/controller/User_Auth.dart';
-import 'package:e_presence/controller/User_Location.dart';
-import 'package:e_presence/controller/User_image.dart';
+import 'package:e_presence/controller/User_Controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -12,8 +10,7 @@ void main(List<String> args) {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => API_controller()),
-        ChangeNotifierProvider(create: (_) => userImage()),
-        ChangeNotifierProvider(create: (_) => UserAuth()),
+        ChangeNotifierProvider(create: (_) => UserControlProvider()),
       ],
       child: Main(),
     ),
@@ -28,7 +25,7 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  UserLocation userLocation = UserLocation();
+  UserControlProvider userLocation = UserControlProvider();
 
   loadData() async {
     userLocation.determinePosition();
@@ -46,6 +43,7 @@ class _MainState extends State<Main> {
     user.postUser();
     user.loadJadwal();
     return MaterialApp(
+      theme: ThemeData(fontFamily: 'Poppins'),
       routes: {
         DetailPresensi.routeName: (context) => DetailPresensi(),
       },
