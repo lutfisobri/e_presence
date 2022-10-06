@@ -1,10 +1,10 @@
-import 'package:e_presence/View/body/akun_page.dart';
-import 'package:e_presence/View/body/jadwal_page.dart';
-import 'package:e_presence/View/body/mapel_page.dart';
-import 'package:e_presence/controller/API_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../controller/api_controller.dart';
+import '../body/Jadwal_page.dart';
+import '../body/akun_page.dart';
 import '../body/home_page.dart';
+import '../body/mapel_page.dart';
 
 class Beranda extends StatefulWidget {
   Beranda({super.key});
@@ -17,24 +17,19 @@ class _BerandaState extends State<Beranda> {
   List<Widget> body = [
     Home(),
     Mapel(),
-    jadwal_page(),
+    JadwalPage(),
   ];
-  Color colorGreen = const Color.fromARGB(255, 114, 182, 108);
 
-  refresh(API_controller api) async {
-    await Future.delayed(
-      Duration(seconds: 1),
-    );
-    // await api.clearJadwal();
-    await api.loadJadwal();
-  }
+  Color colorGreen = const Color.fromARGB(255, 114, 182, 108);
 
   int index = 0;
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
-    final user = Provider.of<API_controller>(context, listen: false);
+    final api = Provider.of<ApiController>(context, listen: false);
+    api.loadJadwal;
+    api.postUser();
     return Scaffold(
       body: Stack(
         children: [
@@ -58,7 +53,7 @@ class _BerandaState extends State<Beranda> {
               : Container(),
           SafeArea(
             child: (index == 3)
-                ? akun_Page()
+                ? AkunPage()
                 : Container(
                     child: Column(
                       children: [
@@ -66,7 +61,7 @@ class _BerandaState extends State<Beranda> {
                           height: 80,
                           padding: const EdgeInsets.only(
                               left: 20, right: 20, top: 10, bottom: 10),
-                          child: Consumer<API_controller>(
+                          child: Consumer<ApiController>(
                             builder: (context, value, child) => Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,17 +78,18 @@ class _BerandaState extends State<Beranda> {
                                       ),
                                     ),
                                     Text(
-                                      user.getUser.isEmpty
+                                      api.getUser.isEmpty
                                           ? "Loading"
-                                          : "${user.getUser[0].name} - ${user.getUser[0].kelas}",
+                                          : "${api.getUser[0].name} - ${api.getUser[0].kelas}",
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
                                 ),
                                 CircleAvatar(
+                                  backgroundColor: colorGreen,
                                   radius: 23,
-                                  backgroundImage: user.getUser.isNotEmpty
-                                      ? NetworkImage(user.getUser[0].photoUrl)
+                                  backgroundImage: api.getUser.isNotEmpty
+                                      ? NetworkImage(api.getUser[0].photoUrl)
                                       : null,
                                 ),
                               ],

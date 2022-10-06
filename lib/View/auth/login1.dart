@@ -1,11 +1,10 @@
 import 'dart:async';
-
-import 'package:e_presence/View/child/changePassword.dart';
-import 'package:e_presence/View/route/Beranda.dart';
+import 'package:e_presence/View/auth/lupa_password.dart';
+import 'package:e_presence/View/route/beranda.dart';
 import 'package:flutter/material.dart';
 
-class loginF extends StatelessWidget {
-  loginF({super.key});
+class LoginF extends StatelessWidget {
+  LoginF({super.key});
   Color colorGreen = const Color.fromARGB(255, 114, 182, 108);
   @override
   Widget build(BuildContext context) {
@@ -30,13 +29,13 @@ class loginF extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // const Image(
-                  //   width: 100,
-                  //   image: AssetImage("assets/image/logo-splash1.png"),
-                  // ),
-                  // const SizedBox(
-                  //   height: 10,
-                  // ),
+                  const Image(
+                    // width: 100,
+                    image: AssetImage("assets/image/logo-splash1.png"),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   Text(
                     "E-PRESENSI\nSMAN PLUS SUKOWONO",
                     textAlign: TextAlign.center,
@@ -146,7 +145,8 @@ class btnLupaPw extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         GestureDetector(
-          onTap: () {},
+          onTap: () {
+          },
           child: const Text("lupa password ?"),
         ),
       ],
@@ -174,6 +174,8 @@ class _loginBtnState extends State<loginBtn> {
       children: [
         ElevatedButton(
           onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => LupaPassword(),));
+
             // Navigator.push(
             //   context,
             //   MaterialPageRoute(builder: (context) => ChangePassword(),),

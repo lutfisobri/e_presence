@@ -1,8 +1,8 @@
-import 'package:e_presence/controller/User_Controller.dart';
+import 'package:e_presence/controller/user_controller.dart';
 import 'package:flutter/material.dart';
-import '../../Widgets/Login/btnLogin.dart';
-import '../../Widgets/Login/formLogin.dart';
-import '../../Widgets/Login/formPassword.dart';
+import '../../Widgets/Login/btn_login.dart';
+import '../../Widgets/Login/form_login.dart';
+import '../../Widgets/Login/form_password.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
@@ -13,7 +13,7 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    double width = MediaQuery.of(context).size.height;
+    // double width = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
@@ -79,11 +79,11 @@ class LoginPage extends StatelessWidget {
                         Container(
                           height: 30,
                         ),
-                        formUsername(username: username),
+                        FormUsername(username: username),
                         const SizedBox(
                           height: 10,
                         ),
-                        formPassword(
+                        FormPassword(
                           password: password,
                         ),
                         const SizedBox(
@@ -107,7 +107,7 @@ class LoginPage extends StatelessWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        buttonLogin(onPres: () {
+                        ButtonLogin(onPres: () {
                           UserControlProvider auth = UserControlProvider();
                           auth.getUser(username.text, password.text);
                         }),

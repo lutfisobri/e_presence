@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class textfield extends StatefulWidget {
-  const textfield({
+class WidgetTextField extends StatefulWidget {
+  const WidgetTextField({
     Key? key,
     required this.controller,
     this.obscure = false,
@@ -31,10 +31,10 @@ class textfield extends StatefulWidget {
   final bool enable;
 
   @override
-  State<textfield> createState() => _textfieldState();
+  State<WidgetTextField> createState() => _TextFieldState();
 }
 
-class _textfieldState extends State<textfield> {
+class _TextFieldState extends State<WidgetTextField> {
   bool obscure = true;
   @override
   Widget build(BuildContext context) {

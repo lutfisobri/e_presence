@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:provider/provider.dart';
+import '../../controller/api_controller.dart';
 
-class jadwal_page extends StatelessWidget {
-  const jadwal_page({super.key});
+class JadwalPage extends StatelessWidget {
+  const JadwalPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final api = Provider.of<ApiController>(context, listen: false);
+    api.loadJadwal;
+    api.postUser();
     return SingleChildScrollView(
       child: Column(
         children: [

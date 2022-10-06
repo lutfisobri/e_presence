@@ -1,10 +1,10 @@
-class modelPresensi {
+class ModelPresensi {
   late final String data;
-  modelPresensi(
+  ModelPresensi(
     this.data,
   );
 
-  modelPresensi.formJson(Map<String, dynamic> json) : data = json['data'];
+  ModelPresensi.formJson(Map<String, dynamic> json) : data = json['data'];
 
   Map<String, dynamic> toJson() {
     return {

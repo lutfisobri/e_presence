@@ -1,5 +1,5 @@
-import 'package:e_presence/View/child/DetailPresensi.dart';
-import 'package:e_presence/controller/API_controller.dart';
+import 'package:e_presence/View/child/detail_presensi.dart';
+import 'package:e_presence/controller/api_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -9,12 +9,12 @@ class Home extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  _refreshJadwal(API_controller api) async {
+  _refreshJadwal(ApiController api) async {
     await Future.delayed(
       Duration(seconds: 1),
     );
-    // await api.clearJadwal();
-    await api.loadJadwal();
+    api.loadJadwal();
+    api.postUser();
   }
 
   final Color colorGreen = Color.fromARGB(255, 114, 182, 108);
@@ -24,12 +24,14 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime date = DateTime.now();
     var time = DateFormat('EEEE, d MMMM y').format(date);
-    final user = Provider.of<API_controller>(context, listen: false);
+    final api = Provider.of<ApiController>(context, listen: false);
+    api.loadJadwal;
+    api.postUser();
     return Padding(
       padding: const EdgeInsets.only(top: 26),
       child: RefreshIndicator(
         onRefresh: () {
-          return _refreshJadwal(user);
+          return _refreshJadwal(api);
         },
         child: ListView(
           children: [
@@ -40,7 +42,7 @@ class Home extends StatelessWidget {
                 right: 20,
                 bottom: 16,
               ),
-              child: Consumer<API_controller>(
+              child: Consumer<ApiController>(
                 builder: (context, value, child) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -66,7 +68,7 @@ class Home extends StatelessWidget {
                     const SizedBox(
                       height: 16,
                     ),
-                    user.getJadwal.isEmpty
+                    value.getJadwal.isEmpty
                         ? Container(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -89,9 +91,10 @@ class Home extends StatelessWidget {
                             ),
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
-                            itemCount: user.getJadwal.length,
+                            itemCount: value.getJadwal.length,
                             itemBuilder: (context, index) {
-                              var dateTime = DateTime.parse(user.getJadwal[index].jam);
+                              var dateTime =
+                                  DateTime.parse(value.getJadwal[index].jam);
                               // return ListTile(
                               //   leading: CircleAvatar(
                               //     backgroundImage: NetworkImage(user.getJadwal[index].logo),
@@ -119,7 +122,7 @@ class Home extends StatelessWidget {
                                   onTap: () {
                                     Navigator.pushNamed(
                                         context, DetailPresensi.routeName,
-                                        arguments: user.getJadwal[index].id);
+                                        arguments: value.getJadwal[index].id);
                                   },
                                   leading: ClipRRect(
                                     borderRadius: BorderRadius.circular(11),
@@ -127,7 +130,8 @@ class Home extends StatelessWidget {
                                       height: 50,
                                       width: 50,
                                       fit: BoxFit.cover,
-                                      image: NetworkImage(user.getJadwal[index].logo),
+                                      image: NetworkImage(
+                                          value.getJadwal[index].logo),
                                     ),
                                   ),
                                   trailing: Column(
@@ -135,7 +139,7 @@ class Home extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
                                       Text(
-                                        user.getJadwal[index].name,
+                                        value.getJadwal[index].name,
                                         style: const TextStyle(
                                             // color: Colors.white,
                                             fontSize: 16,
@@ -145,7 +149,8 @@ class Home extends StatelessWidget {
                                       //   height: 1,
                                       // ),
                                       Text(
-                                        DateFormat('hh.mm - hh.mm').format(dateTime),
+                                        DateFormat('hh.mm - hh.mm')
+                                            .format(dateTime),
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w300,
