@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 
-class formPassword extends StatefulWidget {
-  formPassword({
+class FormPassword extends StatefulWidget {
+  const FormPassword({
     Key? key, required this.password,
   }) : super(key: key);
 
   final TextEditingController password;
 
   @override
-  State<formPassword> createState() => _showPasswordState(password: password);
+  State<FormPassword> createState() => _ShowPasswordState();
 }
 
-class _showPasswordState extends State<formPassword> {
-  _showPasswordState({required this.password});
-  final TextEditingController password;
+class _ShowPasswordState extends State<FormPassword> {
   bool show = false;
 
   Icon icon = Icon(Icons.remove_red_eye_outlined);
@@ -30,7 +28,7 @@ class _showPasswordState extends State<formPassword> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: password,
+      controller: widget.password,
       obscureText: show,
       decoration: InputDecoration(
         hintText: "Password",

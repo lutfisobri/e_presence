@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class buttonLogin extends StatelessWidget {
-  buttonLogin({
+class ButtonLogin extends StatelessWidget {
+  ButtonLogin({
     Key? key,
     required this.onPres,
   }) : super(key: key);

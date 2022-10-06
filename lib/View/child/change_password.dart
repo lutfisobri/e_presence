@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../Widgets/textfield.dart';
+
+import '../../Widgets/text_field.dart';
 
 class ChangePassword extends StatelessWidget {
   ChangePassword({super.key});
@@ -38,7 +39,7 @@ class ChangePassword extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text("Password Lama *"),
-                textfield(
+                WidgetTextField(
                   controller: pwLama,
                   obscure: true,
                   hintText: "Password Lama",
@@ -49,7 +50,7 @@ class ChangePassword extends StatelessWidget {
                   height: 20,
                 ),
                 const Text("Password Baru *"),
-                textfield(
+                WidgetTextField(
                   controller: pwBaru,
                   obscure: true,
                   hintText: "Password Baru",
@@ -60,7 +61,7 @@ class ChangePassword extends StatelessWidget {
                   height: 20,
                 ),
                 const Text("Konfirmasi Password Baru *"),
-                textfield(
+                WidgetTextField(
                   controller: confpwBaru,
                   obscure: true,
                   hintText: "Konfirmasi Password Baru",

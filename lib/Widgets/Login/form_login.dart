@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class formUsername extends StatelessWidget {
-  formUsername({
+class FormUsername extends StatelessWidget {
+  FormUsername({
     Key? key, required this.username,
   }) : super(key: key);
 

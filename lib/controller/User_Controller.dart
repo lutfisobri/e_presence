@@ -1,18 +1,22 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:e_presence/Model/modelPresensi.dart';
+import 'package:e_presence/Model/model_presensi.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UserControlProvider with ChangeNotifier {
-  getUser(String username, String Password) {
-    print(username);
-    print(Password);
+  getUser(String username, String password) {
+    // print(username);
+    // print(Password);
   }
 
-  verificationPresensi(BuildContext context, double jarak, modelPresensi mdl,
-      List<modelPresensi> items) {
+  verificationPresensi(
+    BuildContext context,
+    double jarak,
+    ModelPresensi mdl,
+    List<ModelPresensi> items,
+  ) {
     const selfi = SnackBar(
       content: Text("Silahkan lakukan foto selfi untuk verifikasi"),
     );
@@ -39,7 +43,7 @@ class UserControlProvider with ChangeNotifier {
                               source = null;
                               Navigator.pop(context);
                             },
-                            child: Text("Ok"),
+                            child: const Text("Ok"),
                           ),
                         ],
                       ),
@@ -77,15 +81,15 @@ class UserControlProvider with ChangeNotifier {
 
   get path => source;
 
-  bool serviceEnabled = false;
-  LocationPermission? permission;
+  // bool serviceEnabled = false;
+  // LocationPermission? permission;
 
   Future<Position> determinePosition() async {
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error('Location services are disabled.');
     }
-    permission = await Geolocator.checkPermission();
+    LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
@@ -106,7 +110,7 @@ class UserControlProvider with ChangeNotifier {
   StreamSubscription<Position> subscription =
       Geolocator.getPositionStream().listen((Position position) async {});
 
-  StreamDispose() {
+  streamDispose() {
     subscription.cancel();
     notifyListeners();
   }

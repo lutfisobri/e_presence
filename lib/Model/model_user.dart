@@ -1,7 +1,7 @@
-class modelUser {
+class ModelUser {
   final String name, photoUrl, username, password, kelas, id;
 
-  modelUser({
+  ModelUser({
     required this.name,
     required this.photoUrl,
     required this.username,
@@ -10,8 +10,8 @@ class modelUser {
     required this.id,
   });
 
-  factory modelUser.formJson(Map<String, dynamic> json) {
-    return modelUser(
+  factory ModelUser.formJson(Map<String, dynamic> json) {
+    return ModelUser(
       name: json['name'],
       photoUrl: json['photoUrl'],
       username: json['username'],

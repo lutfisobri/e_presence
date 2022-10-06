@@ -1,10 +1,10 @@
-import 'package:e_presence/controller/API_controller.dart';
-import 'package:e_presence/controller/User_Controller.dart';
+import 'package:e_presence/controller/api_controller.dart';
+import 'package:e_presence/controller/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../../Model/modelPresensi.dart';
+import '../../Model/model_presensi.dart';
 
 class DetailPresensi extends StatefulWidget {
   const DetailPresensi({super.key});
@@ -15,12 +15,12 @@ class DetailPresensi extends StatefulWidget {
 }
 
 class _PresensiState extends State<DetailPresensi> {
-  modelPresensi? _chose;
+  ModelPresensi? _chose;
 
-  List<modelPresensi> items = [
-    modelPresensi("Hadir"),
-    modelPresensi("Izin"),
-    modelPresensi("Telat"),
+  List<ModelPresensi> items = [
+    ModelPresensi("Hadir"),
+    ModelPresensi("Izin"),
+    ModelPresensi("Telat"),
   ];
 
   Color colorGreen = const Color.fromARGB(255, 114, 182, 108);
@@ -35,7 +35,6 @@ class _PresensiState extends State<DetailPresensi> {
 
   @override
   Widget build(BuildContext context) {
-    final mapel = Provider.of<API_controller>(context, listen: false);
     final user = Provider.of<UserControlProvider>(context, listen: false);
     final args = ModalRoute.of(context)!.settings.arguments;
     int index = int.parse(args.toString()) - 1;
@@ -52,7 +51,7 @@ class _PresensiState extends State<DetailPresensi> {
     return WillPopScope(
       onWillPop: () async {
         user.reset();
-        user.StreamDispose();
+        user.streamDispose();
         return true;
       },
       child: Scaffold(
@@ -69,7 +68,7 @@ class _PresensiState extends State<DetailPresensi> {
               SingleChildScrollView(
                 child: Container(
                   padding: const EdgeInsets.only(left: 16, right: 16),
-                  child: Consumer<API_controller>(
+                  child: Consumer<ApiController>(
                     builder: (context, value, child) => Column(
                       children: [
                         Row(
@@ -77,7 +76,7 @@ class _PresensiState extends State<DetailPresensi> {
                           children: [
                             const Text("Mata Pelajaran"),
                             teks(
-                              text: mapel.getJadwal[index].name,
+                              text: value.getJadwal[index].name,
                               fontWeight: FontWeight.bold,
                               size: 14,
                             ),
@@ -92,7 +91,7 @@ class _PresensiState extends State<DetailPresensi> {
                             const Text("Mulai"),
                             teks(
                               text: DateFormat('dd MMMM yyyy - hh.mm').format(
-                                DateTime.parse(mapel.getJadwal[index].jam),
+                                DateTime.parse(value.getJadwal[index].jam),
                               ),
                               fontWeight: FontWeight.bold,
                               size: 14,
@@ -108,7 +107,7 @@ class _PresensiState extends State<DetailPresensi> {
                             const Text("Selesai"),
                             teks(
                               text: DateFormat('dd MMMM yyyy - hh.mm').format(
-                                DateTime.parse(mapel.getJadwal[index].jam),
+                                DateTime.parse(value.getJadwal[index].jam),
                               ),
                               fontWeight: FontWeight.bold,
                               size: 14,
@@ -144,7 +143,7 @@ class _PresensiState extends State<DetailPresensi> {
                           ),
                           child: DropdownButton(
                             value: _chose,
-                            items: items.map<DropdownMenuItem<modelPresensi>>(
+                            items: items.map<DropdownMenuItem<ModelPresensi>>(
                               (e) {
                                 return DropdownMenuItem(
                                   value: e,
@@ -183,7 +182,7 @@ class _PresensiState extends State<DetailPresensi> {
                           height: 20,
                         ),
                         Consumer<UserControlProvider>(
-                          builder: (context, value, child) => Container(
+                          builder: (context, user, child) => Container(
                             decoration: BoxDecoration(
                               border: Border.all(color: colorGreen),
                               borderRadius: BorderRadius.circular(11),

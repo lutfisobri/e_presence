@@ -1,9 +1,9 @@
-import 'package:e_presence/controller/API_controller.dart';
+import 'package:e_presence/controller/api_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class edit_Profile extends StatelessWidget {
-  const edit_Profile({super.key});
+class EditProfile extends StatelessWidget {
+  const EditProfile({super.key});
 
   final Color colorGreen = const Color.fromARGB(255, 114, 182, 108);
 
@@ -35,7 +35,7 @@ class edit_Profile extends StatelessWidget {
                       height: 10,
                     ),
                     Center(
-                      child: Consumer<API_controller>(
+                      child: Consumer<ApiController>(
                         builder: (context, value, child) => ClipRRect(
                           borderRadius: BorderRadius.circular(100),
                           child: Image(
