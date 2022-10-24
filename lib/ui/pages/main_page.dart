@@ -1,3 +1,4 @@
+import '../../core/providers/user_controller.dart';
 import 'package:e_presence/ui/pages/page/akun_page.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,6 @@ class _BerandaState extends State<Beranda> {
   Future<void> loadData() async {
     final api = context.read<ApiController>();
     await api.loadJadwal();
-    // await api.postUser();
   }
 
   List<Widget> body = [
@@ -54,58 +54,63 @@ class _BerandaState extends State<Beranda> {
                     colorBlendMode: BlendMode.darken,
                   ),
                 ),
-                Stack(
-                  children: [
-                    index == 0 ? Container(
-                      height: 82.h,
-                      padding: EdgeInsets.only(
-                        left: 11.2.r,
-                        right: 11.2.r,
-                        top: 15.r,
-                        bottom: 5.r,
-                      ),
-                      child: topBar(),
-                    ) : Container(),
-                    RefreshIndicator(
-                      onRefresh: () => loadData(),
-                      child: ListView(
-                        padding: EdgeInsets.only(top: index == 0 ? 82.r : 36.r),
-                        children: [
-                          Container(
-                            width: 360.w,
-                            constraints: BoxConstraints(
-                                minHeight: 530.h, maxHeight: double.infinity),
-                            padding: const EdgeInsets.only(
-                              top: 24,
-                              left: 20,
-                              right: 20,
-                              bottom: 10,
-                            ),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
+                SafeArea(
+                  child: Stack(
+                    children: [
+                      index == 0
+                          ? Container(
+                              height: 82.h,
+                              padding: EdgeInsets.only(
+                                left: 11.2.r,
+                                right: 11.2.r,
+                                // top: 15.r,
+                                bottom: 5.r,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  offset: Offset(0, -1),
-                                  blurRadius: 5,
+                              child: topBar(),
+                            )
+                          : Container(),
+                      RefreshIndicator(
+                        onRefresh: () => loadData(),
+                        child: ListView(
+                          padding:
+                              EdgeInsets.only(top: index == 0 ? 82.r : 36.r),
+                          children: [
+                            Container(
+                              width: 360.w,
+                              constraints: BoxConstraints(
+                                  minHeight: 530.h, maxHeight: double.infinity),
+                              padding: const EdgeInsets.only(
+                                top: 24,
+                                // left: 20,
+                                // right: 20,
+                                bottom: 10,
+                              ),
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  topRight: Radius.circular(20),
                                 ),
-                                BoxShadow(
-                                  color: Colors.white,
-                                  offset: Offset(0, 5),
-                                  blurRadius: 5,
-                                ),
-                              ],
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    offset: Offset(0, -1),
+                                    blurRadius: 5,
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.white,
+                                    offset: Offset(0, 5),
+                                    blurRadius: 5,
+                                  ),
+                                ],
+                              ),
+                              child: body[index],
                             ),
-                            child: body[index],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -113,35 +118,51 @@ class _BerandaState extends State<Beranda> {
     );
   }
 
-  Consumer<ApiController> topBar() {
-    return Consumer<ApiController>(
-      builder: (context, value, child) => Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Selamat Datang!",
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
+  Consumer<UserControlProvider> topBar() {
+    String greeting() {
+      var hour = DateTime.now().hour;
+      if (hour < 10) {
+        return 'Pagi';
+      }
+      if (hour < 14) {
+        return 'Siang';
+      }
+      if (hour < 17) {
+        return 'Sore';
+      }
+      return 'Malam';
+    }
+
+    return Consumer<UserControlProvider>(
+      builder: (context, value, child) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Selamat ${greeting()}, ${value.dataUser.nama}",
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              Text(
-                value.getUser.isEmpty
-                    ? "Loading"
-                    : "${value.getUser[0].name} - ${value.getUser[0].kelas}",
-                style: TextStyle(fontSize: 12.6.sp, color: Colors.white),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          )
-        ],
-      ),
+                Text(
+                  value.dataUser.kelas == ""
+                      ? "Loading"
+                      : "Kelas ${value.dataUser.kelas}",
+                  style: TextStyle(fontSize: 12.6.sp, color: Colors.white),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            )
+          ],
+        );
+      },
     );
   }
 

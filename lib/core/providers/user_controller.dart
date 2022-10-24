@@ -1,14 +1,116 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
+import 'package:e_presence/core/model/model_mapel.dart';
 import 'package:e_presence/core/model/model_presensi.dart';
+import 'package:e_presence/core/model/model_user.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class UserControlProvider with ChangeNotifier {
-  getUser(String username, String password) {
-    // print(username);
-    // print(Password);
+  final String _baseUrl = "http://10.0.2.2/API/v1/";
+  late ModelUser dataUser;
+  late List<ModelMapel> dataMapel;
+
+  loadProfile(String username, String password) async {
+    final Uri url = Uri.parse("${_baseUrl}user/index.php");
+    final response = await http.post(
+      url,
+      headers: {
+        "accept": "application/json",
+      },
+      body: {
+        "username": username,
+        "password": password,
+        "login": "false",
+      },
+    );
+    final dataResponse = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      dataUser = ModelUser.formJson(dataResponse);
+      getMapel(dataUser.idKelas);
+      notifyListeners();
+    }
+  }
+
+  userLogin(String username, String password, BuildContext context) async {
+    final Uri url = Uri.parse("${_baseUrl}user/index.php");
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "accept": "application/json",
+        },
+        body: {
+          "username": username,
+          "password": password,
+          "login": "true",
+        },
+      );
+      final dataResponse = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        dataUser = ModelUser.formJson(dataResponse);
+        getMapel(dataUser.idKelas);
+        Navigator.pushReplacementNamed(context, "/home");
+        notifyListeners();
+      } else {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Error"),
+              content: Text(dataResponse['message']),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Ok"),
+                )
+              ],
+            );
+          },
+        );
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  userLogout() {
+    dataUser = dataUser.clear();
+    notifyListeners();
+  }
+
+  getMapel(String idKelas) async {
+    final Uri url = Uri.parse("${_baseUrl}mapel/index.php?id_kelas=1");
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        Iterable iterable = jsonDecode(response.body);
+        dataMapel = iterable.map((e) => ModelMapel.formJson(e)).toList();
+        notifyListeners();
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  updateProfile(String username, String email, String photo) async {
+    final Uri url = Uri.parse("${_baseUrl}user/index.php");
+    var request =
+        http.MultipartRequest('POST', Uri.parse('${_baseUrl}user/index.php'));
+    request.fields.addAll({'username': username, 'email': email});
+    request.files.add(await http.MultipartFile.fromPath('photoProfile', photo));
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      print(await response.stream.bytesToString());
+      loadProfile(username, dataUser.password);
+    } else {
+      print(response.reasonPhrase);
+    }
   }
 
   verificationPresensi(
@@ -56,16 +158,18 @@ class UserControlProvider with ChangeNotifier {
 
   final ImagePicker _picker = ImagePicker();
   // XFile? image;
-  XFile? photo;
+  XFile? _photo;
 
   File? source;
+  String? namaPhoto;
 
   pickImage() async {
     // image = await _picker.pickImage(source: ImageSource.gallery);
     try {
-      photo = await _picker.pickImage(source: ImageSource.camera);
-      if (photo != null) {
-        source = File(photo!.path);
+      _photo = await _picker.pickImage(source: ImageSource.camera);
+      if (_photo != null) {
+        source = File(_photo!.path);
+        namaPhoto = _photo!.name;
         notifyListeners();
       }
     } catch (e) {
@@ -74,7 +178,7 @@ class UserControlProvider with ChangeNotifier {
   }
 
   reset() {
-    photo = null;
+    _photo = null;
     source = null;
     notifyListeners();
   }

@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class StyleThemeData {
-  final colorGreen = const Color.fromARGB(255, 114, 182, 108);
-  final textColor = const Color.fromARGB(255, 87, 87, 87);
-
-  static const Green = Color.fromARGB(255, 114, 182, 108);
+  static const green = Color.fromARGB(255, 114, 182, 108);
   static ThemeData themeData(BuildContext context) {
     return ThemeData(
       fontFamily: "Poppins",
       appBarTheme: AppBarTheme(
         centerTitle: false,
-        color: Green,
+        color: green,
         titleTextStyle: TextStyle(
           fontSize: 20.sp,
           color: Colors.black,
@@ -27,7 +24,7 @@ class StyleThemeData {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: const MaterialStatePropertyAll<Color>(Green),
+          backgroundColor: const MaterialStatePropertyAll<Color>(green),
           foregroundColor: const MaterialStatePropertyAll<Color>(Colors.white),
           textStyle: MaterialStatePropertyAll(
             TextStyle(
@@ -39,10 +36,10 @@ class StyleThemeData {
       outlinedButtonTheme: const OutlinedButtonThemeData(
         style: ButtonStyle(
           foregroundColor: MaterialStatePropertyAll<Color>(
-            Green,
+            green,
           ),
           side: MaterialStatePropertyAll<BorderSide>(
-            BorderSide(color: Green),
+            BorderSide(color: green),
           ),
         ),
       ),
@@ -51,10 +48,10 @@ class StyleThemeData {
       ),
       textTheme: const TextTheme(
         titleLarge: TextStyle(
-          color: Green,
+          color: green,
         ),
         titleMedium: TextStyle(
-          color: Green,
+          color: green,
         ),
       ),
       primaryColor: Colors.blue,

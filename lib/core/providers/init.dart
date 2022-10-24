@@ -1,4 +1,5 @@
 import 'package:e_presence/ui/pages/accounts/auth/login.dart';
+import 'package:e_presence/ui/pages/accounts/view_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -6,7 +7,7 @@ import 'package:provider/provider.dart';
 import '../../ui/pages/accounts/change_password.dart';
 import '../../ui/pages/details_pages/detail_presensi.dart';
 import '../../ui/pages/accounts/edit_profile.dart';
-import '../../ui/pages/accounts/lupa_password.dart';
+import '../../ui/pages/accounts/forget_password/search_account.dart';
 import '../../ui/pages/main_page.dart';
 import '../../ui/pages/splash_screen.dart';
 import '../../ui/shared/theme_data.dart';
@@ -27,7 +28,6 @@ class _MainState extends State<Main> {
     final api = context.read<ApiController>();
     userLocation.determinePosition();
     api.loadJadwal();
-    api.postUser();
   }
 
   @override
@@ -48,9 +48,10 @@ class _MainState extends State<Main> {
             "/login": (context) => Login(),
             "/home": (context) => Beranda(),
             "/detailPresensi": (context) => const DetailPresensi(),
-            "/ubahPassword": (context) => ChangePassword(),
+            "/ubahPassword": (context) => const ChangePassword(),
             "/editProfile": (context) => EditProfile(),
             "/lupaPassword": (context) => const LupaPassword(),
+            "/viewPhoto":(context) => const ViewPhoto(),
           },
           debugShowCheckedModeBanner: false,
           home: const SplashScreen(),

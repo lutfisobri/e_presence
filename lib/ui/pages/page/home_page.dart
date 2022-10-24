@@ -1,5 +1,5 @@
 import 'package:e_presence/core/providers/api_controller.dart';
-import 'package:e_presence/ui/shared/theme_data.dart';
+import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +25,6 @@ class _HomeState extends State<Home> {
   loadData() {
     final api = context.read<ApiController>();
     api.loadJadwal();
-    api.postUser();
   }
 
   @override
@@ -33,8 +32,6 @@ class _HomeState extends State<Home> {
     super.initState();
     loadData();
   }
-
-  final styleThemeData = StyleThemeData();
 
   @override
   Widget build(BuildContext context) {
@@ -46,25 +43,31 @@ class _HomeState extends State<Home> {
         Consumer<ApiController>(
           builder: (context, value, child) => Wrap(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Hari ini",
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      color: styleThemeData.textColor,
-                      fontWeight: FontWeight.w600,
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Hari ini",
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        color: textColor,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                  Text(
-                    time,
-                    style: TextStyle(
-                      fontSize: 12.6.sp,
-                      color: styleThemeData.textColor,
+                    Text(
+                      time,
+                      style: TextStyle(
+                        fontSize: 12.6.sp,
+                        color: textColor,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               SizedBox(
                 height: 16.r,
@@ -101,6 +104,10 @@ class _HomeState extends State<Home> {
         height: 16.h,
       ),
       physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(
+        left: 20,
+        right: 20,
+      ),
       shrinkWrap: true,
       itemCount: value.getJadwal.length,
       itemBuilder: (context, index) {
