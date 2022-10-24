@@ -16,6 +16,7 @@ class WidgetTextField extends StatefulWidget {
     this.type,
     this.border,
     this.enable = true,
+    this.primaryColor,
     this.fillColor,
     this.filled,
     this.hintStyle,
@@ -38,7 +39,7 @@ class WidgetTextField extends StatefulWidget {
   final TextInputType? type;
   final OutlineInputBorder? border;
   final bool? enable, filled, readOnly;
-  final Color? fillColor, focusColor;
+  final Color? fillColor, focusColor, primaryColor;
   final TextStyle? hintStyle, style;
   final InputBorder? enableBorder, disableBorder, focusBorder;
   final void Function()? onTap;
@@ -52,42 +53,48 @@ class _TextFieldState extends State<WidgetTextField> {
   bool readOnly = false;
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      keyboardType: widget.type,
-      initialValue: widget.initialValue,
-      decoration: InputDecoration(
-        focusedBorder: widget.focusBorder,
-        enabledBorder: widget.enableBorder,
-        disabledBorder: widget.disableBorder,
-        focusColor: widget.focusColor,
-        prefixIcon: widget.prefixIcon,
-        hintText: widget.hintText,
-        hintStyle: widget.hintStyle,
-        suffixIcon: widget.obscure
-            ? GestureDetector(
-                onTap: () {
-                  setState(() {
-                    obscure = !obscure;
-                  });
-                },
-                child: obscure ? widget.sufixIcon1 : widget.sufixIcon2,
-              )
-            : widget.sufixIcon1,
-            suffixIconColor: Colors.black,
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: widget.contenH,
-          vertical: widget.contenV,
-        ),
-        fillColor: widget.fillColor,
-        filled: widget.filled,
-        border: widget.border,
+    return Theme(
+      data: ThemeData(
+        colorScheme: ThemeData().colorScheme.copyWith(primary: widget.primaryColor),
       ),
-      obscureText: widget.obscure ? obscure : widget.obscure,
-      controller: widget.controller,
-      enabled: widget.enable,
-      style: widget.style,
-      onTap: widget.onTap,
-      readOnly: widget.readOnly! ? widget.readOnly! : readOnly,
+      child: TextFormField(
+        keyboardType: widget.type,
+        initialValue: widget.initialValue,
+        decoration: InputDecoration(
+          focusedBorder: widget.focusBorder,
+          label: widget.label,
+          enabledBorder: widget.enableBorder,
+          disabledBorder: widget.disableBorder,
+          focusColor: widget.focusColor,
+          prefixIcon: widget.prefixIcon,
+          hintText: widget.hintText,
+          hintStyle: widget.hintStyle,
+          suffixIcon: widget.obscure
+              ? GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      obscure = !obscure;
+                    });
+                  },
+                  child: obscure ? widget.sufixIcon1 : widget.sufixIcon2,
+                )
+              : widget.sufixIcon1,
+              suffixIconColor: Colors.black,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: widget.contenH,
+            vertical: widget.contenV,
+          ),
+          fillColor: widget.fillColor,
+          filled: widget.filled,
+          border: widget.border,
+        ),
+        obscureText: widget.obscure ? obscure : widget.obscure,
+        controller: widget.controller,
+        enabled: widget.enable,
+        style: widget.style,
+        onTap: widget.onTap,
+        readOnly: widget.readOnly! ? widget.readOnly! : readOnly,
+      ),
     );
   }
 }

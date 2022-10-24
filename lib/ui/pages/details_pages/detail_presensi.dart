@@ -1,6 +1,7 @@
 import 'package:e_presence/core/providers/api_controller.dart';
 import 'package:e_presence/core/providers/user_controller.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
+import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -23,8 +24,6 @@ class _PresensiState extends State<DetailPresensi> {
     ModelPresensi("Izin"),
     ModelPresensi("Telat"),
   ];
-
-  final styleThemeData = StyleThemeData();
 
   @override
   void initState() {
@@ -137,7 +136,7 @@ class _PresensiState extends State<DetailPresensi> {
                         DecoratedBox(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: styleThemeData.colorGreen,
+                              color: colorGreen,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.circular(11),
@@ -155,7 +154,7 @@ class _PresensiState extends State<DetailPresensi> {
                                             const EdgeInsets.only(left: 20),
                                         child: Text(
                                           e.data,
-                                          style: TextStyle(color: styleThemeData.colorGreen),
+                                          style: TextStyle(color: colorGreen),
                                         ),
                                       ),
                                     ],
@@ -174,7 +173,7 @@ class _PresensiState extends State<DetailPresensi> {
                               padding: const EdgeInsets.only(right: 20),
                               child: Icon(
                                 Icons.arrow_drop_down,
-                                color: styleThemeData.colorGreen,
+                                color: colorGreen,
                               ),
                             ),
                           ),
@@ -185,7 +184,7 @@ class _PresensiState extends State<DetailPresensi> {
                         Consumer<UserControlProvider>(
                           builder: (context, user, child) => Container(
                             decoration: BoxDecoration(
-                              border: Border.all(color: styleThemeData.colorGreen),
+                              border: Border.all(color: colorGreen),
                               borderRadius: BorderRadius.circular(11),
                             ),
                             child: InkWell(
@@ -207,7 +206,7 @@ class _PresensiState extends State<DetailPresensi> {
                                             Text(
                                               "Tambah Foto",
                                               style: TextStyle(
-                                                color: styleThemeData.colorGreen,
+                                                color: colorGreen,
                                               ),
                                             ),
                                             const SizedBox(
@@ -260,7 +259,7 @@ class _PresensiState extends State<DetailPresensi> {
                         },
                         // style: ButtonStyle(
                         //   backgroundColor:
-                        //       MaterialStatePropertyAll<Color>(styleThemeData.colorGreen),
+                        //       MaterialStatePropertyAll<Color>(colorGreen),
                         // ),
                         child: const Text("SIMPAN"),
                       ),

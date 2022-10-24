@@ -1,11 +1,14 @@
+import 'package:e_presence/core/providers/api_controller.dart';
+import 'package:e_presence/core/providers/user_controller.dart';
+import 'package:e_presence/ui/shared/constant/tab_bar.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
+import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import '../../../core/providers/api_controller.dart';
 
 class Mapel extends StatefulWidget {
-  Mapel({super.key});
+  const Mapel({super.key});
 
   @override
   State<Mapel> createState() => _MapelState();
@@ -13,136 +16,86 @@ class Mapel extends StatefulWidget {
 
 class _MapelState extends State<Mapel> with TickerProviderStateMixin {
   StyleThemeData styleThemeData = StyleThemeData();
-  late TabController tabController;
+  int selectedTab = 1;
+  List data = [];
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 6, vsync: this);
+    getData();
+  }
+
+  getData() {
+    final dataMapel = Provider.of<UserControlProvider>(context, listen: false);
+    // data = dataMapel.dataMapel.where((i) => i.hari == selectedTab).toList();
+    data = content.where((i) => i['hari'] == selectedTab).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final api = Provider.of<ApiController>(context, listen: false);
     api.loadJadwal;
-    api.postUser();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Jadwal Mata Pelajaran",
-          style: TextStyle(
-            fontSize: 20.sp,
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+          ),
+          child: Text(
+            "Jadwal Mata Pelajaran",
+            style: TextStyle(
+              fontSize: 20.sp,
+              color: Colors.black,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(
+            left: 20,
+            right: 20,
+          ),
+          child: Divider(
+            thickness: 1,
             color: Colors.black,
-            fontWeight: FontWeight.w700,
           ),
         ),
-        const Divider(
-          thickness: 1,
-          color: Colors.black,
+        SizedBox(
+          height: 13.r,
         ),
-        // SizedBox(
-        //   height: 13.r,
-        // ),
-        DefaultTabController(
-          length: 6, // length of tabs
-          initialIndex: 0,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Container(
-                child: TabBar(
-                  isScrollable: true,
-                  labelColor: Colors.green,
-                  unselectedLabelColor: Colors.black,
-                  tabs: [
-                    Tab(text: 'Senin'),
-                    Tab(text: 'Selasa'),
-                    Tab(text: 'Rabu'),
-                    Tab(text: 'Kamis'),
-                    Tab(text: 'Jumat'),
-                    Tab(text: 'Sabtu'),
-                  ],
-                  indicatorColor: Colors.transparent,
-                ),
-              ),
-              Container(
-                height: 400, //height of TabBarView
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(color: Colors.grey, width: 0.5),
-                  ),
-                ),
-                child: TabBarView(
-                  children: <Widget>[
-                    Container(
-                      child: Center(
-                        child: Text(
-                          'Display Tab 1',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Center(
-                        child: Text(
-                          'Display Tab 2',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Center(
-                        child: Text(
-                          'Display Tab 3',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Center(
-                        child: Text(
-                          'Display Tab 4',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Center(
-                        child: Text(
-                          'Display Tab 4',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      child: Center(
-                        child: Text(
-                          'Display Tab 4',
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+        CustomTabBar(
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
           ),
+          tab: selectedTab,
+          onChange: (newSelected) {
+            setState(() {
+              selectedTab = newSelected;
+              getData();
+            });
+          },
         ),
+        Padding(
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 12.6,
+          ),
+          child:
+              Consumer<UserControlProvider>(builder: (context, value, child) {
+            return ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              separatorBuilder: (context, index) => Container(),
+              itemBuilder: (context, index) =>
+                  Text(data[index]['mapel']),
+              itemCount: data.length,
+            );
+          }),
+        )
       ],
-    );
-  }
-
-  TextStyle style(Color colors) {
-    return TextStyle(
-      color: colors,
-      fontWeight: FontWeight.w600,
-      fontSize: 12.6.sp,
     );
   }
 }

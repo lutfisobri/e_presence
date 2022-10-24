@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:e_presence/core/providers/api_controller.dart';
+import 'package:e_presence/core/providers/user_controller.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,29 +25,30 @@ class _AkunPageState extends State<AkunPage> {
   void loadApi() {
     final api = Provider.of<ApiController>(context, listen: false);
     api.loadJadwal();
-    api.postUser();
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: LayoutBuilder(builder: (context, maxHeight) {
-        return Consumer<ApiController>(
+        return Consumer<UserControlProvider>(
           builder: (context, value, child) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: EdgeInsets.only(top: 25.r, left: 20.54.r, right: 25.r),
-                height: maxHeight.maxHeight - 537.h,
+                height: 113,
                 child: Stack(
                   children: [
                     Positioned(
                       left: 0,
                       child: CircleAvatar(
-                        backgroundImage: value.getUser.isNotEmpty
-                            ? NetworkImage(value.getUser[0].photoUrl)
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: value.dataUser.photo == "" ? null: NetworkImage(value.dataUser.photo),
+                        maxRadius: 37,
+                        child: value.dataUser.photo == ""
+                            ? Image.asset("assets/image/profil_default.png")
                             : null,
-                        maxRadius: 35.r,
                       ),
                     ),
                     Positioned(
@@ -53,21 +57,27 @@ class _AkunPageState extends State<AkunPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            value.getUser[0].name,
+                            value.dataUser.username == ""
+                                ? "loading"
+                                : value.dataUser.username,
                             style: TextStyle(
                               fontSize: 17.sp,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
                           Text(
-                            value.getUser[0].username,
+                            value.dataUser.nis == ""
+                                ? "loading"
+                                : value.dataUser.nis,
                             style: TextStyle(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w300,
                             ),
                           ),
                           Text(
-                            "Email",
+                            value.dataUser.email == ""
+                                ? "loading"
+                                : value.dataUser.email,
                             style: TextStyle(
                               fontSize: 15.sp,
                               fontWeight: FontWeight.w300,
@@ -134,18 +144,50 @@ class _AkunPageState extends State<AkunPage> {
                         height: 19.r,
                       ),
                       ListTile(
-                        leading: const Icon(Icons.edit),
-                        title: const Text("Ubah Kata Sandi"),
+                        leading: Icon(
+                          Icons.edit,
+                          size: 18.sp,
+                          color: Colors.black,
+                        ),
+                        title: Text(
+                          "Ubah Kata Sandi",
+                          style: TextStyle(
+                            fontSize: 12.6.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
                         onTap: () =>
                             Navigator.pushNamed(context, "/ubahPassword"),
                       ),
                       const Divider(),
-                      ListTile(
-                        leading: const Icon(Icons.logout),
-                        title: const Text("Keluar"),
-                        onTap: () =>
-                            Navigator.pushReplacementNamed(context, "/login"),
-                      ),
+                      Consumer<UserControlProvider>(
+                          builder: (context, value, child) {
+                        return ListTile(
+                          leading: Icon(
+                            Icons.logout,
+                            color: Colors.black,
+                            size: 18.sp,
+                          ),
+                          title: Text(
+                            "Keluar",
+                            style: TextStyle(
+                              fontSize: 12.6.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.pushReplacementNamed(context, "/login");
+                            Timer(
+                              Duration(seconds: 2),
+                              () {
+                                value.userLogout();
+                              },
+                            );
+                          },
+                        );
+                      }),
                       const Divider(),
                     ],
                   ),

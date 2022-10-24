@@ -1,9 +1,13 @@
 import 'dart:async';
+import 'package:e_presence/core/providers/api_controller.dart';
+import 'package:e_presence/core/providers/user_controller.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
+import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
   Login({super.key});
@@ -14,17 +18,19 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController email = TextEditingController();
+  TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
-
-  final styleThemeData = StyleThemeData();
 
   bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    final userControlProvider =
+        Provider.of<UserControlProvider>(context, listen: false);
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Stack(
@@ -60,7 +66,7 @@ class _LoginState extends State<Login> {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 19.sp,
-                      color: styleThemeData.colorGreen,
+                      color: colorGreen,
                     ),
                   ),
                   SizedBox(
@@ -85,9 +91,9 @@ class _LoginState extends State<Login> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           WidgetTextField(
-                            controller: email,
+                            controller: username,
                             hintText: "Username",
-                            label: Text("Username"),
+                            primaryColor: colorGreen,
                             hintStyle: TextStyle(
                               fontSize: 12.sp,
                               color: const Color(0XFF9F9F9F),
@@ -95,7 +101,6 @@ class _LoginState extends State<Login> {
                             prefixIcon: Icon(
                               Icons.account_box,
                               size: 20.sp,
-                              color:const Color(0XFF9F9F9F),
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(7.r),
@@ -114,24 +119,22 @@ class _LoginState extends State<Login> {
                           WidgetTextField(
                             controller: password,
                             hintText: "Password",
+                            primaryColor: colorGreen,
                             hintStyle: TextStyle(
-                              fontSize: 12.sp,
+                              fontSize: 15.sp,
                               color: const Color(0XFF9F9F9F),
                             ),
                             obscure: true,
                             sufixIcon1: const Icon(
                               Icons.visibility_off,
-                              color: Color(0XFF9F9F9F),
                             ),
                             sufixIcon2: const Icon(
                               Icons.visibility,
-                              color: Color(0XFF9F9F9F),
                             ),
                             contenV: 17,
                             prefixIcon: Icon(
                               Icons.key,
                               size: 20.sp,
-                              color: const Color(0XFF9F9F9F),
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(7.r),
@@ -165,19 +168,44 @@ class _LoginState extends State<Login> {
                               ),
                               Expanded(
                                 child: WidgetEleBtn(
-                                  onPres: () {
-                                    setState(() {
-                                      isLoading = true;
-                                    });
-                                    Timer(Duration(seconds: 1), () {
-                                      Navigator.pushReplacementNamed(
-                                        context,
-                                        "/home",
+                                  onPres: () async {
+                                    FocusManager.instance.primaryFocus
+                                        ?.unfocus();
+                                    if (username.text == "" ||
+                                        password.text == "") {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text("error"),
+                                          content: Text(
+                                              "Username atau password tidak boleh kosong"),
+                                          actions: [
+                                            GestureDetector(
+                                              onTap: () =>
+                                                  Navigator.pop(context),
+                                              child: Text("Ok"),
+                                            )
+                                          ],
+                                        ),
                                       );
+                                    } else {
                                       setState(() {
-                                        isLoading = false;
+                                        isLoading = true;
                                       });
-                                    });
+                                      Timer(
+                                        Duration(seconds: 1),
+                                        () {
+                                          userControlProvider.userLogin(
+                                            username.text,
+                                            password.text,
+                                            context,
+                                          );
+                                          setState(() {
+                                            isLoading = false;
+                                          });
+                                        },
+                                      );
+                                    }
                                   },
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(7.r),

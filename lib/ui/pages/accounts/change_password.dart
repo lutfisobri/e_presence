@@ -1,24 +1,37 @@
 import 'package:e_presence/ui/shared/theme_data.dart';
+import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:flutter/material.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ChangePassword extends StatelessWidget {
-  ChangePassword({super.key});
+class ChangePassword extends StatefulWidget {
+  const ChangePassword({super.key});
   static const routeName = "/changePassword";
 
+  @override
+  State<ChangePassword> createState() => _ChangePasswordState();
+}
+
+class _ChangePasswordState extends State<ChangePassword> {
   final TextEditingController pwLama = TextEditingController();
   final TextEditingController pwBaru = TextEditingController();
   final TextEditingController confpwBaru = TextEditingController();
+
   final styleThemeData = StyleThemeData();
 
   @override
+  void dispose() {
+    pwLama.dispose();
+    pwBaru.dispose();
+    confpwBaru.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        pwLama.dispose();
-        pwBaru.dispose();
-        confpwBaru.dispose();
-        return true;
+    return GestureDetector(
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Scaffold(
         appBar: AppBar(
@@ -35,62 +48,92 @@ class ChangePassword extends StatelessWidget {
         ),
         body: SafeArea(
           child: Container(
-            padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+            padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Password Lama *"),
                 WidgetTextField(
                   controller: pwLama,
                   obscure: true,
-                  hintText: "Password Lama",
-                  sufixIcon1: Icon(Icons.visibility_off),
-                  sufixIcon2: Icon(Icons.visibility),
+                  label: Text(
+                    "Password Lama",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  sufixIcon1: const Icon(
+                    Icons.visibility_off,
+                    color: Colors.black,
+                  ),
+                  sufixIcon2: const Icon(
+                    Icons.visibility,
+                    color: Colors.black,
+                  ),
+                  primaryColor: Colors.black,
                 ),
-                const SizedBox(
-                  height: 20,
+                SizedBox(
+                  height: 20.h,
                 ),
-                const Text("Password Baru *"),
                 WidgetTextField(
                   controller: pwBaru,
                   obscure: true,
-                  hintText: "Password Baru",
-                  sufixIcon1: Icon(Icons.visibility_off),
-                  sufixIcon2: Icon(Icons.visibility),
+                  label: Text(
+                    "Password Baru*",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  sufixIcon1: const Icon(
+                    Icons.visibility_off,
+                    color: Colors.black,
+                  ),
+                  sufixIcon2: const Icon(
+                    Icons.visibility,
+                    color: Colors.black,
+                  ),
+                  primaryColor: Colors.black,
                 ),
-                const SizedBox(
-                  height: 20,
+                SizedBox(
+                  height: 20.h,
                 ),
-                const Text("Konfirmasi Password Baru *"),
                 WidgetTextField(
                   controller: confpwBaru,
                   obscure: true,
-                  hintText: "Konfirmasi Password Baru",
-                  sufixIcon1: Icon(Icons.visibility_off),
-                  sufixIcon2: Icon(Icons.visibility),
+                  label: Text(
+                    "Konfirmasi Password Baru*",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 10.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  sufixIcon1: const Icon(
+                    Icons.visibility_off,
+                    color: Colors.black,
+                  ),
+                  sufixIcon2: const Icon(
+                    Icons.visibility,
+                    color: Colors.black,
+                  ),
+                  primaryColor: Colors.black,
                 ),
-                const SizedBox(
-                  height: 20,
+                SizedBox(
+                  height: 16.5.h,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        shape: MaterialStatePropertyAll<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              11,
-                            ),
-                          ),
-                        ),
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                          styleThemeData.colorGreen,
-                        ),
+                    WidgetEleBtn(
+                      onPres: () {},
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7.77.r),
                       ),
-                      child: Text("Ubah"),
-                    ),
+                      child: const Text("Ubah"),
+                    )
                   ],
                 ),
               ],
