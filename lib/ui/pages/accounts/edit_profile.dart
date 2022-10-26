@@ -185,9 +185,8 @@ class EditProfile extends StatelessWidget {
                                 builder: (context, value, child) {
                               return WidgetEleBtn(
                                 onPres: () {
-                                  var photo = value.source!.path;
+                                  var photo = value.source?.path;
                                   value.updateProfile(
-                                    value.dataUser.username,
                                     emailController.text,
                                     photo,
                                   );
@@ -226,6 +225,7 @@ class EditProfile extends StatelessWidget {
                           onTap: () {
                             user.reset();
                             user.pickImage();
+                            // updatePhoto(context);
                           },
                           child: const Icon(
                             Icons.camera_alt_outlined,
@@ -244,6 +244,113 @@ class EditProfile extends StatelessWidget {
     );
   }
 
+  Future<dynamic> updatePhoto(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SizedBox(
+          height: 174,
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 15, left: 25),
+                child: Text(
+                  "Foto Profil",
+                  style: TextStyle(
+                    fontSize: 17,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Row(
+                  children: [
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 25),
+                          child: SizedBox(
+                            height: 60,
+                            width: 60,
+                            child: Image.asset(
+                              "assets/icons/kamera.png",
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 23, top: 10),
+                          child: Text(
+                            "Kamera",
+                            style: TextStyle(
+                              color: Color(0XFF646161),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 35),
+                          child: Image.asset(
+                            "assets/icons/galeri.png",
+                            height: 60,
+                            width: 60,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 34, top: 10),
+                          child: Text(
+                            "Galeri",
+                            style: TextStyle(
+                              color: Color(0XFF646161),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 35),
+                          child: Image.asset(
+                            "assets/icons/hapus.png",
+                            height: 60,
+                            width: 60,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(left: 34, top: 10),
+                          child: Text(
+                            "Hapus",
+                            style: TextStyle(
+                              color: Color(0XFF646161),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Center photoProfile() {
     return Center(
       child: SizedBox(
@@ -257,14 +364,14 @@ class EditProfile extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: value.source == null
-                  ? value.dataUser.photo == ""
+                  ? value.dataUser.foto == ""
                       ? const Image(
                           image: AssetImage("assets/image/profil_default.png"),
                           fit: BoxFit.cover,
                         )
                       : Image(
                           image: NetworkImage(
-                            value.dataUser.photo,
+                            value.dataUser.foto,
                           ),
                           fit: BoxFit.cover,
                         )

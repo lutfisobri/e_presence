@@ -41,7 +41,7 @@ class _HomeState extends State<Home> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Consumer<ApiController>(
-          builder: (context, value, child) => Wrap(
+          builder: (context, value, child) => Column(
             children: [
               Padding(
                 padding: const EdgeInsets.only(
@@ -50,33 +50,126 @@ class _HomeState extends State<Home> {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
+                  children: const [
                     Text(
-                      "Hari ini",
+                      "Mata Pelajaran",
                       style: TextStyle(
-                        fontSize: 20.sp,
-                        color: textColor,
+                        fontSize: 20,
+                        color: Colors.black,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(
-                      time,
+                      "Hari Ini",
                       style: TextStyle(
-                        fontSize: 12.6.sp,
-                        color: textColor,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: 16.r,
+              const SizedBox(
+                height: 12.6,
               ),
               value.getJadwal.isEmpty ? nullContent(context) : content(value),
+              Padding(
+                padding: const EdgeInsets.only(
+                    top: 12.9, left: 19, right: 19, bottom: 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    Text(
+                      "Informasi Akademik",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      "Terbaru",
+                      style: TextStyle(
+                        fontSize: 12.6,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              inforAkademik(value),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  SizedBox inforAkademik(ApiController value) {
+    return SizedBox(
+      height: 129,
+      child: ListView.separated(
+        separatorBuilder: (context, index) => Container(
+          width: 14,
+        ),
+        scrollDirection: Axis.horizontal,
+        itemCount: 2,
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(left: 19, right: 19, top: 8, bottom: 8),
+        itemBuilder: (context, index) => Container(
+          width: 246,
+          height: 119,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 1),
+                  blurRadius: 5,
+                  color: Color(0XFF000000).withOpacity(0.25),
+                ),
+              ]),
+          child: Center(
+            child: Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(left: 12.6, right: 12.6),
+                  width: 57,
+                  height: 57,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(3.15),
+                    child: Image.network(value.getJadwal[0].logo),
+                  ),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      "Title",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0XFF193D28),
+                      ),
+                    ),
+                    Text(
+                      "Subtitle",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0XFF193D28),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -101,68 +194,64 @@ class _HomeState extends State<Home> {
   ListView content(ApiController value) {
     return ListView.separated(
       separatorBuilder: (context, index) => Container(
-        height: 16.h,
+        height: 12.6,
       ),
       physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.only(
-        left: 20,
-        right: 20,
+        left: 19,
+        right: 19,
       ),
       shrinkWrap: true,
       itemCount: value.getJadwal.length,
       itemBuilder: (context, index) {
         var dateTime = DateTime.parse(value.getJadwal[index].jam);
         return Container(
-          height: 70,
+          height: 56.6,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: const [
+            boxShadow: [
               BoxShadow(
-                color: Colors.black12,
-                offset: Offset(0, 8),
-                blurRadius: 20,
+                color: Color(0XFF000000).withOpacity(0.25),
+                offset: const Offset(0, 1),
+                blurRadius: 5,
               ),
             ],
-            borderRadius: BorderRadius.circular(11),
+            borderRadius: BorderRadius.circular(6),
           ),
-          child: ListTile(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                "/detailPresensi",
-                arguments: value.getJadwal[index].id,
-              );
-            },
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(11),
-              child: Image(
-                height: 50,
-                width: 50,
-                fit: BoxFit.cover,
-                image: NetworkImage(value.getJadwal[index].logo),
+          child: Row(
+            children: [
+              Container(
+                margin:
+                    const EdgeInsets.only(top: 10.8, left: 12.6, bottom: 10.8),
+                height: 35,
+                width: 35,
+                child: Image.network(value.getJadwal[index].logo),
               ),
-            ),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  value.getJadwal[index].name,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
+              const SizedBox(
+                width: 12.6,
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value.getJadwal[index].name,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                Text(
-                  DateFormat('hh.mm - hh.mm').format(dateTime),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w300,
+                  Text(
+                    DateFormat('MMMM d,y').format(dateTime),
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              )
+            ],
           ),
         );
       },

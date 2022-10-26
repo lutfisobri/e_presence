@@ -1,8 +1,10 @@
+import 'package:e_presence/core/providers/user_controller.dart';
 import 'package:e_presence/ui/pages/accounts/forget_password/change_password.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class LupaPassword extends StatefulWidget {
   const LupaPassword({super.key});
@@ -13,19 +15,20 @@ class LupaPassword extends StatefulWidget {
 }
 
 class _LupaPasswordState extends State<LupaPassword> {
-  TextEditingController controller = TextEditingController();
+  TextEditingController username = TextEditingController();
   FocusNode focusNode = FocusNode();
 
   @override
   void dispose() {
     focusNode.dispose();
-    controller.dispose();
+    username.dispose();
     super.dispose();
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserControlProvider>(context, listen: false);
     return GestureDetector(
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -44,7 +47,7 @@ class _LupaPasswordState extends State<LupaPassword> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 WidgetTextField(
-                  controller: controller,
+                  controller: username,
                   focusNode: focusNode,
                   label: Text(
                     "Masukkan Username Anda",
@@ -70,11 +73,24 @@ class _LupaPasswordState extends State<LupaPassword> {
                       child: WidgetEleBtn(
                         onPres: () {
                           FocusManager.instance.primaryFocus?.unfocus();
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ForgetChangePassword(),
-                              ));
+                          // user.searchAccount(username.text);
+                          user.searchAccount(username.text).then((value) {
+                          print(value);
+                          // if (value.isNotEmpty) {
+                          //   Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //       builder: (context) => ForgetChangePassword(),
+                          //     ),
+                          //   );
+                          // } else {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(
+                          //       content: Text("Akun tidak ditemukan"),
+                          //     ),
+                          //   );
+                          // }
+                          });
                         },
                         textStyle: TextStyle(
                           fontSize: 11.sp,

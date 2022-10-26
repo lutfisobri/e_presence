@@ -23,7 +23,7 @@ class ViewPhoto extends StatelessWidget {
           width: double.infinity,
           child: Consumer<UserControlProvider>(
             builder: (context, value, child) {
-              return Image.network(value.dataUser.photo, fit: BoxFit.cover,);
+              return value.dataUser.foto == "" ? Image.asset("assets/image/profil_default.png") : Image.network(value.dataUser.foto, fit: BoxFit.cover,);
             },
           ),
         ),

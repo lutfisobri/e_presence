@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'accounts/auth/login.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -19,6 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
       () => Navigator.pushReplacementNamed(context, Login.routeName),
     );
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -28,36 +28,36 @@ class _SplashScreenState extends State<SplashScreen> {
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: const [
                 Image(
-                  width: 90.w,
-                  height: 92.57.w,
+                  width: 90,
+                  height: 92.57,
                   fit: BoxFit.fill,
                   image: const AssetImage("assets/image/logo.png"),
                 ),
                 SizedBox(
-                  height: 10.r,
+                  height: 10,
                 ),
                 Text(
                   "E-PRESENSI\nSMAN PLUS SUKOWONO",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 19,
+                    fontWeight: FontWeight.w600,
                     color: Color.fromARGB(255, 114, 182, 108),
                   ),
                 ),
               ],
             ),
           ),
-          Positioned(
-            bottom: 106.r,
-            left: 126.r,
-            right: 127.r,
+          const Positioned(
+            bottom: 105,
+            left: 123,
+            right: 123,
             child: Text(
-              "Version 1.0\nCopyright Neko.ID",
+              "Version 1.0.0\nCopyright Neko.ID",
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.w300, fontSize: 11.3.sp),
+              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
             ),
           ),
         ],

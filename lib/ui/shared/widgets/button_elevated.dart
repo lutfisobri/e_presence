@@ -10,6 +10,7 @@ class WidgetEleBtn extends StatefulWidget {
     this.shape,
     this.textStyle,
     this.focusNode,
+    this.minimunSize,
   });
 
   final void Function()? onPres;
@@ -20,6 +21,7 @@ class WidgetEleBtn extends StatefulWidget {
   final RoundedRectangleBorder? shape;
   final TextStyle? textStyle;
   final FocusNode? focusNode;
+  final Size? minimunSize;
 
   @override
   State<WidgetEleBtn> createState() => _WidgetEleBtnState();
@@ -31,13 +33,14 @@ class _WidgetEleBtnState extends State<WidgetEleBtn> {
     return ElevatedButton(
       onPressed: widget.onPres,
       style: ButtonStyle(
+        minimumSize: MaterialStatePropertyAll(widget.minimunSize),
         backgroundColor: MaterialStatePropertyAll(widget.bgColor),
         foregroundColor: MaterialStatePropertyAll(widget.fgColor),
         elevation: MaterialStatePropertyAll(widget.elevation),
         shape: MaterialStatePropertyAll(widget.shape),
         textStyle: MaterialStatePropertyAll(widget.textStyle),
       ),
-      focusNode: widget.focusNode,      
+      focusNode: widget.focusNode,
       child: widget.child,
     );
   }

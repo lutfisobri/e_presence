@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:e_presence/core/model/model_user.dart';
 import 'package:e_presence/core/providers/api_controller.dart';
 import 'package:e_presence/core/providers/user_controller.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
@@ -16,19 +17,28 @@ class AkunPage extends StatefulWidget {
 
 class _AkunPageState extends State<AkunPage> {
   final styleThemeData = StyleThemeData();
+  late ModelUser modelUser;
   @override
   void initState() {
     super.initState();
-    loadApi();
+    loadUser();
   }
 
-  void loadApi() {
-    final api = Provider.of<ApiController>(context, listen: false);
-    api.loadJadwal();
+  void loadUser() {
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    var val = "";
+    user.loadProfile().then((value) {
+      print(value);
+      val = value.foto;
+    });
+    print(val);
+    setState(() {});
+    // print(modelUser.foto);
   }
 
   @override
   Widget build(BuildContext context) {
+    // print(modelUser.foto);
     return SafeArea(
       child: LayoutBuilder(builder: (context, maxHeight) {
         return Consumer<UserControlProvider>(
@@ -44,9 +54,11 @@ class _AkunPageState extends State<AkunPage> {
                       left: 0,
                       child: CircleAvatar(
                         backgroundColor: Colors.transparent,
-                        backgroundImage: value.dataUser.photo == "" ? null: NetworkImage(value.dataUser.photo),
+                        backgroundImage: value.dataUser.foto == ""
+                            ? null
+                            : NetworkImage(value.dataUser.foto),
                         maxRadius: 37,
-                        child: value.dataUser.photo == ""
+                        child: value.dataUser.foto == ""
                             ? Image.asset("assets/image/profil_default.png")
                             : null,
                       ),
@@ -182,7 +194,7 @@ class _AkunPageState extends State<AkunPage> {
                             Timer(
                               Duration(seconds: 2),
                               () {
-                                value.userLogout();
+                                value.userClearData();
                               },
                             );
                           },
