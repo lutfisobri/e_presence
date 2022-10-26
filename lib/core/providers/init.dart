@@ -1,16 +1,15 @@
 import 'package:e_presence/ui/pages/accounts/auth/login.dart';
+import 'package:e_presence/ui/pages/accounts/change_password.dart';
+import 'package:e_presence/ui/pages/accounts/edit_profile.dart';
+import 'package:e_presence/ui/pages/accounts/forget_password/search_account.dart';
 import 'package:e_presence/ui/pages/accounts/view_photo.dart';
+import 'package:e_presence/ui/pages/details_pages/detail_presensi.dart';
+import 'package:e_presence/ui/pages/main_page.dart';
+import 'package:e_presence/ui/pages/splash_screen.dart';
+import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-
-import '../../ui/pages/accounts/change_password.dart';
-import '../../ui/pages/details_pages/detail_presensi.dart';
-import '../../ui/pages/accounts/edit_profile.dart';
-import '../../ui/pages/accounts/forget_password/search_account.dart';
-import '../../ui/pages/main_page.dart';
-import '../../ui/pages/splash_screen.dart';
-import '../../ui/shared/theme_data.dart';
 import 'api_controller.dart';
 import 'user_controller.dart';
 
@@ -26,7 +25,7 @@ class _MainState extends State<Main> {
 
   loadData() async {
     final api = context.read<ApiController>();
-    userLocation.determinePosition();
+    // userLocation.determinePosition();
     api.loadJadwal();
   }
 

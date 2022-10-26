@@ -2,7 +2,7 @@ import '../../core/providers/user_controller.dart';
 import 'package:e_presence/ui/pages/page/akun_page.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../core/providers/api_controller.dart';
 import 'page/ujian_page.dart';
@@ -10,7 +10,7 @@ import 'page/home_page.dart';
 import 'page/mapel_page.dart';
 
 class Beranda extends StatefulWidget {
-  Beranda({super.key});
+  const Beranda({super.key});
   static const routeName = "/home";
 
   @override
@@ -24,9 +24,9 @@ class _BerandaState extends State<Beranda> {
   }
 
   List<Widget> body = [
-    Home(),
-    Mapel(),
-    JadwalPage(),
+    const Home(),
+    const Mapel(),
+    const JadwalPage(),
   ];
   final styleThemeData = StyleThemeData();
 
@@ -46,8 +46,7 @@ class _BerandaState extends State<Beranda> {
           : Stack(
               children: [
                 SizedBox(
-                  width: 360.w,
-                  height: 400.h,
+                  height: 400,
                   child: Image.asset(
                     "assets/wave/top-wave.png",
                     fit: BoxFit.cover,
@@ -59,12 +58,10 @@ class _BerandaState extends State<Beranda> {
                     children: [
                       index == 0
                           ? Container(
-                              height: 82.h,
-                              padding: EdgeInsets.only(
-                                left: 11.2.r,
-                                right: 11.2.r,
-                                // top: 15.r,
-                                bottom: 5.r,
+                              height: 81,
+                              padding: const EdgeInsets.only(
+                                left: 13.62,
+                                right: 13.62,
                               ),
                               child: topBar(),
                             )
@@ -72,21 +69,18 @@ class _BerandaState extends State<Beranda> {
                       RefreshIndicator(
                         onRefresh: () => loadData(),
                         child: ListView(
-                          padding:
-                              EdgeInsets.only(top: index == 0 ? 82.r : 36.r),
+                          padding: EdgeInsets.only(top: index == 0 ? 81 : 36),
                           children: [
                             Container(
-                              width: 360.w,
-                              constraints: BoxConstraints(
-                                  minHeight: 530.h, maxHeight: double.infinity),
+                              width: double.infinity,
+                              constraints: const BoxConstraints(
+                                  minHeight: 530, maxHeight: double.infinity),
                               padding: const EdgeInsets.only(
                                 top: 24,
-                                // left: 20,
-                                // right: 20,
                                 bottom: 10,
                               ),
                               decoration: const BoxDecoration(
-                                color: Colors.white,
+                                color: Color(0XFFFAFAFA),
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(20),
                                   topRight: Radius.circular(20),
@@ -121,13 +115,13 @@ class _BerandaState extends State<Beranda> {
   Consumer<UserControlProvider> topBar() {
     String greeting() {
       var hour = DateTime.now().hour;
-      if (hour < 10) {
+      if (hour > 4 && hour < 10) {
         return 'Pagi';
       }
-      if (hour < 14) {
+      if (hour > 10 && hour < 14) {
         return 'Siang';
       }
-      if (hour < 17) {
+      if (hour > 14 && hour < 18) {
         return 'Sore';
       }
       return 'Malam';
@@ -145,8 +139,8 @@ class _BerandaState extends State<Beranda> {
               children: [
                 Text(
                   "Selamat ${greeting()}, ${value.dataUser.nama}",
-                  style: TextStyle(
-                    fontSize: 15.sp,
+                  style: const TextStyle(
+                    fontSize: 16,
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
@@ -155,7 +149,11 @@ class _BerandaState extends State<Beranda> {
                   value.dataUser.kelas == ""
                       ? "Loading"
                       : "Kelas ${value.dataUser.kelas}",
-                  style: TextStyle(fontSize: 12.6.sp, color: Colors.white),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w400
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
@@ -168,56 +166,56 @@ class _BerandaState extends State<Beranda> {
 
   BottomNavigationBar bottomNavBar() {
     return BottomNavigationBar(
-      items: [
+      items: const [
         BottomNavigationBarItem(
           icon: Image(
-            width: 21.w,
-            height: 21.h,
-            image: const AssetImage("assets/bottom_navbar/home.png"),
+            width: 21,
+            height: 21,
+            image: AssetImage("assets/bottom_navbar/home.png"),
           ),
           activeIcon: Image(
-            image: const AssetImage("assets/bottom_navbar/home_active.png"),
-            width: 23.w,
-            height: 23.h,
+            image: AssetImage("assets/bottom_navbar/home_active.png"),
+            width: 23,
+            height: 23,
           ),
           label: "Mapel",
         ),
         BottomNavigationBarItem(
           icon: Image(
-            width: 21.w,
-            height: 21.h,
-            image: const AssetImage("assets/bottom_navbar/mapel.png"),
+            width: 21,
+            height: 21,
+            image: AssetImage("assets/bottom_navbar/mapel.png"),
           ),
           activeIcon: Image(
-            image: const AssetImage("assets/bottom_navbar/mapel_active.png"),
-            width: 21.w,
-            height: 21.h,
+            image: AssetImage("assets/bottom_navbar/mapel_active.png"),
+            width: 21,
+            height: 21,
           ),
           label: "Mapel",
         ),
         BottomNavigationBarItem(
           icon: Image(
-            width: 21.w,
-            height: 21.h,
-            image: const AssetImage("assets/bottom_navbar/ujian.png"),
+            width: 21,
+            height: 21,
+            image: AssetImage("assets/bottom_navbar/ujian.png"),
           ),
           activeIcon: Image(
-            image: const AssetImage("assets/bottom_navbar/ujian_active.png"),
-            width: 21.w,
-            height: 21.h,
+            image: AssetImage("assets/bottom_navbar/ujian_active.png"),
+            width: 21,
+            height: 21,
           ),
           label: "Mapel",
         ),
         BottomNavigationBarItem(
           icon: Image(
-            width: 21.w,
-            height: 21.h,
-            image: const AssetImage("assets/bottom_navbar/akun.png"),
+            width: 21,
+            height: 21,
+            image: AssetImage("assets/bottom_navbar/akun.png"),
           ),
           activeIcon: Image(
-            image: const AssetImage("assets/bottom_navbar/akun_active.png"),
-            width: 21.w,
-            height: 21.h,
+            image: AssetImage("assets/bottom_navbar/akun_active.png"),
+            width: 21,
+            height: 21,
           ),
           label: "Mapel",
         ),

@@ -1,12 +1,9 @@
 import 'dart:async';
-import 'package:e_presence/core/providers/api_controller.dart';
 import 'package:e_presence/core/providers/user_controller.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
-import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class Login extends StatefulWidget {
@@ -38,8 +35,8 @@ class _LoginState extends State<Login> {
             Align(
               alignment: Alignment.topCenter,
               child: Container(
-                width: 360.w,
-                height: 70.h,
+                width: MediaQuery.of(context).size.width,
+                height: 70,
                 child: Image.asset(
                   "assets/wave/top-wave.png",
                   fit: BoxFit.cover,
@@ -51,33 +48,33 @@ class _LoginState extends State<Login> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image(
-                    width: 90.w,
-                    height: 92.57.w,
+                  const Image(
+                    width: 90,
+                    height: 92.57,
                     fit: BoxFit.fill,
-                    image: const AssetImage("assets/image/logo.png"),
+                    image: AssetImage("assets/image/logo.png"),
                   ),
-                  SizedBox(
-                    height: 10.h,
+                  const SizedBox(
+                    height: 10,
                   ),
-                  Text(
+                  const Text(
                     "E-PRESENSI\nSMAN PLUS SUKOWONO",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 19.sp,
+                      fontSize: 19,
                       color: colorGreen,
                     ),
                   ),
-                  SizedBox(
-                    height: 20.h,
+                  const SizedBox(
+                    height: 20,
                   ),
                   Container(
-                    padding: EdgeInsets.all(10.r),
-                    margin: EdgeInsets.only(left: 20.r, right: 20.r),
+                    padding: const EdgeInsets.all(10),
+                    margin: const EdgeInsets.only(left: 20, right: 20),
                     decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(15.r),
+                        borderRadius: BorderRadius.circular(15),
                         boxShadow: const [
                           BoxShadow(
                             color: Colors.black12,
@@ -86,58 +83,60 @@ class _LoginState extends State<Login> {
                           ),
                         ]),
                     child: Container(
-                      padding: EdgeInsets.all(20.r),
+                      padding: const EdgeInsets.all(20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           WidgetTextField(
                             controller: username,
-                            hintText: "Username",
+                            hintText: "Nama Pengguna",
                             primaryColor: colorGreen,
-                            hintStyle: TextStyle(
-                              fontSize: 12.sp,
-                              color: const Color(0XFF9F9F9F),
+                            hintStyle: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0XFF9F9F9F),
                             ),
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.account_box,
-                              size: 20.sp,
+                              size: 20,
                             ),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7.r),
+                              borderRadius: BorderRadius.circular(7),
                               borderSide: BorderSide.none,
                             ),
-                            contenV: 17.r,
+                            contenV: 17,
                             fillColor: const Color(0xFFEFEFEF),
                             filled: true,
                             style: const TextStyle(
                               color: Color(0XFF9F9F9F),
                             ),
                           ),
-                          SizedBox(
-                            height: 15.h,
+                          const SizedBox(
+                            height: 15,
                           ),
                           WidgetTextField(
                             controller: password,
-                            hintText: "Password",
+                            hintText: "Kata sandi",
                             primaryColor: colorGreen,
-                            hintStyle: TextStyle(
-                              fontSize: 15.sp,
-                              color: const Color(0XFF9F9F9F),
+                            hintStyle: const TextStyle(
+                              fontSize: 14,
+                              color: Color(0XFF9F9F9F),
                             ),
                             obscure: true,
                             sufixIcon1: const Icon(
                               Icons.visibility_off,
+                              size: 19,
                             ),
                             sufixIcon2: const Icon(
                               Icons.visibility,
+                              size: 19,
                             ),
                             contenV: 17,
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.key,
-                              size: 20.sp,
+                              size: 19,
                             ),
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7.r),
+                              borderRadius: BorderRadius.circular(7),
                               borderSide: BorderSide.none,
                             ),
                             fillColor: const Color(0xFFEFEFEF),
@@ -147,72 +146,45 @@ class _LoginState extends State<Login> {
                               color: Color(0XFF9F9F9F),
                             ),
                           ),
-                          SizedBox(
-                            height: 23.h,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(context, "/lupaPassword");
+                                },
+                                child: const Opacity(
+                                  opacity: 0.5,
+                                  child: Text(
+                                    "Lupa Kata Sandi",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      letterSpacing: 0.2,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 6,
                           ),
                           Row(
                             children: [
-                              WidgetEleBtn(
-                                onPres: () {
-                                  Navigator.pushNamed(context, "/lupaPassword");
-                                },
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(7.r),
-                                ),
-                                child: const Icon(
-                                  Icons.key,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10.w,
-                              ),
                               Expanded(
                                 child: WidgetEleBtn(
                                   onPres: () async {
-                                    FocusManager.instance.primaryFocus
-                                        ?.unfocus();
-                                    if (username.text == "" ||
-                                        password.text == "") {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: Text("error"),
-                                          content: Text(
-                                              "Username atau password tidak boleh kosong"),
-                                          actions: [
-                                            GestureDetector(
-                                              onTap: () =>
-                                                  Navigator.pop(context),
-                                              child: Text("Ok"),
-                                            )
-                                          ],
-                                        ),
-                                      );
-                                    } else {
-                                      setState(() {
-                                        isLoading = true;
-                                      });
-                                      Timer(
-                                        Duration(seconds: 1),
-                                        () {
-                                          userControlProvider.userLogin(
-                                            username.text,
-                                            password.text,
-                                            context,
-                                          );
-                                          setState(() {
-                                            isLoading = false;
-                                          });
-                                        },
-                                      );
-                                    }
+                                    actionBtnLogin(
+                                        context, userControlProvider);
                                   },
+                                  minimunSize: Size(248, 41),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(7.r),
+                                    borderRadius: BorderRadius.circular(7),
                                   ),
-                                  textStyle: TextStyle(
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.bold,
+                                  textStyle: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                   child: isLoading
                                       ? const SizedBox(
@@ -222,7 +194,7 @@ class _LoginState extends State<Login> {
                                             color: Colors.white,
                                           ),
                                         )
-                                      : const Text("LOGIN"),
+                                      : const Text("MASUK"),
                                 ),
                               ),
                             ],
@@ -237,8 +209,8 @@ class _LoginState extends State<Login> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Image(
-                width: 360.w,
-                height: 64.h,
+                width: MediaQuery.of(context).size.width,
+                height: 64,
                 image: const AssetImage("assets/wave/bottom-wave.png"),
                 fit: BoxFit.cover,
               ),
@@ -247,5 +219,42 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  void actionBtnLogin(
+      BuildContext context, UserControlProvider userControlProvider) {
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (username.text == "" || password.text == "") {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("error"),
+          content: Text("Username atau password tidak boleh kosong"),
+          actions: [
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Text("Ok"),
+            )
+          ],
+        ),
+      );
+    } else {
+      setState(() {
+        isLoading = true;
+      });
+      Timer(
+        Duration(seconds: 1),
+        () {
+          userControlProvider.userLogin(
+            username.text,
+            password.text,
+            context,
+          );
+          setState(() {
+            isLoading = false;
+          });
+        },
+      );
+    }
   }
 }

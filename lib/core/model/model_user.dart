@@ -1,21 +1,19 @@
 class ModelUser {
-  final String email,
-      photo,
+  final String nis,
       username,
       password,
+      email,
+      foto,
       idKelas,
-      id,
-      nis,
       nama,
       kelamin,
       kelas;
 
   ModelUser({
-    required this.id,
     required this.username,
     required this.password,
     required this.email,
-    required this.photo,
+    required this.foto,
     required this.idKelas,
     required this.nis,
     required this.nama,
@@ -25,13 +23,12 @@ class ModelUser {
 
   factory ModelUser.formJson(Map<String, dynamic> json) {
     return ModelUser(
-      id: json['id_siswa'],
+      nis: json['nis'],
       username: json['username'],
       password: json['password'],
       email: json['email'],
-      photo: json['photo'],
+      foto: json['foto'],
       idKelas: json['id_kelas'],
-      nis: json['nis'],
       nama: json['nama_siswa'],
       kelamin: json['jenis_kelamin'],
       kelas: json['kelas'],
@@ -40,13 +37,12 @@ class ModelUser {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'nis': nis,
       'username': username,
       'password': password,
       'email': email,
-      'photo': photo,
+      'photo': foto,
       'idKelas': idKelas,
-      'nis': nis,
       'nama': nama,
       'jenisKelamin': kelamin,
       'kelas': kelas,
@@ -55,13 +51,12 @@ class ModelUser {
 
   clear() {
     Map<String, dynamic> hapus = {
-      "id_siswa": "",
+      "nis": "",
       "username": "",
       "password": "",
       "email": "",
-      "photo": "",
+      "foto": "",
       "id_kelas": "",
-      "nis": "",
       "nama_siswa": "",
       "jenis_kelamin": "",
       "kelas": "",

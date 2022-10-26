@@ -10,11 +10,30 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class UserControlProvider with ChangeNotifier {
-  final String _baseUrl = "http://10.0.2.2/API/v1/";
+  final String _baseUrl = "https://neko.id.orangeflasher.com/v1/";
   late ModelUser dataUser;
   late List<ModelMapel> dataMapel;
 
-  loadProfile(String username, String password) async {
+  Future<List<Map<String, dynamic>>> searchAccount(String username) async {
+    List<Map<String, dynamic>> output = [
+      {
+        "username": "tidak ditemukan",
+        "email": "",
+      }
+    ];
+    final Uri url = Uri.parse("${_baseUrl}user/index.php");
+    final response = await http.post(
+      url,
+      body: {"username": username, "lupa_password": "iya"},
+    );
+    final dataResponse = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      output = [dataResponse];
+    }
+    return output;
+  }
+
+  Future<ModelUser> loadProfile() async {
     final Uri url = Uri.parse("${_baseUrl}user/index.php");
     final response = await http.post(
       url,
@@ -22,8 +41,8 @@ class UserControlProvider with ChangeNotifier {
         "accept": "application/json",
       },
       body: {
-        "username": username,
-        "password": password,
+        "username": dataUser.username,
+        "password": dataUser.password,
         "login": "false",
       },
     );
@@ -33,6 +52,7 @@ class UserControlProvider with ChangeNotifier {
       getMapel(dataUser.idKelas);
       notifyListeners();
     }
+    return ModelUser.formJson(dataResponse);
   }
 
   userLogin(String username, String password, BuildContext context) async {
@@ -77,7 +97,7 @@ class UserControlProvider with ChangeNotifier {
     }
   }
 
-  userLogout() {
+  userClearData() {
     dataUser = dataUser.clear();
     notifyListeners();
   }
@@ -96,18 +116,23 @@ class UserControlProvider with ChangeNotifier {
     }
   }
 
-  updateProfile(String username, String email, String photo) async {
+  updateProfile(String email, String? photo) async {
     final Uri url = Uri.parse("${_baseUrl}user/index.php");
     var request =
         http.MultipartRequest('POST', Uri.parse('${_baseUrl}user/index.php'));
-    request.fields.addAll({'username': username, 'email': email});
-    request.files.add(await http.MultipartFile.fromPath('photoProfile', photo));
+    if (photo != null) {
+      request.fields.addAll({'nis': dataUser.nis, 'email': email});
+      request.files.add(await http.MultipartFile.fromPath('foto', photo));
+    } else {
+      request.fields
+          .addAll({'nis': dataUser.nis, 'email': email, 'foto': "ya"});
+    }
 
     http.StreamedResponse response = await request.send();
 
     if (response.statusCode == 200) {
       print(await response.stream.bytesToString());
-      loadProfile(username, dataUser.password);
+      loadProfile();
     } else {
       print(response.reasonPhrase);
     }
@@ -161,7 +186,6 @@ class UserControlProvider with ChangeNotifier {
   XFile? _photo;
 
   File? source;
-  String? namaPhoto;
 
   pickImage() async {
     // image = await _picker.pickImage(source: ImageSource.gallery);
@@ -169,7 +193,6 @@ class UserControlProvider with ChangeNotifier {
       _photo = await _picker.pickImage(source: ImageSource.camera);
       if (_photo != null) {
         source = File(_photo!.path);
-        namaPhoto = _photo!.name;
         notifyListeners();
       }
     } catch (e) {
@@ -184,9 +207,6 @@ class UserControlProvider with ChangeNotifier {
   }
 
   get path => source;
-
-  // bool serviceEnabled = false;
-  // LocationPermission? permission;
 
   Future<Position> determinePosition() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -208,8 +228,6 @@ class UserControlProvider with ChangeNotifier {
     return await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
   }
-
-  double latitude = 0;
 
   StreamSubscription<Position> subscription =
       Geolocator.getPositionStream().listen((Position position) async {});
