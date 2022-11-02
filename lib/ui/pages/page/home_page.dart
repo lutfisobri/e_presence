@@ -57,15 +57,16 @@ class _HomeState extends State<Home> {
                         fontSize: 20,
                         color: Colors.black,
                         fontWeight: FontWeight.w600,
+                        fontFamily: "IBMPlex",
                       ),
                     ),
                     Text(
                       "Hari Ini",
                       style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                          fontFamily: "Roboto"),
                     ),
                   ],
                 ),
@@ -83,18 +84,18 @@ class _HomeState extends State<Home> {
                     Text(
                       "Informasi Akademik",
                       style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                      ),
+                          fontSize: 20,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: "IBMPlex"),
                     ),
                     Text(
                       "Terbaru",
                       style: TextStyle(
-                        fontSize: 12.6,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
+                          fontSize: 12.6,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                          fontFamily: "Roboto"),
                     ),
                   ],
                 ),
@@ -119,7 +120,7 @@ class _HomeState extends State<Home> {
         shrinkWrap: true,
         padding: const EdgeInsets.only(left: 19, right: 19, top: 8, bottom: 8),
         itemBuilder: (context, index) => Container(
-          width: 246,
+          width: 246.w,
           height: 119,
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(6),
@@ -143,27 +144,35 @@ class _HomeState extends State<Home> {
                     child: Image.network(value.getJadwal[0].logo),
                   ),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      "Title",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0XFF193D28),
+                Flexible(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Semua mata pelajaran sdfnsdkbfjsdbfkjs",
+                        maxLines: 1,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0XFF193D28),
+                          overflow: TextOverflow.visible,
+                          fontFamily: "Roboto",
+                        ),
                       ),
-                    ),
-                    Text(
-                      "Subtitle",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0XFF193D28),
+                      Flexible(
+                        child: Text(
+                          "Maret 8 2023",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0XFF193D28),
+                            fontFamily: "Roboto",
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 )
               ],
             ),
@@ -240,6 +249,7 @@ class _HomeState extends State<Home> {
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
+                      fontFamily: "Roboto",
                     ),
                   ),
                   Text(
@@ -247,6 +257,7 @@ class _HomeState extends State<Home> {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
+                      fontFamily: "Roboto",
                     ),
                   ),
                 ],

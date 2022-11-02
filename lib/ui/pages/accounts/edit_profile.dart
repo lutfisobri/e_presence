@@ -50,12 +50,12 @@ class EditProfile extends StatelessWidget {
                       children: [
                         photoProfile(),
                         SizedBox(
-                          height: 28.28.r,
+                          height: 14.28.r,
                         ),
                         Text(
                           "Nama Lengkap *",
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: const Color(0XFF858585),
                           ),
@@ -68,7 +68,7 @@ class EditProfile extends StatelessWidget {
                             enable: false,
                             style: TextStyle(
                               color: const Color(0XFF858585),
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                             disableBorder: const UnderlineInputBorder(
@@ -79,12 +79,12 @@ class EditProfile extends StatelessWidget {
                           );
                         }),
                         SizedBox(
-                          height: 18.5.r,
+                          height: 10.5,
                         ),
                         Text(
                           "E-mail *",
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: const Color(0XFF858585),
                           ),
@@ -99,18 +99,18 @@ class EditProfile extends StatelessWidget {
                             primaryColor: Colors.black,
                             style: TextStyle(
                               // color: Colors.white,
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           );
                         }),
                         const SizedBox(
-                          height: 20,
+                          height: 10.5,
                         ),
                         Text(
                           "Nisn *",
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: const Color(0XFF858585),
                           ),
@@ -122,7 +122,7 @@ class EditProfile extends StatelessWidget {
                               contenH: 0,
                               style: TextStyle(
                                 color: const Color(0XFF858585),
-                                fontSize: 14.sp,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
                               enable: false,
@@ -130,12 +130,12 @@ class EditProfile extends StatelessWidget {
                           },
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 10.5,
                         ),
                         Text(
                           "Tanggal Lahir *",
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: const Color(0XFF858585),
                           ),
@@ -147,18 +147,18 @@ class EditProfile extends StatelessWidget {
                           readOnly: true,
                           style: TextStyle(
                             color: Colors.black,
-                            fontSize: 14.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
                           sufixIcon1: const Icon(Icons.calendar_month),
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 10.5,
                         ),
                         Text(
                           "Kelas *",
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: const Color(0XFF858585),
                           ),
@@ -170,13 +170,13 @@ class EditProfile extends StatelessWidget {
                             initialValue: value.dataUser.kelas,
                             style: TextStyle(
                               color: const Color(0XFF858585),
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           );
                         }),
                         const SizedBox(
-                          height: 20,
+                          height: 20.5,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
@@ -193,10 +193,15 @@ class EditProfile extends StatelessWidget {
                                   // modalBottomSheet(context);
                                 },
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(7.77.r),
+                                  borderRadius: BorderRadius.circular(7.77),
                                 ),
-                                textStyle: TextStyle(fontSize: 14.sp),
-                                child: Text("Simpan"),
+                                minimunSize: Size(109, 46),
+                                textStyle: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: "Roboto",
+                                ),
+                                child: Text("SIMPAN"),
                               );
                             }),
                           ],
@@ -224,8 +229,8 @@ class EditProfile extends StatelessWidget {
                           borderRadius: BorderRadius.circular(100),
                           onTap: () {
                             user.reset();
-                            user.pickImage();
-                            // updatePhoto(context);
+                            // user.pickImage();
+                            updatePhoto(context);
                           },
                           child: const Icon(
                             Icons.camera_alt_outlined,
@@ -267,21 +272,24 @@ class EditProfile extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 16),
                 child: Row(
                   children: [
+                    SizedBox(
+                      width: 25,
+                    ),
                     Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 25),
-                          child: SizedBox(
+                        InkWell(
+                          onTap: () {
+                            
+                          },
+                          child: Image.asset(
+                            "assets/icons/kamera.png",
                             height: 60,
                             width: 60,
-                            child: Image.asset(
-                              "assets/icons/kamera.png",
-                              fit: BoxFit.cover,
-                            ),
+                            fit: BoxFit.cover,
                           ),
                         ),
                         const Padding(
-                          padding: EdgeInsets.only(left: 23, top: 10),
+                          padding: EdgeInsets.only(top: 10),
                           child: Text(
                             "Kamera",
                             style: TextStyle(
@@ -293,10 +301,13 @@ class EditProfile extends StatelessWidget {
                         ),
                       ],
                     ),
+                    SizedBox(
+                      width: 30,
+                    ),
                     Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 35),
+                        InkWell(
+                          onTap: () {},
                           child: Image.asset(
                             "assets/icons/galeri.png",
                             height: 60,
@@ -304,8 +315,8 @@ class EditProfile extends StatelessWidget {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 34, top: 10),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
                           child: Text(
                             "Galeri",
                             style: TextStyle(
@@ -317,10 +328,15 @@ class EditProfile extends StatelessWidget {
                         ),
                       ],
                     ),
+                    SizedBox(
+                      width: 30,
+                    ),
                     Column(
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 35),
+                        InkWell(
+                          onTap: () {
+                            
+                          },
                           child: Image.asset(
                             "assets/icons/hapus.png",
                             height: 60,
@@ -328,8 +344,8 @@ class EditProfile extends StatelessWidget {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        const Padding(
-                          padding: EdgeInsets.only(left: 34, top: 10),
+                        Padding(
+                          padding: EdgeInsets.only(top: 10),
                           child: Text(
                             "Hapus",
                             style: TextStyle(
@@ -353,9 +369,13 @@ class EditProfile extends StatelessWidget {
 
   Center photoProfile() {
     return Center(
-      child: SizedBox(
+      child: Container(
         width: 90.r,
         height: 90.r,
+        decoration: BoxDecoration(
+          border: Border.all(width: 3),
+          borderRadius: BorderRadius.circular(100),
+        ),
         child: Consumer<UserControlProvider>(
           builder: (context, value, child) => GestureDetector(
             onTap: () {

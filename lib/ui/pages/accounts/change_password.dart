@@ -2,7 +2,7 @@ import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:flutter/material.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -56,10 +56,10 @@ class _ChangePasswordState extends State<ChangePassword> {
                   controller: pwLama,
                   obscure: true,
                   label: Text(
-                    "Password Lama",
+                    "Password Lama*",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 10.sp,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -72,9 +72,13 @@ class _ChangePasswordState extends State<ChangePassword> {
                     color: Colors.black,
                   ),
                   primaryColor: Colors.black,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(
-                  height: 20.h,
+                  height: 20,
                 ),
                 WidgetTextField(
                   controller: pwBaru,
@@ -83,7 +87,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     "Password Baru*",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 10.sp,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -96,9 +100,13 @@ class _ChangePasswordState extends State<ChangePassword> {
                     color: Colors.black,
                   ),
                   primaryColor: Colors.black,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(
-                  height: 20.h,
+                  height: 20,
                 ),
                 WidgetTextField(
                   controller: confpwBaru,
@@ -107,7 +115,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     "Konfirmasi Password Baru*",
                     style: TextStyle(
                       color: Colors.black,
-                      fontSize: 10.sp,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -120,9 +128,13 @@ class _ChangePasswordState extends State<ChangePassword> {
                     color: Colors.black,
                   ),
                   primaryColor: Colors.black,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 SizedBox(
-                  height: 16.5.h,
+                  height: 16.5,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -130,9 +142,11 @@ class _ChangePasswordState extends State<ChangePassword> {
                     WidgetEleBtn(
                       onPres: () {},
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(7.77.r),
+                        borderRadius: BorderRadius.circular(7.77),
                       ),
-                      child: const Text("Ubah"),
+                      minimunSize: Size(109, 46),
+                      textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      child: const Text("UBAH"),
                     )
                   ],
                 ),

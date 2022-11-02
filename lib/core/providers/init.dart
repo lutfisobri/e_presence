@@ -45,7 +45,7 @@ class _MainState extends State<Main> {
           theme: StyleThemeData.themeData(context),
           routes: {
             "/login": (context) => Login(),
-            "/home": (context) => Beranda(),
+            "/home": (context) => const Beranda(),
             "/detailPresensi": (context) => const DetailPresensi(),
             "/ubahPassword": (context) => const ChangePassword(),
             "/editProfile": (context) => EditProfile(),

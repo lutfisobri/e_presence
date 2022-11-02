@@ -1,11 +1,10 @@
 import 'dart:async';
-
 import 'package:e_presence/core/model/model_user.dart';
 import 'package:e_presence/core/providers/api_controller.dart';
 import 'package:e_presence/core/providers/user_controller.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class AkunPage extends StatefulWidget {
@@ -46,78 +45,108 @@ class _AkunPageState extends State<AkunPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: EdgeInsets.only(top: 25.r, left: 20.54.r, right: 25.r),
+                padding: EdgeInsets.only(left: 20.54, right: 25),
                 height: 113,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      left: 0,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: value.dataUser.foto == ""
-                            ? null
-                            : NetworkImage(value.dataUser.foto),
-                        maxRadius: 37,
-                        child: value.dataUser.foto == ""
-                            ? Image.asset("assets/image/profil_default.png")
-                            : null,
-                      ),
-                    ),
-                    Positioned(
-                      left: 82.r,
-                      child: Column(
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Stack(
+                    children: [
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            value.dataUser.username == ""
-                                ? "loading"
-                                : value.dataUser.username,
-                            style: TextStyle(
-                              fontSize: 17.sp,
-                              fontWeight: FontWeight.w700,
+                          Center(
+                            child: Container(
+                              width: 61,
+                              height: 61,
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 3),
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Consumer<UserControlProvider>(
+                                builder: (context, value, child) =>
+                                    GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, "/viewPhoto");
+                                  },
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(100),
+                                    child: value.source == null
+                                        ? value.dataUser.foto == ""
+                                            ? const Image(
+                                                image: AssetImage(
+                                                    "assets/image/profil_default.png"),
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image(
+                                                image: NetworkImage(
+                                                  value.dataUser.foto,
+                                                ),
+                                                fit: BoxFit.cover,
+                                              )
+                                        : Image.file(
+                                            value.path,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                          Text(
-                            value.dataUser.nis == ""
-                                ? "loading"
-                                : value.dataUser.nis,
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                          Text(
-                            value.dataUser.email == ""
-                                ? "loading"
-                                : value.dataUser.email,
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      child: Row(
-                        children: [
                           SizedBox(
-                            width: 17.47.r,
+                            width: 22.96,
                           ),
-                          GestureDetector(
-                            onTap: () =>
-                                Navigator.pushNamed(context, "/editProfile"),
-                            child: const Icon(Icons.edit),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                value.dataUser.nama,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: "Roboto",
+                                ),
+                              ),
+                              Text(
+                                "NIS ${value.dataUser.nis}",
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300,
+                                  fontFamily: "Roboto",
+                                ),
+                              ),
+                              Text(
+                                value.dataUser.email,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w300,
+                                  fontFamily: "Roboto",
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        right: 1.5,
+                        top: 25,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(context, "/editProfile");
+                          },
+                          child: Image.asset(
+                            "assets/icons/edit_profile.png",
+                            height: 30,
+                            width: 30,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 13.74.r,
               ),
               Expanded(
                 child: Container(
@@ -127,8 +156,8 @@ class _AkunPageState extends State<AkunPage> {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20.r),
-                      topRight: Radius.circular(20.r),
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
                     ),
                     boxShadow: const [
                       BoxShadow(
@@ -138,9 +167,9 @@ class _AkunPageState extends State<AkunPage> {
                     ],
                   ),
                   padding: EdgeInsets.only(
-                    top: 19.r,
-                    left: 19.r,
-                    right: 19.r,
+                    top: 19,
+                    left: 19,
+                    right: 19,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,25 +177,27 @@ class _AkunPageState extends State<AkunPage> {
                       Text(
                         "Pengaturan Akun",
                         style: TextStyle(
-                          fontSize: 13.sp,
+                          fontSize: 16,
                           fontWeight: FontWeight.w700,
+                          fontFamily: "Roboto",
                         ),
                       ),
                       SizedBox(
-                        height: 19.r,
+                        height: 19,
                       ),
                       ListTile(
-                        leading: Icon(
-                          Icons.edit,
-                          size: 18.sp,
-                          color: Colors.black,
+                        leading: Image.asset(
+                          "assets/icons/ubh_sandi.png",
+                          height: 30,
+                          width: 30,
                         ),
                         title: Text(
                           "Ubah Kata Sandi",
                           style: TextStyle(
-                            fontSize: 12.6.sp,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
+                            fontFamily: "Roboto",
                           ),
                         ),
                         onTap: () =>
@@ -176,17 +207,18 @@ class _AkunPageState extends State<AkunPage> {
                       Consumer<UserControlProvider>(
                           builder: (context, value, child) {
                         return ListTile(
-                          leading: Icon(
-                            Icons.logout,
-                            color: Colors.black,
-                            size: 18.sp,
+                          leading: Image.asset(
+                            "assets/icons/keluar.png",
+                            height: 30,
+                            width: 30,
                           ),
                           title: Text(
                             "Keluar",
                             style: TextStyle(
-                              fontSize: 12.6.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Colors.black,
+                              fontFamily: "Roboto",
                             ),
                           ),
                           onTap: () {

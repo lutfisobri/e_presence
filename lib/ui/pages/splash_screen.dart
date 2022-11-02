@@ -18,7 +18,6 @@ class _SplashScreenState extends State<SplashScreen> {
       () => Navigator.pushReplacementNamed(context, Login.routeName),
     );
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   width: 90,
                   height: 92.57,
                   fit: BoxFit.fill,
-                  image: const AssetImage("assets/image/logo.png"),
+                  image: AssetImage("assets/image/logo.png"),
                 ),
                 SizedBox(
                   height: 10,
@@ -57,7 +56,11 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Text(
               "Version 1.0.0\nCopyright Neko.ID",
               textAlign: TextAlign.center,
-              style: TextStyle(fontWeight: FontWeight.w400, fontSize: 12),
+              style: TextStyle(
+                fontWeight: FontWeight.w400,
+                fontSize: 12,
+                fontFamily: "Montserrat",
+              ),
             ),
           ),
         ],

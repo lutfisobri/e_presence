@@ -26,6 +26,9 @@ class _LupaPasswordState extends State<LupaPassword> {
     FocusManager.instance.primaryFocus?.unfocus();
   }
 
+  String notifSearch = "";
+  bool isAccount = false;
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserControlProvider>(context, listen: false);
@@ -42,67 +45,127 @@ class _LupaPasswordState extends State<LupaPassword> {
         ),
         body: SafeArea(
           child: Container(
-            padding: EdgeInsets.only(left: 20.r, right: 20.r, top: 33.r),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                WidgetTextField(
-                  controller: username,
-                  focusNode: focusNode,
-                  label: Text(
-                    "Masukkan Username Anda",
-                    style: TextStyle(
-                      fontSize: 10.sp,
-                      color: const Color(0XFF838383),
-                    ),
-                  ),
-                  contenH: 15,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7.r),
-                  ),
-                  enableBorder: OutlineInputBorder(),
-                  primaryColor: Color(0XFF0B0B0B),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Expanded(
-                      child: WidgetEleBtn(
-                        onPres: () {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          // user.searchAccount(username.text);
-                          user.searchAccount(username.text).then((value) {
-                          print(value);
-                          // if (value.isNotEmpty) {
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: (context) => ForgetChangePassword(),
-                          //     ),
-                          //   );
-                          // } else {
-                          //   ScaffoldMessenger.of(context).showSnackBar(
-                          //     const SnackBar(
-                          //       content: Text("Akun tidak ditemukan"),
-                          //     ),
-                          //   );
-                          // }
-                          });
-                        },
-                        textStyle: TextStyle(
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.w700,
-                        ),
-                        child: const Text("Cari"),
+            padding: EdgeInsets.only(left: 20.r, right: 20.r, top: 24),
+            child: isAccount
+                ? Column(
+                    children: [
+                      Text(
+                        "Akun anda telah ditemukan, kirim verifikasi melalui email",
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: "Roboto"),
                       ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                      SizedBox(
+                        height: 6,
+                      ),
+                      WidgetTextField(
+                        controller: username,
+                        focusNode: focusNode,
+                        enable: false,
+                        contenH: 15,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(7.r),
+                        ),
+                        enableBorder: OutlineInputBorder(),
+                        primaryColor: Color(0XFF0B0B0B),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: WidgetEleBtn(
+                              onPres: () {},
+                              minimunSize: Size(double.infinity, 41),
+                              textStyle: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              child: Text("KIRIM VERIFIKASI"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (notifSearch != "")
+                        Text(
+                          notifSearch,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: "Roboto",
+                          ),
+                        ),
+                      const SizedBox(
+                        height: 6,
+                      ),
+                      WidgetTextField(
+                        controller: username,
+                        focusNode: focusNode,
+                        label: Text(
+                          "Masukkan Username Anda",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0XFF838383),
+                          ),
+                        ),
+                        contenH: 15,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(7.r),
+                        ),
+                        enableBorder: OutlineInputBorder(),
+                        primaryColor: Color(0XFF0B0B0B),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: WidgetEleBtn(
+                              minimunSize: Size(double.infinity, 41),
+                              onPres: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                user.searchAccount(username.text).then((value) {
+                                  if (value['username'] == "tidak ditemukan") {
+                                    setState(() {
+                                      notifSearch = "akun tidak ditemukan";
+                                    });
+                                  }
+                                  if (value['email'] == null ||
+                                      value['email'] == "") {
+                                    setState(() {
+                                      notifSearch =
+                                          "email tidak ditemukan silahkan hubungi admin sekolah";
+                                    });
+                                  } else {
+                                    setState(() {
+                                      notifSearch = "";
+                                      isAccount = true;
+                                      username.text = value['email'];
+                                    });
+                                  }
+                                });
+                              },
+                              textStyle: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              child: const Text("Cari"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
           ),
         ),
       ),

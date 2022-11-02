@@ -2,7 +2,6 @@ import '../../core/providers/user_controller.dart';
 import 'package:e_presence/ui/pages/page/akun_page.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../core/providers/api_controller.dart';
 import 'page/ujian_page.dart';
@@ -175,8 +174,8 @@ class _BerandaState extends State<Beranda> {
           ),
           activeIcon: Image(
             image: AssetImage("assets/bottom_navbar/home_active.png"),
-            width: 23,
-            height: 23,
+            width: 21,
+            height: 21,
           ),
           label: "Mapel",
         ),

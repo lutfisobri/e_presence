@@ -45,6 +45,7 @@ dependencies:
   dio: ^4.0.6
   image_picker: ^0.8.5+3
   animations: ^2.0.7
+  platform_device_id: ^1.0.1
 
 dev_dependencies:
   flutter_test:
@@ -94,6 +95,18 @@ flutter:
       - family: Poppins
         fonts:
           - asset: assets/fonts/Poppins-Regular.ttf
+
+      - family: Roboto
+        fonts:
+          - asset: assets/fonts/Roboto-Regular.ttf
+
+      - family: IBMPlex
+        fonts:
+          - asset: assets/fonts/IBMPlexSans-Regular.ttf
+
+      - family: Montserrat
+        fonts:
+          - asset: assets/fonts/Montserrat-Regular.ttf
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf

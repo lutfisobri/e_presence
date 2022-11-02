@@ -10,25 +10,24 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class UserControlProvider with ChangeNotifier {
-  final String _baseUrl = "https://neko.id.orangeflasher.com/v1/";
+  final String _baseUrl = "https://neko.id.orangeflasher.com/v1/user/";
   late ModelUser dataUser;
   late List<ModelMapel> dataMapel;
 
-  Future<List<Map<String, dynamic>>> searchAccount(String username) async {
-    List<Map<String, dynamic>> output = [
+  Future<Map<String, dynamic>> searchAccount(String username) async {
+    Map<String, dynamic> output = 
       {
         "username": "tidak ditemukan",
         "email": "",
-      }
-    ];
-    final Uri url = Uri.parse("${_baseUrl}user/index.php");
+      };
+    final Uri url = Uri.parse("${_baseUrl}search_account.php");
     final response = await http.post(
       url,
       body: {"username": username, "lupa_password": "iya"},
     );
     final dataResponse = jsonDecode(response.body);
     if (response.statusCode == 200) {
-      output = [dataResponse];
+      output = dataResponse;
     }
     return output;
   }
@@ -46,17 +45,21 @@ class UserControlProvider with ChangeNotifier {
         "login": "false",
       },
     );
-    final dataResponse = jsonDecode(response.body);
+    final dataResponse = await jsonDecode(response.body);
     if (response.statusCode == 200) {
       dataUser = ModelUser.formJson(dataResponse);
-      getMapel(dataUser.idKelas);
+      // getMapel(dataUser.idKelas);
       notifyListeners();
     }
     return ModelUser.formJson(dataResponse);
   }
 
-  userLogin(String username, String password, BuildContext context) async {
-    final Uri url = Uri.parse("${_baseUrl}user/index.php");
+  Future<String> userLogin(
+    String username,
+    String password,
+    String deviceId,
+  ) async {
+    final Uri url = Uri.parse("${_baseUrl}login.php");
     try {
       final response = await http.post(
         url,
@@ -66,54 +69,54 @@ class UserControlProvider with ChangeNotifier {
         body: {
           "username": username,
           "password": password,
-          "login": "true",
+          "deviceId": deviceId,
         },
       );
-      final dataResponse = jsonDecode(response.body);
       if (response.statusCode == 200) {
+        final dataResponse = jsonDecode(response.body);
         dataUser = ModelUser.formJson(dataResponse);
-        getMapel(dataUser.idKelas);
-        Navigator.pushReplacementNamed(context, "/home");
         notifyListeners();
+        return "200";
+      } else if (response.statusCode == 401) {
+        return "401";
       } else {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text("Error"),
-              content: Text(dataResponse['message']),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: Text("Ok"),
-                )
-              ],
-            );
-          },
-        );
+        return "gagal";
       }
     } catch (e) {
-      print(e.toString());
+      return "gagal";
+    }
+  }
+
+  Future<bool> userLoginNewDevice(String username, String password, String deviceId) async {
+    final Uri url = Uri.parse("${_baseUrl}login.php");
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "accept": "application/json",
+        },
+        body: {
+          "username": username,
+          "password": password,
+          "new_device": deviceId,
+        },
+      );
+      if (response.statusCode == 200) {
+        final dataResponse = jsonDecode(response.body);
+        dataUser = ModelUser.formJson(dataResponse);
+        notifyListeners();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
     }
   }
 
   userClearData() {
     dataUser = dataUser.clear();
     notifyListeners();
-  }
-
-  getMapel(String idKelas) async {
-    final Uri url = Uri.parse("${_baseUrl}mapel/index.php?id_kelas=1");
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        Iterable iterable = jsonDecode(response.body);
-        dataMapel = iterable.map((e) => ModelMapel.formJson(e)).toList();
-        notifyListeners();
-      }
-    } catch (e) {
-      print(e.toString());
-    }
   }
 
   updateProfile(String email, String? photo) async {
