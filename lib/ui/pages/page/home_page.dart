@@ -124,10 +124,15 @@ class _HomeState extends State<Home> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  offset: Offset(0, 1),
-                  blurRadius: 5,
-                  color: Color(0XFF000000).withOpacity(0.25),
+                  color: Color(0XFF909090).withOpacity(0.08),
+                  offset: const Offset(1, 2),
+                  blurRadius: 2,
                 ),
+                // BoxShadow(
+                //   offset: Offset(0, 1),
+                //   blurRadius: 5,
+                //   color: Color(0XFF000000).withOpacity(0.25),
+                // ),
               ]),
           child: Center(
             child: Row(
@@ -225,9 +230,9 @@ class _HomeState extends State<Home> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Color(0XFF000000).withOpacity(0.25),
-                offset: const Offset(0, 1),
-                blurRadius: 5,
+                color: Color(0XFF909090).withOpacity(0.08),
+                offset: const Offset(1, 2),
+                blurRadius: 2,
               ),
             ],
             borderRadius: BorderRadius.circular(6),

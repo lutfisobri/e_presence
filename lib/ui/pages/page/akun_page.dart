@@ -19,6 +19,17 @@ class _AkunPageState extends State<AkunPage> {
     super.initState();
   }
 
+  loadProfile() async {
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, "/login");
+        user.userClearData();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
