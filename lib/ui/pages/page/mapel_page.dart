@@ -1,10 +1,11 @@
-import 'package:e_presence/core/providers/api_controller.dart';
-import 'package:e_presence/core/providers/user_controller.dart';
+import 'package:e_presence/core/providers/pelajaran_provider.dart';
+import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/ui/shared/constant/tab_bar.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class Mapel extends StatefulWidget {
@@ -16,6 +17,8 @@ class Mapel extends StatefulWidget {
 
 class _MapelState extends State<Mapel> with TickerProviderStateMixin {
   StyleThemeData styleThemeData = StyleThemeData();
+  ScrollController scrollController = ScrollController();
+  PageController pageController = PageController();
   int selectedTab = 1;
   List data = [];
   @override
@@ -25,29 +28,28 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
   }
 
   getData() {
-    final dataMapel = Provider.of<UserControlProvider>(context, listen: false);
-    // data = dataMapel.dataMapel.where((i) => i.hari == selectedTab).toList();
-    data = content.where((i) => i['hari'] == selectedTab).toList();
+    final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    dataMapel.loadMapel(user.dataUser.idKelas);
   }
 
   @override
   Widget build(BuildContext context) {
-    final api = Provider.of<ApiController>(context, listen: false);
-    api.loadJadwal;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
+            left: 19,
+            right: 19,
           ),
           child: Text(
             "Jadwal Mata Pelajaran",
             style: TextStyle(
-              fontSize: 20.sp,
+              fontSize: 20,
               color: Colors.black,
               fontWeight: FontWeight.w700,
+              fontFamily: "Roboto",
             ),
           ),
         ),
@@ -62,7 +64,7 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
           ),
         ),
         SizedBox(
-          height: 13.r,
+          height: 11,
         ),
         CustomTabBar(
           padding: const EdgeInsets.only(
@@ -73,28 +75,119 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
           onChange: (newSelected) {
             setState(() {
               selectedTab = newSelected;
-              getData();
             });
-          },
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 12.6,
-          ),
-          child:
-              Consumer<UserControlProvider>(builder: (context, value, child) {
-            return ListView.separated(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              separatorBuilder: (context, index) => Container(),
-              itemBuilder: (context, index) =>
-                  Text(data[index]['mapel']),
-              itemCount: data.length,
+            pageController.animateToPage(
+              newSelected - 1,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.decelerate,
             );
-          }),
-        )
+          },
+          scrollController: scrollController,
+        ),
+        Container(
+          height: 400,
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height - 150.h,
+          ),
+          child: Consumer<PelajaranProvider>(
+            builder: (context, pelProv, child) {
+              return PageView.builder(
+                controller: pageController,
+                onPageChanged: (value) {
+                  setState(() {
+                    selectedTab = value + 1;
+                  });
+                  if (selectedTab > 3) {
+                    scrollController.animateTo(
+                      100.00,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.decelerate,
+                    );
+                  } else if (selectedTab < 4) {
+                    scrollController.animateTo(
+                      0,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.decelerate,
+                    );
+                  }
+                },
+                itemCount: tabItems.length,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.only(left: 19, right: 19),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    separatorBuilder: (context, index) => Container(
+                      height: 12.6,
+                    ),
+                    itemCount: pelProv.listMapel.length,
+                    itemBuilder: (context, index) {
+                      var date =
+                          DateTime.parse(pelProv.listMapel[index].jadwal);
+                      pelProv.listMapel
+                          .sort((a, b) => a.jadwal.compareTo(b.jadwal));
+                      return Container(
+                        height: 56.6,
+                        width: double.infinity,
+                        padding: EdgeInsets.only(left: 12.6, right: 12.6),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.25),
+                              offset: Offset(0, 1),
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(3.15),
+                              ),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            ),
+                            SizedBox(
+                              width: 12.6,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  pelProv.listMapel[index].namaMapel,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: "Roboto",
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat('EEEE dd,y').format(date),
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: "Roboto",
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
       ],
     );
   }

@@ -1,4 +1,4 @@
-import 'package:e_presence/core/providers/user_controller.dart';
+import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

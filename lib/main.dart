@@ -1,5 +1,5 @@
-import 'package:e_presence/core/providers/api_controller.dart';
-import 'package:e_presence/core/providers/user_controller.dart';
+import 'package:e_presence/core/providers/pelajaran_provider.dart';
+import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,8 +10,8 @@ void main(List<String> args) {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ApiController()),
         ChangeNotifierProvider(create: (_) => UserControlProvider()),
+        ChangeNotifierProvider(create: (_) => PelajaranProvider()),
       ],
       child: const Main(),
     ),

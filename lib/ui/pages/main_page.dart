@@ -1,12 +1,11 @@
-import '../../core/providers/user_controller.dart';
-import 'package:e_presence/ui/pages/page/akun_page.dart';
-import 'package:e_presence/ui/shared/theme_data.dart';
+import 'package:e_presence/core/providers/pelajaran_provider.dart';
+import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/providers/api_controller.dart';
-import 'page/ujian_page.dart';
+import 'page/akun_page.dart';
 import 'page/home_page.dart';
 import 'page/mapel_page.dart';
+import 'page/ujian_page.dart';
 
 class Beranda extends StatefulWidget {
   const Beranda({super.key});
@@ -18,8 +17,14 @@ class Beranda extends StatefulWidget {
 
 class _BerandaState extends State<Beranda> {
   Future<void> loadData() async {
-    final api = context.read<ApiController>();
-    await api.loadJadwal();
+    final loadPelajaran =
+        Provider.of<PelajaranProvider>(context, listen: false);
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    Future.delayed(Duration(seconds: 1));
+    await loadPelajaran.loadMapel(user.dataUser.idKelas);
+    await loadPelajaran.loadPresensi(user.dataUser.idKelas);
+    await loadPelajaran.loadUjian(user.dataUser.idKelas);
+    await user.loadProfile();
   }
 
   List<Widget> body = [
@@ -27,7 +32,6 @@ class _BerandaState extends State<Beranda> {
     const Mapel(),
     const JadwalPage(),
   ];
-  final styleThemeData = StyleThemeData();
 
   int index = 0;
 
@@ -52,58 +56,56 @@ class _BerandaState extends State<Beranda> {
                     colorBlendMode: BlendMode.darken,
                   ),
                 ),
-                SafeArea(
-                  child: Stack(
-                    children: [
-                      index == 0
-                          ? Container(
-                              height: 81,
-                              padding: const EdgeInsets.only(
-                                left: 13.62,
-                                right: 13.62,
-                              ),
-                              child: topBar(),
-                            )
-                          : Container(),
-                      RefreshIndicator(
-                        onRefresh: () => loadData(),
-                        child: ListView(
-                          padding: EdgeInsets.only(top: index == 0 ? 81 : 36),
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              constraints: const BoxConstraints(
-                                  minHeight: 530, maxHeight: double.infinity),
-                              padding: const EdgeInsets.only(
-                                top: 24,
-                                bottom: 10,
-                              ),
-                              decoration: const BoxDecoration(
-                                color: Color(0XFFFAFAFA),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(20),
-                                  topRight: Radius.circular(20),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    offset: Offset(0, -1),
-                                    blurRadius: 5,
-                                  ),
-                                  BoxShadow(
-                                    color: Colors.white,
-                                    offset: Offset(0, 5),
-                                    blurRadius: 5,
-                                  ),
-                                ],
-                              ),
-                              child: body[index],
+                Stack(
+                  children: [
+                    index == 0
+                        ? Container(
+                            height: 81,
+                            padding: const EdgeInsets.only(
+                              left: 13.62,
+                              right: 13.62,
+                              top: 25,
                             ),
-                          ],
-                        ),
+                            child: topBar(),
+                          )
+                        : Container(),
+                    RefreshIndicator(
+                      onRefresh: () => loadData(),
+                      child: ListView(
+                        padding: EdgeInsets.only(top: index == 0 ? 81 : 36),
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            constraints: const BoxConstraints(
+                                minHeight: 530, maxHeight: double.infinity),
+                            padding: const EdgeInsets.only(
+                              top: 24,
+                            ),
+                            decoration: const BoxDecoration(
+                              color: Color(0XFFFAFAFA),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(20),
+                                topRight: Radius.circular(20),
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  offset: Offset(0, -1),
+                                  blurRadius: 5,
+                                ),
+                                BoxShadow(
+                                  color: Colors.white,
+                                  offset: Offset(0, 5),
+                                  blurRadius: 5,
+                                ),
+                              ],
+                            ),
+                            child: body[index],
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -149,10 +151,9 @@ class _BerandaState extends State<Beranda> {
                       ? "Loading"
                       : "Kelas ${value.dataUser.kelas}",
                   style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400
-                  ),
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400),
                   overflow: TextOverflow.ellipsis,
                 ),
               ],

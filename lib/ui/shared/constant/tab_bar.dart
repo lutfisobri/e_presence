@@ -6,11 +6,13 @@ class CustomTabBar extends StatelessWidget {
   final int tab;
   final Function(int) onChange;
   final EdgeInsets? padding;
+  final ScrollController? scrollController;
   const CustomTabBar({
     super.key,
     required this.tab,
     required this.onChange,
     this.padding,
+    this.scrollController,
   });
 
   @override
@@ -18,6 +20,7 @@ class CustomTabBar extends StatelessWidget {
     return SizedBox(
       height: 20,
       child: ListView.separated(
+        controller: scrollController,
         padding: padding,
         separatorBuilder: (context, index) => Container(
           width: 31.w,
@@ -28,7 +31,6 @@ class CustomTabBar extends StatelessWidget {
           return GestureDetector(
             onTap: () {
               onChange(tabItems[index]['id']);
-              print(tabItems[index]);
             },
             child: Text(
               tabItems[index]['day'],
@@ -37,7 +39,9 @@ class CustomTabBar extends StatelessWidget {
                     ? Colors.black
                     : const Color(0XFF777777),
                 fontWeight: FontWeight.w600,
-                fontSize: 14,
+                fontSize: 15,
+                decoration: TextDecoration.underline,
+                fontFamily: "Roboto",
               ),
             ),
           );

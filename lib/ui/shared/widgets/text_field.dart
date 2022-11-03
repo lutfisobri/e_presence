@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class WidgetTextField extends StatefulWidget {
-  WidgetTextField({
+  const WidgetTextField({
     Key? key,
     this.controller,
     this.obscure = false,
@@ -28,6 +28,7 @@ class WidgetTextField extends StatefulWidget {
     this.focusBorder,
     this.onTap,
     this.readOnly = false,
+    this.validator,
   }) : super(key: key);
 
   final bool obscure;
@@ -43,6 +44,7 @@ class WidgetTextField extends StatefulWidget {
   final TextStyle? hintStyle, style;
   final InputBorder? enableBorder, disableBorder, focusBorder;
   final void Function()? onTap;
+  final String? Function(String?)? validator;
 
   @override
   State<WidgetTextField> createState() => _TextFieldState();
@@ -60,6 +62,7 @@ class _TextFieldState extends State<WidgetTextField> {
       child: TextFormField(
         keyboardType: widget.type,
         initialValue: widget.initialValue,
+        validator: widget.validator,
         decoration: InputDecoration(
           focusedBorder: widget.focusBorder,
           label: widget.label,

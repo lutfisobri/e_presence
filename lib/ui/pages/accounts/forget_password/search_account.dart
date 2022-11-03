@@ -1,4 +1,4 @@
-import 'package:e_presence/core/providers/user_controller.dart';
+import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/ui/pages/accounts/forget_password/change_password.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';

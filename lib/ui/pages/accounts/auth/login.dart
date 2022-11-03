@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:e_presence/core/providers/user_controller.dart';
+import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:e_presence/utils/static.dart';
@@ -78,61 +78,23 @@ class _LoginState extends State<Login> {
             if (value == "200") {
               Navigator.pushReplacementNamed(context, "/home");
             } else if (value == "401") {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => Dialog(
-                  child: SizedBox(
-                    height: 100,
-                    width: double.infinity,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text("data"),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () {
-                                closeWindow();
-                              },
-                              child: Text("Tidak"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                closeWindow();
-                                userControlProvider
-                                    .userLoginNewDevice(
-                                  username.text,
-                                  password.text,
-                                  deviceId,
-                                )
-                                    .then((value) {
-                                  if (value) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => NotifLoading(),
-                                    );
-                                    Timer(
-                                      Duration(milliseconds: 500),
-                                      () {
-                                        Navigator.pushReplacementNamed(
-                                          context,
-                                          "/home",
-                                        );
-                                      },
-                                    );
-                                  } else {}
-                                });
-                              },
-                              child: Text("Ya"),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              userControlProvider
+                  .userLoginNewDevice(
+                username.text,
+                password.text,
+                deviceId,
+              )
+                  .then(
+                (value) {
+                  if (value) {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      "/home",
+                    );
+                  } else {
+                    // showDialog(context: context, builder: );
+                  }
+                },
               );
             }
           });
@@ -199,7 +161,8 @@ class _LoginState extends State<Login> {
                       margin: const EdgeInsets.only(left: 20, right: 20),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        border: Border.all(color: Colors.black.withOpacity(0.10)),
+                        border:
+                            Border.all(color: Colors.black.withOpacity(0.10)),
                         // borderRadius: BorderRadius.circular(15),
                         // boxShadow: const [
                         //   BoxShadow(

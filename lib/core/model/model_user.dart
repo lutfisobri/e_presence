@@ -7,7 +7,10 @@ class ModelUser {
       idKelas,
       nama,
       kelamin,
-      kelas;
+      kelas,
+      tglLahir,
+      isLogin,
+      deviceId;
 
   ModelUser({
     required this.username,
@@ -19,6 +22,9 @@ class ModelUser {
     required this.nama,
     required this.kelamin,
     required this.kelas,
+    required this.tglLahir,
+    required this.isLogin,
+    required this.deviceId,
   });
 
   factory ModelUser.formJson(Map<String, dynamic> json) {
@@ -32,6 +38,9 @@ class ModelUser {
       nama: json['nama_siswa'],
       kelamin: json['jenis_kelamin'],
       kelas: json['kelas'],
+      tglLahir: json['tanggal_lahir'],
+      isLogin: json['isLogin'],
+      deviceId: json['deviceId'],
     );
   }
 
@@ -41,11 +50,14 @@ class ModelUser {
       'username': username,
       'password': password,
       'email': email,
-      'photo': foto,
-      'idKelas': idKelas,
-      'nama': nama,
-      'jenisKelamin': kelamin,
+      'foto': foto,
+      'id_kelas': idKelas,
+      'nama_siswa': nama,
+      'jenis_kelamin': kelamin,
       'kelas': kelas,
+      'tanggal_lahir': tglLahir,
+      'isLogin': isLogin,
+      'deviceId': deviceId,
     };
   }
 
@@ -60,6 +72,9 @@ class ModelUser {
       "nama_siswa": "",
       "jenis_kelamin": "",
       "kelas": "",
+      "tanggal_lahir": "",
+      "isLogin": "",
+      "deviceId": "",
     };
     return ModelUser.formJson(hapus);
   }

@@ -10,8 +10,7 @@ import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'api_controller.dart';
-import 'user_controller.dart';
+import 'user_provider.dart';
 
 class Main extends StatefulWidget {
   const Main({super.key});
@@ -21,12 +20,13 @@ class Main extends StatefulWidget {
 }
 
 class _MainState extends State<Main> {
-  UserControlProvider userLocation = UserControlProvider();
-
   loadData() async {
-    final api = context.read<ApiController>();
-    // userLocation.determinePosition();
-    api.loadJadwal();
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    await user.determinePosition();
+    if (user.dataUser.username.isNotEmpty &&
+        user.dataUser.password.isNotEmpty) {
+      user.loadProfile();
+    }
   }
 
   @override
@@ -50,7 +50,7 @@ class _MainState extends State<Main> {
             "/ubahPassword": (context) => const ChangePassword(),
             "/editProfile": (context) => EditProfile(),
             "/lupaPassword": (context) => const LupaPassword(),
-            "/viewPhoto":(context) => const ViewPhoto(),
+            "/viewPhoto": (context) => const ViewPhoto(),
           },
           debugShowCheckedModeBanner: false,
           home: const SplashScreen(),

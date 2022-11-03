@@ -1,12 +1,9 @@
-import 'package:e_presence/core/providers/api_controller.dart';
-import 'package:e_presence/core/providers/user_controller.dart';
-import 'package:e_presence/ui/shared/theme_data.dart';
+import 'package:e_presence/core/providers/pelajaran_provider.dart';
+import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import '../../../core/model/model_presensi.dart';
 
 class DetailPresensi extends StatefulWidget {
   const DetailPresensi({super.key});
@@ -16,13 +13,22 @@ class DetailPresensi extends StatefulWidget {
   State<DetailPresensi> createState() => _PresensiState();
 }
 
-class _PresensiState extends State<DetailPresensi> {
-  ModelPresensi? _chose;
+class ListModelPresensi {
+  final String data;
+  ListModelPresensi(
+    this.data,
+  );
+}
 
-  List<ModelPresensi> items = [
-    ModelPresensi("Hadir"),
-    ModelPresensi("Izin"),
-    ModelPresensi("Telat"),
+class _PresensiState extends State<DetailPresensi> {
+  ListModelPresensi? _chose;
+
+
+
+  List<ListModelPresensi> items = [
+    ListModelPresensi("Hadir"),
+    ListModelPresensi("Izin"),
+    ListModelPresensi("Telat"),
   ];
 
   @override
@@ -50,7 +56,7 @@ class _PresensiState extends State<DetailPresensi> {
     });
     return WillPopScope(
       onWillPop: () async {
-        user.reset();
+        // user.reset();
         user.streamDispose();
         return true;
       },
@@ -68,7 +74,7 @@ class _PresensiState extends State<DetailPresensi> {
               SingleChildScrollView(
                 child: Container(
                   padding: const EdgeInsets.only(left: 16, right: 16),
-                  child: Consumer<ApiController>(
+                  child: Consumer<PelajaranProvider>(
                     builder: (context, value, child) => Column(
                       children: [
                         Row(
@@ -76,7 +82,8 @@ class _PresensiState extends State<DetailPresensi> {
                           children: [
                             const Text("Mata Pelajaran"),
                             teks(
-                              text: value.getJadwal[index].name,
+                              // text: value.getJadwal[index].name,
+                              text: "n",
                               fontWeight: FontWeight.bold,
                               size: 14,
                             ),
@@ -90,9 +97,10 @@ class _PresensiState extends State<DetailPresensi> {
                           children: [
                             const Text("Mulai"),
                             teks(
-                              text: DateFormat('dd MMMM yyyy - hh.mm').format(
-                                DateTime.parse(value.getJadwal[index].jam),
-                              ),
+                              // text: DateFormat('dd MMMM yyyy - hh.mm').format(
+                              //   DateTime.parse(value.getJadwal[index].jam),
+                              // ),
+                              text: "d",
                               fontWeight: FontWeight.bold,
                               size: 14,
                             ),
@@ -106,9 +114,10 @@ class _PresensiState extends State<DetailPresensi> {
                           children: [
                             const Text("Selesai"),
                             teks(
-                              text: DateFormat('dd MMMM yyyy - hh.mm').format(
-                                DateTime.parse(value.getJadwal[index].jam),
-                              ),
+                              // text: DateFormat('dd MMMM yyyy - hh.mm').format(
+                              //   DateTime.parse(value.getJadwal[index].jam),
+                              // ),
+                              text: "d",
                               fontWeight: FontWeight.bold,
                               size: 14,
                             ),
@@ -143,7 +152,7 @@ class _PresensiState extends State<DetailPresensi> {
                           ),
                           child: DropdownButton(
                             value: _chose,
-                            items: items.map<DropdownMenuItem<ModelPresensi>>(
+                            items: items.map<DropdownMenuItem<ListModelPresensi>>(
                               (e) {
                                 return DropdownMenuItem(
                                   value: e,
@@ -153,7 +162,8 @@ class _PresensiState extends State<DetailPresensi> {
                                         padding:
                                             const EdgeInsets.only(left: 20),
                                         child: Text(
-                                          e.data,
+                                          "n",
+                                          // e.data,
                                           style: TextStyle(color: colorGreen),
                                         ),
                                       ),
@@ -190,7 +200,7 @@ class _PresensiState extends State<DetailPresensi> {
                             child: InkWell(
                               borderRadius: BorderRadius.circular(11),
                               onTap: () {
-                                user.pickImage();
+                                // user.pickImage();
                               },
                               child: user.source == null
                                   ? Container(
@@ -222,7 +232,7 @@ class _PresensiState extends State<DetailPresensi> {
                                       height: 200,
                                       width: double.infinity,
                                       child: Image.file(
-                                        user.path,
+                                        user.source!,
                                         // scale: 5,
                                         fit: BoxFit.scaleDown,
                                       ),
@@ -249,13 +259,13 @@ class _PresensiState extends State<DetailPresensi> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                          UserControlProvider userAuth = UserControlProvider();
-                          userAuth.verificationPresensi(
-                            context,
-                            distance!,
-                            _chose!,
-                            items,
-                          );
+                          // UserControlProvider userAuth = UserControlProvider();
+                          // userAuth.verificationPresensi(
+                          //   context,
+                          //   distance!,
+                          //   _chose!,
+                          //   items,
+                          // );
                         },
                         // style: ButtonStyle(
                         //   backgroundColor:

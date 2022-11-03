@@ -1,5 +1,6 @@
-import 'package:e_presence/core/providers/api_controller.dart';
-import 'package:e_presence/utils/static.dart';
+import 'package:e_presence/core/model/model_presensi.dart';
+import 'package:e_presence/core/providers/pelajaran_provider.dart';
+import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -15,22 +16,16 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  _refreshJadwal(ApiController api) async {
-    await Future.delayed(
-      Duration(seconds: 1),
-    );
-    api.loadJadwal();
-  }
-
-  loadData() {
-    final api = context.read<ApiController>();
-    api.loadJadwal();
+  loadPresensi() async {
+    final loadPresen = Provider.of<PelajaranProvider>(context, listen: false);
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    loadPresen.loadPresensi(user.dataUser.idKelas);
   }
 
   @override
   void initState() {
     super.initState();
-    loadData();
+    loadPresensi();
   }
 
   @override
@@ -40,7 +35,7 @@ class _HomeState extends State<Home> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Consumer<ApiController>(
+        Consumer<PelajaranProvider>(
           builder: (context, value, child) => Column(
             children: [
               Padding(
@@ -74,7 +69,9 @@ class _HomeState extends State<Home> {
               const SizedBox(
                 height: 12.6,
               ),
-              value.getJadwal.isEmpty ? nullContent(context) : content(value),
+              value.listPresensi.isEmpty
+                  ? nullContent(context)
+                  : content(value),
               Padding(
                 padding: const EdgeInsets.only(
                     top: 12.9, left: 19, right: 19, bottom: 6),
@@ -108,7 +105,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  SizedBox inforAkademik(ApiController value) {
+  SizedBox inforAkademik(PelajaranProvider value) {
     return SizedBox(
       height: 129,
       child: ListView.separated(
@@ -141,7 +138,13 @@ class _HomeState extends State<Home> {
                   height: 57,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(3.15),
-                    child: Image.network(value.getJadwal[0].logo),
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                    ),
+                    // child: Image.network(value.listMapel[0].namaMapel),
                   ),
                 ),
                 Flexible(
@@ -150,7 +153,7 @@ class _HomeState extends State<Home> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
                       Text(
-                        "Semua mata pelajaran sdfnsdkbfjsdbfkjs",
+                        "Semua mata pelajaran",
                         maxLines: 1,
                         style: TextStyle(
                           fontSize: 15,
@@ -200,7 +203,8 @@ class _HomeState extends State<Home> {
     );
   }
 
-  ListView content(ApiController value) {
+  ListView content(PelajaranProvider value) {
+    List<ModelPresensi> listJadwal = [];
     return ListView.separated(
       separatorBuilder: (context, index) => Container(
         height: 12.6,
@@ -211,9 +215,9 @@ class _HomeState extends State<Home> {
         right: 19,
       ),
       shrinkWrap: true,
-      itemCount: value.getJadwal.length,
+      itemCount: value.listPresensi.length,
       itemBuilder: (context, index) {
-        var dateTime = DateTime.parse(value.getJadwal[index].jam);
+        var jamAwal = DateTime.parse(value.listPresensi[index].jamAwal);
         return Container(
           height: 56.6,
           alignment: Alignment.center,
@@ -235,7 +239,10 @@ class _HomeState extends State<Home> {
                     const EdgeInsets.only(top: 10.8, left: 12.6, bottom: 10.8),
                 height: 35,
                 width: 35,
-                child: Image.network(value.getJadwal[index].logo),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                ),
+                // child: Image.network(value.listPresensi[index].logo),
               ),
               const SizedBox(
                 width: 12.6,
@@ -245,7 +252,7 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    value.getJadwal[index].name,
+                    value.listPresensi[index].namaMapel,
                     style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
@@ -253,7 +260,7 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                   Text(
-                    DateFormat('MMMM d,y').format(dateTime),
+                    DateFormat('MMMM d,y').format(jamAwal),
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,

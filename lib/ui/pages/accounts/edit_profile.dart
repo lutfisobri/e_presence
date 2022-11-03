@@ -1,26 +1,74 @@
 import 'dart:async';
-import 'package:e_presence/core/providers/user_controller.dart';
+import 'dart:io';
+import 'package:e_presence/core/model/model_user.dart';
+import 'package:e_presence/core/providers/user_provider.dart';
+import 'package:e_presence/core/services/image_service.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class EditProfile extends StatelessWidget {
+class EditProfile extends StatefulWidget {
   EditProfile({super.key});
   static const routeName = "/editProfile";
+
+  @override
+  State<EditProfile> createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
   final styleThemeData = StyleThemeData();
+  TextEditingController nama = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController nis = TextEditingController();
+  TextEditingController tglLahir = TextEditingController();
+  TextEditingController kelas = TextEditingController();
+  ModelUser modelUser = ModelUser(
+    username: "",
+    password: "",
+    email: "",
+    foto: "",
+    idKelas: "",
+    nis: "",
+    nama: "",
+    kelamin: "",
+    kelas: "",
+    tglLahir: "",
+    isLogin: "",
+    deviceId: "",
+  );
+
+  loadProfile() {
+    var user = Provider.of<UserControlProvider>(context, listen: false);
+    user.loadProfile().then((value) {
+      setState(() {
+        modelUser = value;
+        nama.text = value.nama;
+        emailController.text = value.email;
+        nis.text = value.nis;
+        tglLahir.text = value.tglLahir;
+        kelas.text = value.kelas;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadProfile();
+  }
+
+  File? foto;
 
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<UserControlProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
-        Timer(Duration(seconds: 1), () {
-          user.reset();
-        });
+        final usr = Provider.of<UserControlProvider>(context, listen: false);
+        usr.loadProfile();
         return true;
       },
       child: GestureDetector(
@@ -60,28 +108,26 @@ class EditProfile extends StatelessWidget {
                             color: const Color(0XFF858585),
                           ),
                         ),
-                        Consumer<UserControlProvider>(
-                            builder: (context, value, child) {
-                          return WidgetTextField(
-                            initialValue: value.dataUser.username,
-                            contenH: 0,
-                            enable: false,
-                            style: TextStyle(
-                              color: const Color(0XFF858585),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
+                        WidgetTextField(
+                          controller: nama,
+                          contenH: 0,
+                          enable: false,
+                          style: TextStyle(
+                            color: Color(0XFF858585),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          disableBorder: const UnderlineInputBorder(
+                            borderSide: BorderSide(
+                              width: 0.5,
                             ),
-                            disableBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                width: 0.5,
-                              ),
-                            ),
-                          );
-                        }),
+                          ),
+                        ),
                         SizedBox(
                           height: 10.5,
                         ),
                         Text(
+                          emailController.text != "" ? "E-mail" :
                           "E-mail *",
                           style: TextStyle(
                             fontSize: 15,
@@ -89,21 +135,16 @@ class EditProfile extends StatelessWidget {
                             color: const Color(0XFF858585),
                           ),
                         ),
-                        Consumer<UserControlProvider>(
-                            builder: (context, value, child) {
-                          emailController.text = value.dataUser.email;
-                          return WidgetTextField(
-                            controller: emailController,
-                            // initialValue: value.dataUser.email,
-                            contenH: 0,
-                            primaryColor: Colors.black,
-                            style: TextStyle(
-                              // color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          );
-                        }),
+                        WidgetTextField(
+                          controller: emailController,
+                          contenH: 0,
+                          primaryColor: Colors.black,
+                          style: TextStyle(
+                            // color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         const SizedBox(
                           height: 10.5,
                         ),
@@ -115,25 +156,22 @@ class EditProfile extends StatelessWidget {
                             color: const Color(0XFF858585),
                           ),
                         ),
-                        Consumer<UserControlProvider>(
-                          builder: (context, value, child) {
-                            return WidgetTextField(
-                              initialValue: value.dataUser.username,
-                              contenH: 0,
-                              style: TextStyle(
-                                color: const Color(0XFF858585),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              enable: false,
-                            );
-                          },
+                        WidgetTextField(
+                          controller: nis,
+                          contenH: 0,
+                          style: TextStyle(
+                            color: const Color(0XFF858585),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          enable: false,
                         ),
                         const SizedBox(
                           height: 10.5,
                         ),
                         Text(
-                          "Tanggal Lahir *",
+                          tglLahir.text != "" ? 
+                          "Tanggal Lahir" : "Tanggal Lahir *",
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -141,8 +179,24 @@ class EditProfile extends StatelessWidget {
                           ),
                         ),
                         WidgetTextField(
-                          onTap: () {},
-                          initialValue: "Abcde",
+                          onTap: () {
+                            showDatePicker(
+                              context: context,
+                              initialDate: DateTime.parse(tglLahir.text),
+                              firstDate: DateTime(1990),
+                              lastDate: DateTime(2100),
+                              initialEntryMode:
+                                  DatePickerEntryMode.calendarOnly,
+                            ).then((value) {
+                              if (value != null) {
+                                setState(() {
+                                  tglLahir.text =
+                                      DateFormat('y-MM-dd').format(value);
+                                });
+                              }
+                            });
+                          },
+                          controller: tglLahir,
                           primaryColor: Colors.black,
                           readOnly: true,
                           style: TextStyle(
@@ -163,18 +217,15 @@ class EditProfile extends StatelessWidget {
                             color: const Color(0XFF858585),
                           ),
                         ),
-                        Consumer<UserControlProvider>(
-                            builder: (context, value, child) {
-                          return WidgetTextField(
-                            enable: false,
-                            initialValue: value.dataUser.kelas,
-                            style: TextStyle(
-                              color: const Color(0XFF858585),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          );
-                        }),
+                        WidgetTextField(
+                          enable: false,
+                          controller: kelas,
+                          style: TextStyle(
+                            color: const Color(0XFF858585),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         const SizedBox(
                           height: 20.5,
                         ),
@@ -185,12 +236,11 @@ class EditProfile extends StatelessWidget {
                                 builder: (context, value, child) {
                               return WidgetEleBtn(
                                 onPres: () {
-                                  var photo = value.source?.path;
                                   value.updateProfile(
                                     emailController.text,
-                                    photo,
+                                    foto?.path.toString(),
+                                    tglLahir.text,
                                   );
-                                  // modalBottomSheet(context);
                                 },
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(7.77),
@@ -223,21 +273,16 @@ class EditProfile extends StatelessWidget {
                           border: Border.all(),
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(100)),
-                      child: Consumer<UserControlProvider>(
-                          builder: (context, user, child) {
-                        return InkWell(
-                          borderRadius: BorderRadius.circular(100),
-                          onTap: () {
-                            user.reset();
-                            // user.pickImage();
-                            updatePhoto(context);
-                          },
-                          child: const Icon(
-                            Icons.camera_alt_outlined,
-                            size: 30,
-                          ),
-                        );
-                      }),
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(100),
+                        onTap: () {
+                          updatePhoto(context);
+                        },
+                        child: const Icon(
+                          Icons.camera_alt_outlined,
+                          size: 30,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -279,7 +324,16 @@ class EditProfile extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            
+                            takePhoto().then(
+                              (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    foto = value;
+                                  });
+                                }
+                              },
+                            );
+                            Navigator.pop(context);
                           },
                           child: Image.asset(
                             "assets/icons/kamera.png",
@@ -307,7 +361,18 @@ class EditProfile extends StatelessWidget {
                     Column(
                       children: [
                         InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            pickImage().then(
+                              (value) {
+                                if (value != null) {
+                                  setState(() {
+                                    foto = value;
+                                  });
+                                }
+                              },
+                            );
+                            Navigator.pop(context);
+                          },
                           child: Image.asset(
                             "assets/icons/galeri.png",
                             height: 60,
@@ -335,7 +400,13 @@ class EditProfile extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            
+                            final delete = Provider.of<UserControlProvider>(
+                              context,
+                              listen: false,
+                            );
+                            delete.deletePhoto(modelUser.nis);
+                            loadProfile();
+                            Navigator.pop(context);
                           },
                           child: Image.asset(
                             "assets/icons/hapus.png",
@@ -383,104 +454,24 @@ class EditProfile extends StatelessWidget {
             },
             child: ClipRRect(
               borderRadius: BorderRadius.circular(100),
-              child: value.source == null
-                  ? value.dataUser.foto == ""
+              child: foto?.path == null
+                  ? modelUser.foto == ""
                       ? const Image(
                           image: AssetImage("assets/image/profil_default.png"),
                           fit: BoxFit.cover,
                         )
                       : Image(
                           image: NetworkImage(
-                            value.dataUser.foto,
+                            modelUser.foto,
                           ),
                           fit: BoxFit.cover,
                         )
                   : Image.file(
-                      value.path,
+                      foto!,
                       fit: BoxFit.cover,
                     ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Future<dynamic> modalBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-      ),
-      enableDrag: false,
-      backgroundColor: const Color(0XFFFAFAFA),
-      context: context,
-      builder: (context) => SizedBox(
-        height: 428.h,
-        width: double.infinity,
-        child: Column(
-          children: [
-            GestureDetector(
-              child: const SizedBox(
-                height: 11,
-                width: 62,
-                child: Divider(
-                  thickness: 4,
-                ),
-              ),
-            ),
-            const SizedBox(
-              height: 28.7,
-            ),
-            Image.asset(
-              width: 240,
-              height: 234.86,
-              "assets/image/no_internet1.png",
-            ),
-            const SizedBox(
-              height: 10.14,
-            ),
-            const Text(
-              "Tidak Ada Koneksi Internet",
-              style: TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            const Text(
-              "Mohon Periksa Lagi Kembali Koneksi Internet Anda.",
-              maxLines: 2,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 19, right: 19),
-                    child: WidgetEleBtn(
-                      onPres: () {
-                        Navigator.pop(context);
-                      },
-                      textStyle: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      child: const Text("OK"),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
       ),
     );
