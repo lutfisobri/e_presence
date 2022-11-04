@@ -31,6 +31,15 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserControlProvider>(context, listen: false);
     dataMapel.loadMapel(user.dataUser.idKelas);
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, "/login");
+        user.userClearData();
+      } else if (value == 200) {
+        return;
+      }
+    });
   }
 
   @override

@@ -1,9 +1,14 @@
+import 'dart:async';
+
 import 'package:e_presence/core/providers/user_provider.dart';
+import 'package:e_presence/core/services/validation.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/bottomShet.dart';
+import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 import 'package:provider/provider.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -19,8 +24,37 @@ class _ChangePasswordState extends State<ChangePassword> {
   final TextEditingController pwLama = TextEditingController();
   final TextEditingController pwBaru = TextEditingController();
   final TextEditingController confpwBaru = TextEditingController();
-
   final styleThemeData = StyleThemeData();
+  String deviceId = "";
+
+  @override
+  void initState() {
+    super.initState();
+    loadProfile();
+  }
+
+  loadProfile() async {
+    String? deviceID = await PlatformDeviceId.getDeviceId;
+    setState(() {
+      deviceId = deviceID ?? "";
+    });
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, "/login");
+        user.userClearData();
+      } else if (value == 200) {
+        return;
+      }
+    });
+  }
+
+  clearText() {
+    pwLama.clear();
+    pwBaru.clear();
+    confpwBaru.clear();
+  }
 
   @override
   void dispose() {
@@ -36,12 +70,26 @@ class _ChangePasswordState extends State<ChangePassword> {
       if (value) {
         showDialog(
           context: context,
-          builder: (context) => Dialog(),
+          builder: (context) => CustomDialog(
+            title: "Berhasil",
+            subtitle: "Woah, Kata Sandi anda berhasil diubah",
+            image: "assets/icons/sukses.png",
+          ),
         );
+        user.userLogin(user.dataUser.username, pwBaru.text, deviceId);
+        Timer(
+          Duration(seconds: 2),
+          () => clearText(),
+        );
+        // clearText();
       } else {
         showDialog(
           context: context,
-          builder: (context) => Dialog(),
+          builder: (context) => CustomDialog(
+            title: "Gagal Tersimpan",
+            subtitle: "Periksa Kembali Kata Sandi Anda",
+            image: "assets/icons/gagal.png",
+          ),
         );
       }
     });
@@ -163,10 +211,38 @@ class _ChangePasswordState extends State<ChangePassword> {
                     children: [
                       WidgetEleBtn(
                         onPres: () {
-                          connectionError(context);
-                          // if (pwBaru.text.isEmpty || pwBaru.text == "") {
-
-                          // }
+                          FocusManager.instance.primaryFocus!.unfocus();
+                          var check = passwordIsSame(
+                            pwLama.text,
+                            pwBaru.text,
+                            confpwBaru.text,
+                          );
+                          if (!check) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => CustomDialog(
+                                title: "Gagal Tersimpan",
+                                subtitle: "Periksa Kembali Kata Sandi Anda",
+                                image: "assets/icons/gagal.png",
+                              ),
+                            );
+                            return;
+                          }
+                          final user = Provider.of<UserControlProvider>(context,
+                              listen: false);
+                          if (pwLama.text != user.dataUser.password) {
+                            showDialog(
+                              context: context,
+                              builder: (context) => CustomDialog(
+                                title: "Gagal Tersimpan",
+                                subtitle: "Periksa Kembali Kata Sandi Anda",
+                                image: "assets/icons/gagal.png",
+                              ),
+                            );
+                            return;
+                          }
+                          btnChange();
+                          // connectionError(context);
                         },
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(7.77),

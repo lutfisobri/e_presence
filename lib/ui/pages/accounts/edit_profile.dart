@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:e_presence/core/model/model_user.dart';
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/core/services/image_service.dart';
+import 'package:e_presence/core/services/validation.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
+import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -43,6 +45,15 @@ class _EditProfileState extends State<EditProfile> {
 
   loadProfile() {
     var user = Provider.of<UserControlProvider>(context, listen: false);
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, "/login");
+        user.userClearData();
+      } else if (value == 200) {
+        return;
+      }
+    });
     user.loadProfile().then((value) {
       setState(() {
         modelUser = value;
@@ -69,6 +80,12 @@ class _EditProfileState extends State<EditProfile> {
       onWillPop: () async {
         final usr = Provider.of<UserControlProvider>(context, listen: false);
         usr.loadProfile();
+        if (usr.dataUser.email == "") {
+          return false;
+        }
+        if (usr.dataUser.email == "" && emailController.text != "") {
+          return false;
+        }
         return true;
       },
       child: GestureDetector(
@@ -100,19 +117,19 @@ class _EditProfileState extends State<EditProfile> {
                         SizedBox(
                           height: 14.28.r,
                         ),
-                        Text(
+                        const Text(
                           "Nama Lengkap *",
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: const Color(0XFF858585),
+                            color: Color(0XFF858585),
                           ),
                         ),
                         WidgetTextField(
                           controller: nama,
                           contenH: 0,
                           enable: false,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Color(0XFF858585),
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -123,23 +140,22 @@ class _EditProfileState extends State<EditProfile> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 10.5,
                         ),
                         Text(
-                          emailController.text != "" ? "E-mail" :
-                          "E-mail *",
-                          style: TextStyle(
+                          emailController.text != "" ? "E-mail" : "E-mail *",
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: const Color(0XFF858585),
+                            color: Color(0XFF858585),
                           ),
                         ),
                         WidgetTextField(
                           controller: emailController,
                           contenH: 0,
                           primaryColor: Colors.black,
-                          style: TextStyle(
+                          style: const TextStyle(
                             // color: Colors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -148,19 +164,19 @@ class _EditProfileState extends State<EditProfile> {
                         const SizedBox(
                           height: 10.5,
                         ),
-                        Text(
+                        const Text(
                           "Nisn *",
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: const Color(0XFF858585),
+                            color: Color(0XFF858585),
                           ),
                         ),
                         WidgetTextField(
                           controller: nis,
                           contenH: 0,
-                          style: TextStyle(
-                            color: const Color(0XFF858585),
+                          style: const TextStyle(
+                            color: Color(0XFF858585),
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -170,12 +186,13 @@ class _EditProfileState extends State<EditProfile> {
                           height: 10.5,
                         ),
                         Text(
-                          tglLahir.text != "" ? 
-                          "Tanggal Lahir" : "Tanggal Lahir *",
-                          style: TextStyle(
+                          tglLahir.text != ""
+                              ? "Tanggal Lahir"
+                              : "Tanggal Lahir *",
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: const Color(0XFF858585),
+                            color: Color(0XFF858585),
                           ),
                         ),
                         WidgetTextField(
@@ -185,10 +202,11 @@ class _EditProfileState extends State<EditProfile> {
                               initialDate: DateTime.parse(tglLahir.text),
                               firstDate: DateTime(1990),
                               lastDate: DateTime(2100),
-                              initialEntryMode:
-                                  DatePickerEntryMode.calendarOnly,
+                              // initialEntryMode:
+                              //     DatePickerEntryMode.calendarOnly,
                             ).then((value) {
-                              if (value != null) {
+                              if (value != null &&
+                                  value.isAfter(DateTime(1990))) {
                                 setState(() {
                                   tglLahir.text =
                                       DateFormat('y-MM-dd').format(value);
@@ -199,7 +217,7 @@ class _EditProfileState extends State<EditProfile> {
                           controller: tglLahir,
                           primaryColor: Colors.black,
                           readOnly: true,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
@@ -209,19 +227,19 @@ class _EditProfileState extends State<EditProfile> {
                         const SizedBox(
                           height: 10.5,
                         ),
-                        Text(
+                        const Text(
                           "Kelas *",
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
-                            color: const Color(0XFF858585),
+                            color: Color(0XFF858585),
                           ),
                         ),
                         WidgetTextField(
                           enable: false,
                           controller: kelas,
-                          style: TextStyle(
-                            color: const Color(0XFF858585),
+                          style: const TextStyle(
+                            color: Color(0XFF858585),
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -236,22 +254,46 @@ class _EditProfileState extends State<EditProfile> {
                                 builder: (context, value, child) {
                               return WidgetEleBtn(
                                 onPres: () {
+                                  var mailValdi =
+                                      emailValidation(emailController.text);
+                                  if (!mailValdi) {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) => const CustomDialog(
+                                        title: "Gagal Tersimpan",
+                                        subtitle: "Periksa Kembali Data Anda",
+                                        image: "assets/icons/gagal.png",
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   value.updateProfile(
                                     emailController.text,
                                     foto?.path.toString(),
                                     tglLahir.text,
                                   );
+                                  Future.delayed(const Duration(seconds: 1));
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => const CustomDialog(
+                                      title: "Berhasil",
+                                      subtitle:
+                                          "Woah, Profil anda berhasil diubah",
+                                      image: "assets/icons/sukses.png",
+                                    ),
+                                  );
+                                  loadProfile();
                                 },
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(7.77),
                                 ),
-                                minimunSize: Size(109, 46),
-                                textStyle: TextStyle(
+                                minimunSize: const Size(109, 46),
+                                textStyle: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: "Roboto",
                                 ),
-                                child: Text("SIMPAN"),
+                                child: const Text("SIMPAN"),
                               );
                             }),
                           ],
@@ -317,7 +359,7 @@ class _EditProfileState extends State<EditProfile> {
                 padding: const EdgeInsets.only(top: 16),
                 child: Row(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 25,
                     ),
                     Column(
@@ -355,7 +397,7 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
                     Column(
@@ -380,7 +422,7 @@ class _EditProfileState extends State<EditProfile> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        Padding(
+                        const Padding(
                           padding: EdgeInsets.only(top: 10),
                           child: Text(
                             "Galeri",
@@ -393,20 +435,35 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 30,
                     ),
                     Column(
                       children: [
                         InkWell(
                           onTap: () {
-                            final delete = Provider.of<UserControlProvider>(
-                              context,
-                              listen: false,
-                            );
-                            delete.deletePhoto(modelUser.nis);
-                            loadProfile();
                             Navigator.pop(context);
+                            showDialog(
+                              context: context,
+                              builder: (context) => DialogButton(
+                                title: "Hapus foto profil",
+                                subtitle: "Apakah anda ingin menghapus",
+                                btnLeft: "TIDAK",
+                                btnRight: "IYA",
+                                onPresLeft: () {
+                                  Navigator.pop(context);
+                                },
+                                onPresRight: () {
+                                  final delete =
+                                      Provider.of<UserControlProvider>(
+                                    context,
+                                    listen: false,
+                                  );
+                                  delete.deletePhoto(modelUser.nis);
+                                  loadProfile();
+                                },
+                              ),
+                            );
                           },
                           child: Image.asset(
                             "assets/icons/hapus.png",
@@ -415,7 +472,7 @@ class _EditProfileState extends State<EditProfile> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        Padding(
+                        const Padding(
                           padding: EdgeInsets.only(top: 10),
                           child: Text(
                             "Hapus",

@@ -32,7 +32,15 @@ class _JadwalPageState extends State<JadwalPage> {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserControlProvider>(context, listen: false);
     dataMapel.loadMapel(user.dataUser.idKelas);
-    data = content.where((i) => i['hari'] == selectedTab).toList();
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.pushReplacementNamed(context, "/login");
+        user.userClearData();
+      } else if (value == 200) {
+        return;
+      }
+    });
   }
 
   @override

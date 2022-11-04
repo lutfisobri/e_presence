@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
+import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
@@ -45,29 +46,26 @@ class _LoginState extends State<Login> {
   ) async {
     FocusManager.instance.primaryFocus?.unfocus();
     if (username.text == "" || password.text == "") {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text("error"),
-          content: const Text("Username atau password tidak boleh kosong"),
-          actions: [
-            GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: const Text("Ok"),
-            )
-          ],
-        ),
+      Timer(
+        Duration(milliseconds: 700),
+        () => setState(() {
+          isLoading = false;
+        }),
+      );
+      Future.delayed(Duration(milliseconds: 700));
+      Timer(
+        Duration(milliseconds: 800),
+        () {
+          showDialog(
+            context: context,
+            builder: (context) => CustomDialogLogin(),
+          );
+        },
       );
     } else {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const NotifLoading(),
-      );
       Timer(
-        const Duration(milliseconds: 500),
+        const Duration(seconds: 1),
         () async {
-          await closeWindow();
           await userControlProvider
               .userLogin(
             username.text,
@@ -96,6 +94,11 @@ class _LoginState extends State<Login> {
                   }
                 },
               );
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) => CustomDialogLogin(),
+              );
             }
           });
           setState(() {
@@ -114,238 +117,226 @@ class _LoginState extends State<Login> {
       onTap: () {
         FocusManager.instance.primaryFocus?.unfocus();
       },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Stack(
-          children: [
-            Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: 120,
-                child: Image.asset(
-                  "assets/wave/top-wave.png",
-                  fit: BoxFit.cover,
-                  colorBlendMode: BlendMode.darken,
+      child: Stack(
+        children: [
+          Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 120,
+                    child: Image.asset(
+                      "assets/wave/top-wave.png",
+                      fit: BoxFit.cover,
+                      colorBlendMode: BlendMode.darken,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Image(
-                      width: 90,
-                      height: 92.57,
-                      fit: BoxFit.fill,
-                      image: AssetImage("assets/image/logo.png"),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    const Text(
-                      "E-PRESENSI\nSMAN PLUS SUKOWONO",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 19,
-                        color: colorGreen,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.only(left: 20, right: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border:
-                            Border.all(color: Colors.black.withOpacity(0.10)),
-                        // borderRadius: BorderRadius.circular(15),
-                        // boxShadow: const [
-                        //   BoxShadow(
-                        //     color: Colors.black12,
-                        //     offset: Offset(0, 0),
-                        //     blurRadius: 15,
-                        //   ),
-                        // ],
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            WidgetTextField(
-                              controller: username,
-                              hintText: "Nama Pengguna",
-                              primaryColor: colorGreen,
-                              hintStyle: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0XFF9F9F9F),
-                              ),
-                              prefixIcon: const Icon(
-                                Icons.account_box,
-                                size: 20,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(7),
-                                borderSide: BorderSide.none,
-                              ),
-                              contenV: 17,
-                              fillColor: const Color(0xFFEFEFEF),
-                              filled: true,
-                              style: const TextStyle(
-                                color: Color(0XFF9F9F9F),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            WidgetTextField(
-                              controller: password,
-                              hintText: "Kata sandi",
-                              primaryColor: colorGreen,
-                              hintStyle: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0XFF9F9F9F),
-                              ),
-                              obscure: true,
-                              sufixIcon1: const Icon(
-                                Icons.visibility_off,
-                                size: 19,
-                              ),
-                              sufixIcon2: const Icon(
-                                Icons.visibility,
-                                size: 19,
-                              ),
-                              contenV: 17,
-                              prefixIcon: const Icon(
-                                Icons.key,
-                                size: 19,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(7),
-                                borderSide: BorderSide.none,
-                              ),
-                              fillColor: const Color(0xFFEFEFEF),
-                              filled: true,
-                              focusColor: Colors.black,
-                              style: const TextStyle(
-                                color: Color(0XFF9F9F9F),
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
+                Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Image(
+                          width: 90,
+                          height: 92.57,
+                          fit: BoxFit.fill,
+                          image: AssetImage("assets/image/logo.png"),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text(
+                          "E-PRESENSI\nSMAN PLUS SUKOWONO",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 19,
+                            color: colorGreen,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          margin: const EdgeInsets.only(left: 20, right: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                                color: Colors.black.withOpacity(0.10)),
+                            // borderRadius: BorderRadius.circular(15),
+                            // boxShadow: const [
+                            //   BoxShadow(
+                            //     color: Colors.black12,
+                            //     offset: Offset(0, 0),
+                            //     blurRadius: 15,
+                            //   ),
+                            // ],
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                        context, "/lupaPassword");
-                                  },
-                                  child: const Opacity(
-                                    opacity: 0.5,
-                                    child: Text(
-                                      "Lupa Kata Sandi",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        letterSpacing: 0.2,
-                                        decoration: TextDecoration.underline,
+                                WidgetTextField(
+                                  controller: username,
+                                  hintText: "Nama Pengguna",
+                                  primaryColor: colorGreen,
+                                  hintStyle: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0XFF9F9F9F),
+                                  ),
+                                  prefixIcon: const Icon(
+                                    Icons.account_box,
+                                    size: 20,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(7),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  contenV: 17,
+                                  fillColor: const Color(0xFFEFEFEF),
+                                  filled: true,
+                                  style: const TextStyle(
+                                    color: Color(0XFF9F9F9F),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15,
+                                ),
+                                WidgetTextField(
+                                  controller: password,
+                                  hintText: "Kata sandi",
+                                  primaryColor: colorGreen,
+                                  hintStyle: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0XFF9F9F9F),
+                                  ),
+                                  obscure: true,
+                                  sufixIcon1: const Icon(
+                                    Icons.visibility_off,
+                                    size: 19,
+                                  ),
+                                  sufixIcon2: const Icon(
+                                    Icons.visibility,
+                                    size: 19,
+                                  ),
+                                  contenV: 17,
+                                  prefixIcon: const Icon(
+                                    Icons.key,
+                                    size: 19,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(7),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  fillColor: const Color(0xFFEFEFEF),
+                                  filled: true,
+                                  focusColor: Colors.black,
+                                  style: const TextStyle(
+                                    color: Color(0XFF9F9F9F),
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, "/lupaPassword");
+                                      },
+                                      child: const Opacity(
+                                        opacity: 0.5,
+                                        child: Text(
+                                          "Lupa Kata Sandi",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            letterSpacing: 0.2,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 6,
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: WidgetEleBtn(
+                                        onPres: () async {
+                                          setState(() {
+                                            isLoading = true;
+                                          });
+                                          actionBtnLogin(
+                                              context, userControlProvider);
+                                        },
+                                        minimunSize: const Size(248, 41),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(7),
+                                        ),
+                                        textStyle: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        child: Text("MASUK"),
                                       ),
                                     ),
-                                  ),
-                                )
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 6,
-                            ),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: WidgetEleBtn(
-                                    onPres: () async {
-                                      actionBtnLogin(
-                                          context, userControlProvider);
-                                    },
-                                    minimunSize: const Size(248, 41),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                    textStyle: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                    child: isLoading
-                                        ? const SizedBox(
-                                            height: 25,
-                                            width: 25,
-                                            child: CircularProgressIndicator(
-                                              color: Colors.white,
-                                              strokeWidth: 2,
-                                            ),
-                                          )
-                                        : const Text("MASUK"),
-                                  ),
+                                  ],
                                 ),
                               ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              // alignment: Alignment.bottomCenter,
-              child: Image(
-                width: MediaQuery.of(context).size.width,
-                height: 120,
-                image: const AssetImage("assets/wave/bottom-wave.png"),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class NotifLoading extends StatelessWidget {
-  const NotifLoading({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: SizedBox(
-        height: 167.48,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 50.75),
-            child: Column(
-              children: const [
-                CircularProgressIndicator(),
-                SizedBox(
-                  height: 13.29,
-                ),
-                Text(
-                  "Tunggu Proses",
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
+                Positioned(
+                  bottom: 0,
+                  // alignment: Alignment.bottomCenter,
+                  child: Image(
+                    width: MediaQuery.of(context).size.width,
+                    height: 120,
+                    image: const AssetImage("assets/wave/bottom-wave.png"),
+                    fit: BoxFit.cover,
                   ),
                 ),
               ],
             ),
           ),
-        ),
+          if (isLoading)
+            Container(
+              alignment: Alignment.center,
+              color: Colors.white.withOpacity(0.3),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 2.63,
+                  ),
+                  Text(
+                    "Tunggu Proses",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        decoration: TextDecoration.none,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "Poppins"),
+                  ),
+                ],
+              ),
+            ),
+        ],
       ),
     );
   }

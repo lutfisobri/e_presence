@@ -1,5 +1,4 @@
 import 'package:e_presence/core/providers/user_provider.dart';
-import 'package:e_presence/ui/pages/accounts/forget_password/change_password.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:flutter/material.dart';
@@ -139,6 +138,7 @@ class _LupaPasswordState extends State<LupaPassword> {
                                     setState(() {
                                       notifSearch = "akun tidak ditemukan";
                                     });
+                                    return;
                                   }
                                   if (value['email'] == null ||
                                       value['email'] == "") {
@@ -146,6 +146,7 @@ class _LupaPasswordState extends State<LupaPassword> {
                                       notifSearch =
                                           "email tidak ditemukan silahkan hubungi admin sekolah";
                                     });
+                                    return;
                                   } else {
                                     setState(() {
                                       notifSearch = "";

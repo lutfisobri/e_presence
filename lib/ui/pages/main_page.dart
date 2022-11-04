@@ -1,5 +1,7 @@
 import 'package:e_presence/core/providers/pelajaran_provider.dart';
 import 'package:e_presence/core/providers/user_provider.dart';
+import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
+import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'page/akun_page.dart';
@@ -27,6 +29,37 @@ class _BerandaState extends State<Beranda> {
     await user.loadProfile();
   }
 
+  checkEmail() async {
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    if (user.dataUser.email == "" || user.dataUser.email.isEmpty) {
+      // if (!mounted) return;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => DialogEmail(
+            title: "E - Mail Belum Lengkap",
+            subtitle: "Silahkan isi E-Mail Anda",
+            image: "assets/icons/email.png",
+            button: WidgetEleBtn(
+              onPres: () {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  Navigator.pushNamed(context, "/editProfile");
+                });
+              },
+              minimunSize: Size(double.infinity, 36.88),
+              textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7.77),
+              ),
+              child: Text("BUKA PROFIL"),
+            ),
+          ),
+        );
+      });
+    }
+  }
+
   List<Widget> body = [
     const Home(),
     const Mapel(),
@@ -39,6 +72,7 @@ class _BerandaState extends State<Beranda> {
   void initState() {
     super.initState();
     loadData();
+    checkEmail();
   }
 
   @override

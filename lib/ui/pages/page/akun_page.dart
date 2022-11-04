@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
+import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ class _AkunPageState extends State<AkunPage> {
   @override
   void initState() {
     super.initState();
+    loadProfile();
   }
 
   loadProfile() async {
@@ -26,6 +28,8 @@ class _AkunPageState extends State<AkunPage> {
         if (!mounted) return;
         Navigator.pushReplacementNamed(context, "/login");
         user.userClearData();
+      } else if (value == 200) {
+        return;
       }
     });
   }
@@ -215,12 +219,27 @@ class _AkunPageState extends State<AkunPage> {
                           ),
                         ),
                         onTap: () {
-                          Navigator.pushReplacementNamed(context, "/login");
-                          Timer(
-                            const Duration(seconds: 2),
-                            () {
-                              value.userClearData();
-                            },
+                          showDialog(
+                            context: context,
+                            builder: (context) => DialogButton(
+                              title: "Keluar Dari E-Presensi",
+                              subtitle: "Apakah Anda ingin keluar?",
+                              btnLeft: "TIDAK",
+                              btnRight: "IYA",
+                              onPresLeft: () {
+                                Navigator.pop(context);
+                              },
+                              onPresRight: () {
+                                Navigator.pushReplacementNamed(
+                                    context, "/login");
+                                Timer(
+                                  const Duration(seconds: 1),
+                                  () {
+                                    value.userClearData();
+                                  },
+                                );
+                              },
+                            ),
                           );
                         },
                       );
