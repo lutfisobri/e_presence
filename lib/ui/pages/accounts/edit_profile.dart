@@ -5,6 +5,7 @@ import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/core/services/image_service.dart';
 import 'package:e_presence/core/services/validation.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
+import 'package:e_presence/ui/shared/widgets/bottom_shet.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
@@ -14,7 +15,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class EditProfile extends StatefulWidget {
-  EditProfile({super.key});
+  const EditProfile({super.key});
   static const routeName = "/editProfile";
 
   @override
@@ -267,22 +268,40 @@ class _EditProfileState extends State<EditProfile> {
                                     );
                                     return;
                                   }
-                                  value.updateProfile(
+                                  value
+                                      .updateProfile(
                                     emailController.text,
                                     foto?.path.toString(),
                                     tglLahir.text,
-                                  );
-                                  Future.delayed(const Duration(seconds: 1));
-                                  showDialog(
-                                    context: context,
-                                    builder: (context) => const CustomDialog(
-                                      title: "Berhasil",
-                                      subtitle:
-                                          "Woah, Profil anda berhasil diubah",
-                                      image: "assets/icons/sukses.png",
-                                    ),
-                                  );
-                                  loadProfile();
+                                  )
+                                      .then((value) {
+                                    if (value) {
+                                      Future.delayed(
+                                          const Duration(seconds: 1));
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            const CustomDialog(
+                                          title: "Berhasil",
+                                          subtitle:
+                                              "Woah, Profil anda berhasil diubah",
+                                          image: "assets/icons/sukses.png",
+                                        ),
+                                      );
+                                      loadProfile();
+                                    } else {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            const CustomDialog(
+                                          title: "Gagal Tersimpan",
+                                          subtitle: "Periksa Kembali Data Anda",
+                                          image: "assets/icons/gagal.png",
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                  });
                                 },
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(7.77),
@@ -318,7 +337,57 @@ class _EditProfileState extends State<EditProfile> {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(100),
                         onTap: () {
-                          updatePhoto(context);
+                          updatePhoto(
+                            context,
+                            hapus: () {
+                              Navigator.pop(context);
+                              showDialog(
+                                context: context,
+                                builder: (context) => DialogButton(
+                                  title: "Hapus foto profil",
+                                  subtitle: "Apakah anda ingin menghapus",
+                                  btnLeft: "TIDAK",
+                                  btnRight: "IYA",
+                                  onPresLeft: () {
+                                    Navigator.pop(context);
+                                  },
+                                  onPresRight: () {
+                                    final delete =
+                                        Provider.of<UserControlProvider>(
+                                      context,
+                                      listen: false,
+                                    );
+                                    delete.deletePhoto(modelUser.nis);
+                                    loadProfile();
+                                  },
+                                ),
+                              );
+                            },
+                            galeri: () {
+                              pickImage().then(
+                                (value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      foto = value;
+                                    });
+                                  }
+                                },
+                              );
+                              Navigator.pop(context);
+                            },
+                            kamera: () {
+                              takePhoto().then(
+                                (value) {
+                                  if (value != null) {
+                                    setState(() {
+                                      foto = value;
+                                    });
+                                  }
+                                },
+                              );
+                              Navigator.pop(context);
+                            },
+                          );
                         },
                         child: const Icon(
                           Icons.camera_alt_outlined,
@@ -333,165 +402,6 @@ class _EditProfileState extends State<EditProfile> {
           ),
         ),
       ),
-    );
-  }
-
-  Future<dynamic> updatePhoto(BuildContext context) {
-    return showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return SizedBox(
-          height: 174,
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 15, left: 25),
-                child: Text(
-                  "Foto Profil",
-                  style: TextStyle(
-                    fontSize: 17,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Row(
-                  children: [
-                    const SizedBox(
-                      width: 25,
-                    ),
-                    Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            takePhoto().then(
-                              (value) {
-                                if (value != null) {
-                                  setState(() {
-                                    foto = value;
-                                  });
-                                }
-                              },
-                            );
-                            Navigator.pop(context);
-                          },
-                          child: Image.asset(
-                            "assets/icons/kamera.png",
-                            height: 60,
-                            width: 60,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Text(
-                            "Kamera",
-                            style: TextStyle(
-                              color: Color(0XFF646161),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            pickImage().then(
-                              (value) {
-                                if (value != null) {
-                                  setState(() {
-                                    foto = value;
-                                  });
-                                }
-                              },
-                            );
-                            Navigator.pop(context);
-                          },
-                          child: Image.asset(
-                            "assets/icons/galeri.png",
-                            height: 60,
-                            width: 60,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Text(
-                            "Galeri",
-                            style: TextStyle(
-                              color: Color(0XFF646161),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 30,
-                    ),
-                    Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            Navigator.pop(context);
-                            showDialog(
-                              context: context,
-                              builder: (context) => DialogButton(
-                                title: "Hapus foto profil",
-                                subtitle: "Apakah anda ingin menghapus",
-                                btnLeft: "TIDAK",
-                                btnRight: "IYA",
-                                onPresLeft: () {
-                                  Navigator.pop(context);
-                                },
-                                onPresRight: () {
-                                  final delete =
-                                      Provider.of<UserControlProvider>(
-                                    context,
-                                    listen: false,
-                                  );
-                                  delete.deletePhoto(modelUser.nis);
-                                  loadProfile();
-                                },
-                              ),
-                            );
-                          },
-                          child: Image.asset(
-                            "assets/icons/hapus.png",
-                            height: 60,
-                            width: 60,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 10),
-                          child: Text(
-                            "Hapus",
-                            style: TextStyle(
-                              color: Color(0XFF646161),
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        );
-      },
     );
   }
 

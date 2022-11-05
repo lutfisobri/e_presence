@@ -1,8 +1,6 @@
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ForgetChangePassword extends StatefulWidget {
@@ -21,7 +19,7 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Ubah Kata Sandi"),
+          title: const Text("Ubah Kata Sandi"),
           elevation: 0,
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
@@ -48,8 +46,8 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
                   ),
                   primaryColor: Colors.black,
                   obscure: true,
-                  sufixIcon1: Icon(Icons.visibility_off),
-                  sufixIcon2: Icon(Icons.visibility),
+                  sufixIcon1: const Icon(Icons.visibility_off),
+                  sufixIcon2: const Icon(Icons.visibility),
                 ),
                 WidgetTextField(
                   label: Text(
@@ -61,8 +59,8 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
                     ),
                   ),
                   obscure: true,
-                  sufixIcon1: Icon(Icons.visibility_off),
-                  sufixIcon2: Icon(Icons.visibility),
+                  sufixIcon1: const Icon(Icons.visibility_off),
+                  sufixIcon2: const Icon(Icons.visibility),
                   primaryColor: Colors.black,
                 ),
                 SizedBox(
@@ -72,7 +70,7 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
                   onPres: () {
                     FocusManager.instance.primaryFocus?.unfocus();
                   },
-                  child: Text("Ubah"),
+                  child: const Text("Ubah"),
                 ),
               ],
             ),

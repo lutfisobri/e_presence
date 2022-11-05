@@ -22,7 +22,7 @@ class _BerandaState extends State<Beranda> {
     final loadPelajaran =
         Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserControlProvider>(context, listen: false);
-    Future.delayed(Duration(seconds: 1));
+    Future.delayed(const Duration(seconds: 1));
     await loadPelajaran.loadMapel(user.dataUser.idKelas);
     await loadPelajaran.loadPresensi(user.dataUser.idKelas);
     await loadPelajaran.loadUjian(user.dataUser.idKelas);
@@ -47,12 +47,13 @@ class _BerandaState extends State<Beranda> {
                   Navigator.pushNamed(context, "/editProfile");
                 });
               },
-              minimunSize: Size(double.infinity, 36.88),
-              textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+              minimunSize: const Size(double.infinity, 36.88),
+              textStyle:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(7.77),
               ),
-              child: Text("BUKA PROFIL"),
+              child: const Text("BUKA PROFIL"),
             ),
           ),
         );
@@ -79,7 +80,7 @@ class _BerandaState extends State<Beranda> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: index == 3
-          ? AkunPage()
+          ? const AkunPage()
           : Stack(
               children: [
                 SizedBox(
@@ -94,11 +95,11 @@ class _BerandaState extends State<Beranda> {
                   children: [
                     index == 0
                         ? Container(
-                            height: 81,
+                            height: 91,
                             padding: const EdgeInsets.only(
                               left: 13.62,
                               right: 13.62,
-                              top: 25,
+                              top: 35,
                             ),
                             child: topBar(),
                           )
@@ -106,7 +107,7 @@ class _BerandaState extends State<Beranda> {
                     RefreshIndicator(
                       onRefresh: () => loadData(),
                       child: ListView(
-                        padding: EdgeInsets.only(top: index == 0 ? 81 : 36),
+                        padding: EdgeInsets.only(top: index == 0 ? 91 : 44),
                         children: [
                           Container(
                             width: double.infinity,

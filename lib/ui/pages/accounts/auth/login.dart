@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
 class Login extends StatefulWidget {
-  Login({super.key});
+  const Login({super.key});
   static const routeName = "/login";
 
   @override
@@ -47,18 +47,18 @@ class _LoginState extends State<Login> {
     FocusManager.instance.primaryFocus?.unfocus();
     if (username.text == "" || password.text == "") {
       Timer(
-        Duration(milliseconds: 700),
+        const Duration(milliseconds: 700),
         () => setState(() {
           isLoading = false;
         }),
       );
-      Future.delayed(Duration(milliseconds: 700));
+      Future.delayed(const Duration(milliseconds: 700));
       Timer(
-        Duration(milliseconds: 800),
+        const Duration(milliseconds: 800),
         () {
           showDialog(
             context: context,
-            builder: (context) => CustomDialogLogin(),
+            builder: (context) => const CustomDialogLogin(),
           );
         },
       );
@@ -89,15 +89,16 @@ class _LoginState extends State<Login> {
                       context,
                       "/home",
                     );
-                  } else {
-                    // showDialog(context: context, builder: );
                   }
+                  // else {
+                  // showDialog(context: context, builder: );
+                  // }
                 },
               );
             } else {
               showDialog(
                 context: context,
-                builder: (context) => CustomDialogLogin(),
+                builder: (context) => const CustomDialogLogin(),
               );
             }
           });
@@ -125,7 +126,7 @@ class _LoginState extends State<Login> {
               children: [
                 Align(
                   alignment: Alignment.topCenter,
-                  child: Container(
+                  child: SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: 120,
                     child: Image.asset(
@@ -168,14 +169,6 @@ class _LoginState extends State<Login> {
                             color: Colors.white,
                             border: Border.all(
                                 color: Colors.black.withOpacity(0.10)),
-                            // borderRadius: BorderRadius.circular(15),
-                            // boxShadow: const [
-                            //   BoxShadow(
-                            //     color: Colors.black12,
-                            //     offset: Offset(0, 0),
-                            //     blurRadius: 15,
-                            //   ),
-                            // ],
                           ),
                           child: Container(
                             padding: const EdgeInsets.all(20),
@@ -287,7 +280,7 @@ class _LoginState extends State<Login> {
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
                                         ),
-                                        child: Text("MASUK"),
+                                        child: const Text("MASUK"),
                                       ),
                                     ),
                                   ],
@@ -320,11 +313,16 @@ class _LoginState extends State<Login> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(
+                  Image.asset(
+                    "assets/loading/sepeda.gif",
+                    width: 100,
+                    height: 100,
+                  ),
+                  // CircularProgressIndicator(),
+                  const SizedBox(
                     height: 2.63,
                   ),
-                  Text(
+                  const Text(
                     "Tunggu Proses",
                     style: TextStyle(
                         color: Colors.black,

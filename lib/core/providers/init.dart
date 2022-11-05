@@ -22,7 +22,6 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
   loadData() async {
     final user = Provider.of<UserControlProvider>(context, listen: false);
-    await user.determinePosition();
     if (user.dataUser.username.isNotEmpty &&
         user.dataUser.password.isNotEmpty) {
       user.loadProfile();
@@ -44,11 +43,11 @@ class _MainState extends State<Main> {
         return MaterialApp(
           theme: StyleThemeData.themeData(context),
           routes: {
-            "/login": (context) => Login(),
+            "/login": (context) => const Login(),
             "/home": (context) => const Beranda(),
             "/detailPresensi": (context) => const DetailPresensi(),
             "/ubahPassword": (context) => const ChangePassword(),
-            "/editProfile": (context) => EditProfile(),
+            "/editProfile": (context) => const EditProfile(),
             "/lupaPassword": (context) => const LupaPassword(),
             "/viewPhoto": (context) => const ViewPhoto(),
           },

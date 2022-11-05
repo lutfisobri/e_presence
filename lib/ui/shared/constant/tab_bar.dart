@@ -40,7 +40,8 @@ class CustomTabBar extends StatelessWidget {
                     : const Color(0XFF777777),
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
-                decoration: TextDecoration.underline,
+                decoration: tab == tabItems[index]['id']
+                    ? TextDecoration.underline : TextDecoration.none,
                 fontFamily: "Roboto",
               ),
             ),

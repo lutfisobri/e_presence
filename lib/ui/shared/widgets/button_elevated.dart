@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class WidgetEleBtn extends StatefulWidget {
   const WidgetEleBtn({
+    super.key,
     required this.onPres,
     required this.child,
     this.bgColor,

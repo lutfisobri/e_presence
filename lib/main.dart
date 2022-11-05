@@ -1,12 +1,14 @@
 import 'package:e_presence/core/providers/pelajaran_provider.dart';
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 
 import 'core/providers/init.dart';
 
-void main(List<String> args) {
+void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null).then((_) => 
   runApp(
     MultiProvider(
       providers: [
@@ -15,5 +17,5 @@ void main(List<String> args) {
       ],
       child: const Main(),
     ),
-  );
+  ));
 }

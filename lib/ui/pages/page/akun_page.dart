@@ -229,15 +229,19 @@ class _AkunPageState extends State<AkunPage> {
                               onPresLeft: () {
                                 Navigator.pop(context);
                               },
-                              onPresRight: () {
-                                Navigator.pushReplacementNamed(
-                                    context, "/login");
-                                Timer(
-                                  const Duration(seconds: 1),
-                                  () {
-                                    value.userClearData();
-                                  },
-                                );
+                              onPresRight: () async {
+                                await value.userLogout().then((status) {
+                                  if (status) {
+                                    Navigator.pushReplacementNamed(
+                                        context, "/login");
+                                    Timer(
+                                      const Duration(seconds: 1),
+                                      () {
+                                        value.userClearData();
+                                      },
+                                    );
+                                  }
+                                });
                               },
                             ),
                           );

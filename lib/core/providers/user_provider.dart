@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:e_presence/core/model/model_mapel.dart';
 import 'package:e_presence/core/model/model_user.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 
 class UserControlProvider with ChangeNotifier {
@@ -90,7 +89,7 @@ class UserControlProvider with ChangeNotifier {
 
   Future<Map<String, dynamic>> searchAccount(String username) async {
     Map<String, dynamic> output = {
-      "username": "tidak ditemukan",
+      "username": "",
       "email": "",
     };
     final Uri url = Uri.parse("${_baseUrl}search_account.php");
@@ -190,12 +189,34 @@ class UserControlProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> userLogout() async {
+    final Uri url = Uri.parse("${_baseUrl}logout.php");
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "accept": "application/json",
+        },
+        body: {
+          "nis": dataUser.nis,
+        },
+      );
+      if (response.statusCode == 202) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
   userClearData() {
     dataUser = dataUser.clear();
     notifyListeners();
   }
 
-  updateProfile(String email, String? photo, String tglLahir) async {
+  Future<bool> updateProfile(String email, String? photo, String tglLahir) async {
     final Uri url = Uri.parse("${_baseUrl}update_profile.php");
     var request = http.MultipartRequest('POST', url);
     if (photo != null) {
@@ -215,11 +236,11 @@ class UserControlProvider with ChangeNotifier {
 
     http.StreamedResponse response = await request.send();
 
-    if (response.statusCode == 200) {
-      print(await response.stream.bytesToString());
+    if (response.statusCode == 202) {
       loadProfile();
+      return true;
     } else {
-      print(response.reasonPhrase);
+      return false;
     }
   }
 
@@ -268,32 +289,5 @@ class UserControlProvider with ChangeNotifier {
 
   File? source;
 
-  Future<Position> determinePosition() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-    return await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best);
-  }
-
-  StreamSubscription<Position> subscription =
-      Geolocator.getPositionStream().listen((Position position) async {});
-
-  streamDispose() {
-    subscription.cancel();
-    notifyListeners();
-  }
+  
 }

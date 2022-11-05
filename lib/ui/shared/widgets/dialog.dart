@@ -21,7 +21,7 @@ class CustomDialog extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 64.79),
+              margin: const EdgeInsets.only(top: 64.79),
               height: 171.46,
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(14)),
@@ -29,45 +29,62 @@ class CustomDialog extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                      ),
+                      child: Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                    Text(
-                      subtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0XFFD3DAE0),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                      ),
+                      child: Text(
+                        subtitle,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0XFFD3DAE0),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            Positioned(
+            Positioned.fill(
               top: 15,
-              left: 115.17,
-              right: 115.17,
-              child: Container(
-                width: 100,
-                height: 99.69,
-                padding: EdgeInsets.symmetric(
-                  vertical: 4.15,
-                  horizontal: 4.17,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Image.asset(
-                  image,
-                  width: 91.67,
-                  height: 91.38,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: 100,
+                  height: 99.69,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4.15,
+                    horizontal: 4.17,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Image.asset(
+                    image,
+                    width: 91.67,
+                    height: 91.38,
+                  ),
                 ),
               ),
             ),
@@ -94,18 +111,18 @@ class CustomDialogLogin extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 64.79),
+              margin: const EdgeInsets.only(top: 64.79),
               height: 171.46,
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(14)),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: const [
                   SizedBox(
                     height: 20,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                    padding: EdgeInsets.only(left: 20, right: 20, top: 20),
                     child: Text(
                       "Nama Pengguna Atau Kata Sandi",
                       textAlign: TextAlign.center,
@@ -116,7 +133,7 @@ class CustomDialogLogin extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 20, right: 20, top: 3),
+                    padding: EdgeInsets.only(left: 20, right: 20, top: 3),
                     child: Text(
                       "Masukkan Kembali Nama Pengguna dan Kata Sandi Anda",
                       textAlign: TextAlign.center,
@@ -130,25 +147,26 @@ class CustomDialogLogin extends StatelessWidget {
                 ],
               ),
             ),
-            Positioned(
-              top: 15,
-              left: 115.17,
-              right: 115.17,
-              child: Container(
-                width: 100,
-                height: 99.69,
-                padding: EdgeInsets.symmetric(
-                  vertical: 4.15,
-                  horizontal: 4.17,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Image.asset(
-                  "assets/icons/gagal.png",
-                  width: 91.67,
-                  height: 91.38,
+            Positioned.fill(
+              top: -85,
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  width: 100,
+                  height: 99.69,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4.15,
+                    horizontal: 4.17,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Image.asset(
+                    "assets/icons/gagal.png",
+                    width: 91.67,
+                    height: 91.38,
+                  ),
                 ),
               ),
             ),
@@ -184,35 +202,48 @@ class DialogButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-            ),
-            SizedBox(
-              height: 9,
-            ),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0XFFD3DAE0),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+              ),
+              child: Text(
+                title,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
               ),
             ),
-            SizedBox(
+            const SizedBox(
+              height: 9,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 10,
+                right: 10,
+              ),
+              child: Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0XFFD3DAE0),
+                ),
+              ),
+            ),
+            const SizedBox(
               height: 21,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 36,
                 ),
                 Expanded(
                   child: WidgetEleBtn(
                     onPres: onPresLeft,
-                    minimunSize: Size(double.infinity, 46),
-                    textStyle: TextStyle(
+                    minimunSize: const Size(double.infinity, 46),
+                    textStyle: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -222,17 +253,17 @@ class DialogButton extends StatelessWidget {
                     child: Text(btnLeft),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 12,
                 ),
                 Expanded(
                   child: OutlinedButton(
                     onPressed: onPresRight,
                     style: ButtonStyle(
-                      minimumSize: MaterialStatePropertyAll(
+                      minimumSize: const MaterialStatePropertyAll(
                         Size(double.infinity, 46),
                       ),
-                      textStyle: MaterialStatePropertyAll(
+                      textStyle: const MaterialStatePropertyAll(
                         TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -247,7 +278,7 @@ class DialogButton extends StatelessWidget {
                     child: Text(btnRight),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 36,
                 ),
               ],
@@ -281,7 +312,7 @@ class DialogEmail extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-              margin: EdgeInsets.only(top: 64.79),
+              margin: const EdgeInsets.only(top: 64.79),
               height: 171.46,
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(14)),
@@ -289,23 +320,35 @@ class DialogEmail extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 35.5,
                     ),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                      ),
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ),
-                    Text(
-                      subtitle,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0XFFD3DAE0),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                      ),
+                      child: Text(
+                        subtitle,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          color: Color(0XFFD3DAE0),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     Padding(
@@ -318,7 +361,7 @@ class DialogEmail extends StatelessWidget {
                         ],
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                   ],
@@ -332,7 +375,7 @@ class DialogEmail extends StatelessWidget {
               child: Container(
                 width: 91.67,
                 height: 91.38,
-                margin: EdgeInsets.symmetric(
+                margin: const EdgeInsets.symmetric(
                   vertical: 4.15,
                   horizontal: 4.17,
                 ),

@@ -4,7 +4,6 @@ import 'package:e_presence/ui/shared/constant/tab_bar.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -48,8 +47,8 @@ class _JadwalPageState extends State<JadwalPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(
+        const Padding(
+          padding: EdgeInsets.only(
             left: 20,
             right: 20,
           ),
@@ -73,7 +72,7 @@ class _JadwalPageState extends State<JadwalPage> {
             color: Colors.black,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 11,
         ),
         CustomTabBar(
@@ -86,7 +85,7 @@ class _JadwalPageState extends State<JadwalPage> {
             });
             pageController.animateToPage(
               selected - 1,
-              duration: Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 500),
               curve: Curves.decelerate,
             );
           },
@@ -94,7 +93,7 @@ class _JadwalPageState extends State<JadwalPage> {
         Container(
           height: 400,
           constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height - 150.h,
+            minHeight: MediaQuery.of(context).size.height - 197,
           ),
           child: Consumer<PelajaranProvider>(
             builder: (context, pelProv, child) {
@@ -107,13 +106,13 @@ class _JadwalPageState extends State<JadwalPage> {
                   if (selectedTab > 3) {
                     scrollController.animateTo(
                       100.00,
-                      duration: Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 500),
                       curve: Curves.decelerate,
                     );
                   } else if (selectedTab < 4) {
                     scrollController.animateTo(
                       0,
-                      duration: Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 500),
                       curve: Curves.decelerate,
                     );
                   }
@@ -129,21 +128,19 @@ class _JadwalPageState extends State<JadwalPage> {
                     ),
                     itemCount: pelProv.listMapel.length,
                     itemBuilder: (context, index) {
-                      var date =
-                          DateTime.parse(pelProv.listMapel[index].jadwal);
                       pelProv.listMapel
                           .sort((a, b) => a.jadwal.compareTo(b.jadwal));
                       return Container(
                         height: 56.6,
                         width: double.infinity,
-                        padding: EdgeInsets.only(left: 12.6, right: 12.6),
+                        padding: const EdgeInsets.only(left: 12.6, right: 12.6),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(6),
                           color: Colors.white,
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.25),
-                              offset: Offset(0, 1),
+                              offset: const Offset(0, 1),
                               blurRadius: 5,
                             ),
                           ],
@@ -156,11 +153,11 @@ class _JadwalPageState extends State<JadwalPage> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(3.15),
                               ),
-                              child: CircularProgressIndicator(
+                              child: const CircularProgressIndicator(
                                 strokeWidth: 2,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 12.6,
                             ),
                             Column(
@@ -169,15 +166,19 @@ class _JadwalPageState extends State<JadwalPage> {
                               children: [
                                 Text(
                                   pelProv.listMapel[index].namaMapel,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: "Roboto",
                                   ),
                                 ),
                                 Text(
-                                  DateFormat('EEEE dd,y').format(date),
-                                  style: TextStyle(
+                                  DateFormat('EEEE dd,y', 'id_ID').format(
+                                    DateTime.parse(
+                                      pelProv.listMapel[index].jadwal,
+                                    ),
+                                  ),
+                                  style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: "Roboto",

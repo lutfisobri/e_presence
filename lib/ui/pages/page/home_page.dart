@@ -1,9 +1,10 @@
-import 'package:e_presence/core/model/model_presensi.dart';
 import 'package:e_presence/core/providers/pelajaran_provider.dart';
 import 'package:e_presence/core/providers/user_provider.dart';
+import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 import 'package:provider/provider.dart';
 
 class Home extends StatefulWidget {
@@ -39,8 +40,6 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime date = DateTime.now();
-    var time = DateFormat('EEEE, d MMMM y').format(date);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -133,7 +132,7 @@ class _HomeState extends State<Home> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Color(0XFF909090).withOpacity(0.08),
+                  color: const Color(0XFF909090).withOpacity(0.08),
                   offset: const Offset(1, 2),
                   blurRadius: 2,
                 ),
@@ -152,7 +151,7 @@ class _HomeState extends State<Home> {
                   height: 57,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(3.15),
-                    child: Padding(
+                    child: const Padding(
                       padding: EdgeInsets.all(8.0),
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
@@ -217,8 +216,15 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Future<DateTime> validationTime() async {
+    final int offset = await NTP.getNtpOffset(
+      localTime: DateTime.now(),
+      lookUpAddress: "0.id.pool.ntp.org",
+    );
+    return DateTime.now().add(Duration(milliseconds: offset));
+  }
+
   ListView content(PelajaranProvider value) {
-    List<ModelPresensi> listJadwal = [];
     return ListView.separated(
       separatorBuilder: (context, index) => Container(
         height: 12.6,
@@ -231,62 +237,109 @@ class _HomeState extends State<Home> {
       shrinkWrap: true,
       itemCount: value.listPresensi.length,
       itemBuilder: (context, index) {
-        var jamAwal = DateTime.parse(value.listPresensi[index].jamAwal);
-        return Container(
-          height: 56.6,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Color(0XFF909090).withOpacity(0.08),
-                offset: const Offset(1, 2),
-                blurRadius: 2,
-              ),
-            ],
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: Row(
-            children: [
-              Container(
-                margin:
-                    const EdgeInsets.only(top: 10.8, left: 12.6, bottom: 10.8),
-                height: 35,
-                width: 35,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              "/detailPresensi",
+              arguments: value.listPresensi[index].idPresensi,
+            );
+          },
+          child: Container(
+            height: 56.6,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0XFF909090).withOpacity(0.08),
+                  offset: const Offset(1, 2),
+                  blurRadius: 2,
                 ),
-                // child: Image.network(value.listPresensi[index].logo),
-              ),
-              const SizedBox(
-                width: 12.6,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    value.listPresensi[index].namaMapel,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "Roboto",
+              ],
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(
+                      top: 10.8, left: 12.6, bottom: 10.8),
+                  height: 35,
+                  width: 35,
+                  child: iconPresensi(value, index),
+                ),
+                const SizedBox(
+                  width: 12.6,
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      value.listPresensi[index].namaMapel,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: "Roboto",
+                      ),
                     ),
-                  ),
-                  Text(
-                    DateFormat('MMMM d,y').format(jamAwal),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: "Roboto",
+                    Text(
+                      DateFormat('MMMM d,y', 'id_ID').format(
+                        DateTime.parse(
+                          value.listPresensi[index].jamAwal,
+                        ),
+                      ),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "Roboto",
+                      ),
                     ),
-                  ),
-                ],
-              )
-            ],
+                  ],
+                )
+              ],
+            ),
           ),
         );
       },
     );
+  }
+
+  Widget iconPresensi(PelajaranProvider value, int index) {
+    var namaMapel = value.listPresensi[index].namaMapel;
+    switch (namaMapel.toLowerCase()) {
+      case "matematika":
+        return Image.asset("assets/mapel/matematika.png");
+      case "fisika":
+        return Image.asset("assets/mapel/fisika.png");
+      case "agama":
+        return Image.asset("assets/mapel/agama.png");
+      case "biologi":
+        return Image.asset("assets/mapel/biologi.png");
+      case "sejarah indonesia":
+        return Image.asset("assets/mapel/sejarahIndonesia.png");
+      case "kimia":
+        return Image.asset("assets/mapel/kimia.png");
+      case "bahasa inggris":
+        return Image.asset("assets/mapel/bahasaInggris.png");
+      case "geografi":
+        return Image.asset("assets/mapel/geografi.png");
+      case "pendidikan pancasila dan kewarganegaraan":
+        return Image.asset("assets/mapel/pkn.png");
+      case "bahasa indonesia":
+        return Image.asset("assets/mapel/bahasaIndonesia.png");
+      case "bimbingan konseling":
+        return Image.asset("assets/mapel/bimbinganKonseling.png");
+      case "bahasa daerah madura":
+        return Image.asset("assets/mapel/bahasaMadura.png");
+      case "sosiologi":
+        return Image.asset("assets/mapel/sosiologi.png");
+      case "ekonomi":
+        return Image.asset("assets/mapel/ekonomi.png");
+      case "pendidikan jasmani, olahraga, dan kesehatan":
+        return Image.asset("assets/mapel/pjok.png");
+      default:
+        return Container(color: colorGreen);
+    }
   }
 }

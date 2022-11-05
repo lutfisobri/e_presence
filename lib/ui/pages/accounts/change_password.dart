@@ -1,10 +1,8 @@
 import 'dart:async';
-
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/core/services/validation.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
-import 'package:e_presence/ui/shared/widgets/bottomShet.dart';
 import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
@@ -38,16 +36,19 @@ class _ChangePasswordState extends State<ChangePassword> {
     setState(() {
       deviceId = deviceID ?? "";
     });
-    final user = Provider.of<UserControlProvider>(context, listen: false);
-    user.checkAccount().then((value) {
+    user().checkAccount().then((value) {
       if (value == 401) {
         if (!mounted) return;
         Navigator.pushReplacementNamed(context, "/login");
-        user.userClearData();
+        user().userClearData();
       } else if (value == 200) {
         return;
       }
     });
+  }
+
+  UserControlProvider user() {
+    return Provider.of<UserControlProvider>(context, listen: false);
   }
 
   clearText() {
@@ -70,7 +71,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       if (value) {
         showDialog(
           context: context,
-          builder: (context) => CustomDialog(
+          builder: (context) => const CustomDialog(
             title: "Berhasil",
             subtitle: "Woah, Kata Sandi anda berhasil diubah",
             image: "assets/icons/sukses.png",
@@ -78,14 +79,14 @@ class _ChangePasswordState extends State<ChangePassword> {
         );
         user.userLogin(user.dataUser.username, pwBaru.text, deviceId);
         Timer(
-          Duration(seconds: 2),
+          const Duration(milliseconds: 500),
           () => clearText(),
         );
         // clearText();
       } else {
         showDialog(
           context: context,
-          builder: (context) => CustomDialog(
+          builder: (context) => const CustomDialog(
             title: "Gagal Tersimpan",
             subtitle: "Periksa Kembali Kata Sandi Anda",
             image: "assets/icons/gagal.png",
@@ -125,7 +126,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   WidgetTextField(
                     controller: pwLama,
                     obscure: true,
-                    label: Text(
+                    label: const Text(
                       "Password Lama*",
                       style: TextStyle(
                         color: Colors.black,
@@ -142,18 +143,18 @@ class _ChangePasswordState extends State<ChangePassword> {
                       color: Colors.black,
                     ),
                     primaryColor: Colors.black,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   WidgetTextField(
                     controller: pwBaru,
                     obscure: true,
-                    label: Text(
+                    label: const Text(
                       "Password Baru*",
                       style: TextStyle(
                         color: Colors.black,
@@ -170,18 +171,18 @@ class _ChangePasswordState extends State<ChangePassword> {
                       color: Colors.black,
                     ),
                     primaryColor: Colors.black,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20,
                   ),
                   WidgetTextField(
                     controller: confpwBaru,
                     obscure: true,
-                    label: Text(
+                    label: const Text(
                       "Konfirmasi Password Baru*",
                       style: TextStyle(
                         color: Colors.black,
@@ -198,12 +199,12 @@ class _ChangePasswordState extends State<ChangePassword> {
                       color: Colors.black,
                     ),
                     primaryColor: Colors.black,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16.5,
                   ),
                   Row(
@@ -220,7 +221,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                           if (!check) {
                             showDialog(
                               context: context,
-                              builder: (context) => CustomDialog(
+                              builder: (context) => const CustomDialog(
                                 title: "Gagal Tersimpan",
                                 subtitle: "Periksa Kembali Kata Sandi Anda",
                                 image: "assets/icons/gagal.png",
@@ -233,7 +234,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                           if (pwLama.text != user.dataUser.password) {
                             showDialog(
                               context: context,
-                              builder: (context) => CustomDialog(
+                              builder: (context) => const CustomDialog(
                                 title: "Gagal Tersimpan",
                                 subtitle: "Periksa Kembali Kata Sandi Anda",
                                 image: "assets/icons/gagal.png",
@@ -247,8 +248,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(7.77),
                         ),
-                        minimunSize: Size(109, 46),
-                        textStyle: TextStyle(
+                        minimunSize: const Size(109, 46),
+                        textStyle: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w600),
                         child: const Text("UBAH"),
                       )
