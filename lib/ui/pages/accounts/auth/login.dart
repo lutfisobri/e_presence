@@ -89,10 +89,12 @@ class _LoginState extends State<Login> {
                       context,
                       "/home",
                     );
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const CustomDialogLogin(),
+                    );
                   }
-                  // else {
-                  // showDialog(context: context, builder: );
-                  // }
                 },
               );
             } else {

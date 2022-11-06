@@ -7,12 +7,14 @@ class CustomTabBar extends StatelessWidget {
   final Function(int) onChange;
   final EdgeInsets? padding;
   final ScrollController? scrollController;
+  final List? hari;
   const CustomTabBar({
     super.key,
     required this.tab,
     required this.onChange,
     this.padding,
     this.scrollController,
+    this.hari,
   });
 
   @override
@@ -41,7 +43,8 @@ class CustomTabBar extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
                 decoration: tab == tabItems[index]['id']
-                    ? TextDecoration.underline : TextDecoration.none,
+                    ? TextDecoration.underline
+                    : TextDecoration.none,
                 fontFamily: "Roboto",
               ),
             ),

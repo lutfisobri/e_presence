@@ -123,6 +123,7 @@ Future<dynamic> updatePhoto(
 }
 
 connectionError(BuildContext context) {
+  // bool drag = false;
   showModalBottomSheet(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.only(
@@ -130,23 +131,28 @@ connectionError(BuildContext context) {
         topRight: Radius.circular(20),
       ),
     ),
-    enableDrag: false,
     backgroundColor: const Color(0XFFFAFAFA),
     context: context,
+    constraints: BoxConstraints.expand(),
     builder: (context) => SizedBox(
-      height: 428.h,
+      height: 441.h,
       width: double.infinity,
       child: Column(
         children: [
-          GestureDetector(
-            child: const SizedBox(
-              height: 11,
+          Container(
+            height: 11,
+            margin: EdgeInsets.only(top: 11),
+            width: 62,
+            child: Container(
               width: 62,
-              child: Padding(
-                padding: EdgeInsets.only(top: 11),
-                child: Divider(
-                  thickness: 4,
-                ),
+              height: 0.23,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(7),
+              ),
+              child: Divider(
+                color: Color(0XFFD0D3D8),
+                height: 2.3,
+                thickness: 4,
               ),
             ),
           ),
@@ -182,7 +188,7 @@ connectionError(BuildContext context) {
             ),
           ),
           const SizedBox(
-            height: 32,
+            height: 8,
           ),
           Row(
             children: [
@@ -212,8 +218,12 @@ connectionError(BuildContext context) {
 }
 
 connectionErrorHome(BuildContext context) {
-  showModalBottomSheet(
+  showBottomSheet(
     context: context,
-    builder: (context) => const SizedBox(),
+    builder: (context) {
+      return Container(
+        
+      );
+    },
   );
 }

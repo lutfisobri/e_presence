@@ -1,3 +1,4 @@
+import 'package:e_presence/core/model/model_presensi.dart';
 import 'package:e_presence/core/providers/pelajaran_provider.dart';
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/utils/static.dart';
@@ -40,74 +41,78 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: [
-        Consumer<PelajaranProvider>(
-          builder: (context, value, child) => Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
-                      "Mata Pelajaran",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: "IBMPlex",
-                      ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Consumer<PelajaranProvider>(
+              builder: (context, value, child) => Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 20,
                     ),
-                    Text(
-                      "Hari Ini",
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          fontFamily: "Roboto"),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text(
+                          "Mata Pelajaran",
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: "IBMPlex",
+                          ),
+                        ),
+                        Text(
+                          "Hari Ini",
+                          style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                              fontFamily: "Roboto"),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(
+                    height: 12.6,
+                  ),
+                  value.listPresensi.isEmpty
+                      ? nullContent(context)
+                      : content(value),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 12.9, left: 19, right: 19, bottom: 6),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: const [
+                        Text(
+                          "Informasi Akademik",
+                          style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: "IBMPlex"),
+                        ),
+                        Text(
+                          "Terbaru",
+                          style: TextStyle(
+                              fontSize: 12.6,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                              fontFamily: "Roboto"),
+                        ),
+                      ],
+                    ),
+                  ),
+                  inforAkademik(value),
+                ],
               ),
-              const SizedBox(
-                height: 12.6,
-              ),
-              value.listPresensi.isEmpty
-                  ? nullContent(context)
-                  : content(value),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 12.9, left: 19, right: 19, bottom: 6),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
-                      "Informasi Akademik",
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: "IBMPlex"),
-                    ),
-                    Text(
-                      "Terbaru",
-                      style: TextStyle(
-                          fontSize: 12.6,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          fontFamily: "Roboto"),
-                    ),
-                  ],
-                ),
-              ),
-              inforAkademik(value),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
@@ -266,7 +271,7 @@ class _HomeState extends State<Home> {
                       top: 10.8, left: 12.6, bottom: 10.8),
                   height: 35,
                   width: 35,
-                  child: iconPresensi(value, index),
+                  child: iconMapel(value, index, jenis: Pelajaran.presensi),
                 ),
                 const SizedBox(
                   width: 12.6,
@@ -284,11 +289,15 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     Text(
-                      DateFormat('MMMM d,y', 'id_ID').format(
+                      "Jam ${DateFormat('hh:mm', 'id_ID').format(
                         DateTime.parse(
                           value.listPresensi[index].jamAwal,
                         ),
-                      ),
+                      )} - ${DateFormat('hh:mm', 'id_ID').format(
+                        DateTime.parse(
+                          value.listPresensi[index].jamAkhir,
+                        ),
+                      )} WIB",
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -303,43 +312,5 @@ class _HomeState extends State<Home> {
         );
       },
     );
-  }
-
-  Widget iconPresensi(PelajaranProvider value, int index) {
-    var namaMapel = value.listPresensi[index].namaMapel;
-    switch (namaMapel.toLowerCase()) {
-      case "matematika":
-        return Image.asset("assets/mapel/matematika.png");
-      case "fisika":
-        return Image.asset("assets/mapel/fisika.png");
-      case "agama":
-        return Image.asset("assets/mapel/agama.png");
-      case "biologi":
-        return Image.asset("assets/mapel/biologi.png");
-      case "sejarah indonesia":
-        return Image.asset("assets/mapel/sejarahIndonesia.png");
-      case "kimia":
-        return Image.asset("assets/mapel/kimia.png");
-      case "bahasa inggris":
-        return Image.asset("assets/mapel/bahasaInggris.png");
-      case "geografi":
-        return Image.asset("assets/mapel/geografi.png");
-      case "pendidikan pancasila dan kewarganegaraan":
-        return Image.asset("assets/mapel/pkn.png");
-      case "bahasa indonesia":
-        return Image.asset("assets/mapel/bahasaIndonesia.png");
-      case "bimbingan konseling":
-        return Image.asset("assets/mapel/bimbinganKonseling.png");
-      case "bahasa daerah madura":
-        return Image.asset("assets/mapel/bahasaMadura.png");
-      case "sosiologi":
-        return Image.asset("assets/mapel/sosiologi.png");
-      case "ekonomi":
-        return Image.asset("assets/mapel/ekonomi.png");
-      case "pendidikan jasmani, olahraga, dan kesehatan":
-        return Image.asset("assets/mapel/pjok.png");
-      default:
-        return Container(color: colorGreen);
-    }
   }
 }

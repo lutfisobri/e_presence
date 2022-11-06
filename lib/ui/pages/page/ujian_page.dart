@@ -44,157 +44,161 @@ class _JadwalPageState extends State<JadwalPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Stack(
       children: [
-        const Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-          ),
-          child: Text(
-            "Jadwal Ujian",
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.black,
-              fontWeight: FontWeight.w700,
-              fontFamily: "Roboto",
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+              ),
+              child: Text(
+                "Jadwal Ujian",
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: "Roboto",
+                ),
+              ),
             ),
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-          ),
-          child: Divider(
-            thickness: 1,
-            color: Colors.black,
-          ),
-        ),
-        const SizedBox(
-          height: 11,
-        ),
-        CustomTabBar(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          tab: selectedTab,
-          scrollController: scrollController,
-          onChange: (selected) {
-            setState(() {
-              selectedTab = selected;
-            });
-            pageController.animateToPage(
-              selected - 1,
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.decelerate,
-            );
-          },
-        ),
-        Container(
-          height: 400,
-          constraints: BoxConstraints(
-            minHeight: MediaQuery.of(context).size.height - 197,
-          ),
-          child: Consumer<PelajaranProvider>(
-            builder: (context, pelProv, child) {
-              return PageView.builder(
-                controller: pageController,
-                onPageChanged: (value) {
-                  setState(() {
-                    selectedTab = value + 1;
-                  });
-                  if (selectedTab > 3) {
-                    scrollController.animateTo(
-                      100.00,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.decelerate,
-                    );
-                  } else if (selectedTab < 4) {
-                    scrollController.animateTo(
-                      0,
-                      duration: const Duration(milliseconds: 500),
-                      curve: Curves.decelerate,
-                    );
-                  }
-                },
-                itemCount: tabItems.length,
-                itemBuilder: (context, index) => Padding(
-                  padding: const EdgeInsets.only(left: 19, right: 19),
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    separatorBuilder: (context, index) => Container(
-                      height: 12.6,
-                    ),
-                    itemCount: pelProv.listMapel.length,
-                    itemBuilder: (context, index) {
-                      pelProv.listMapel
-                          .sort((a, b) => a.jadwal.compareTo(b.jadwal));
-                      return Container(
-                        height: 56.6,
-                        width: double.infinity,
-                        padding: const EdgeInsets.only(left: 12.6, right: 12.6),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.25),
-                              offset: const Offset(0, 1),
-                              blurRadius: 5,
-                            ),
-                          ],
+            const Padding(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+              ),
+              child: Divider(
+                thickness: 1,
+                color: Colors.black,
+              ),
+            ),
+            const SizedBox(
+              height: 11,
+            ),
+            CustomTabBar(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              tab: selectedTab,
+              scrollController: scrollController,
+              onChange: (selected) {
+                setState(() {
+                  selectedTab = selected;
+                });
+                pageController.animateToPage(
+                  selected - 1,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.decelerate,
+                );
+              },
+            ),
+            Container(
+              height: 400,
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height - 197,
+              ),
+              child: Consumer<PelajaranProvider>(
+                builder: (context, pelProv, child) {
+                  return PageView.builder(
+                    controller: pageController,
+                    onPageChanged: (value) {
+                      setState(() {
+                        selectedTab = value + 1;
+                      });
+                      if (selectedTab > 3) {
+                        scrollController.animateTo(
+                          100.00,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.decelerate,
+                        );
+                      } else if (selectedTab < 4) {
+                        scrollController.animateTo(
+                          0,
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.decelerate,
+                        );
+                      }
+                    },
+                    itemCount: tabItems.length,
+                    itemBuilder: (context, index) => Padding(
+                      padding: const EdgeInsets.only(left: 19, right: 19),
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        separatorBuilder: (context, index) => Container(
+                          height: 12.6,
                         ),
-                        child: Row(
-                          children: [
-                            Container(
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(3.15),
-                              ),
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 12.6,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  pelProv.listMapel[index].namaMapel,
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: "Roboto",
-                                  ),
-                                ),
-                                Text(
-                                  DateFormat('EEEE dd,y', 'id_ID').format(
-                                    DateTime.parse(
-                                      pelProv.listMapel[index].jadwal,
-                                    ),
-                                  ),
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: "Roboto",
-                                  ),
+                        itemCount: pelProv.listUjian.length,
+                        itemBuilder: (context, index) {
+                          pelProv.listUjian
+                              .sort((a, b) => a.jadwal.compareTo(b.jadwal));
+                          return Container(
+                            height: 56.6,
+                            width: double.infinity,
+                            padding:
+                                const EdgeInsets.only(left: 12.6, right: 12.6),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.25),
+                                  offset: const Offset(0, 1),
+                                  blurRadius: 5,
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 35,
+                                  width: 35,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3.15),
+                                  ),
+                                  child: iconMapel(pelProv, index,
+                                      jenis: Pelajaran.ujian),
+                                ),
+                                const SizedBox(
+                                  width: 12.6,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      pelProv.listUjian[index].namaMapel,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: "Roboto",
+                                      ),
+                                    ),
+                                    Text(
+                                      DateFormat('EEEE dd,y', 'id_ID').format(
+                                        DateTime.parse(
+                                          pelProv.listUjian[index].jadwal,
+                                        ),
+                                      ),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: "Roboto",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ],
     );

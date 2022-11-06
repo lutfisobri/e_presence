@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:geolocator/geolocator.dart';
 
 Future<Position> determinePosition() async {
@@ -26,3 +25,13 @@ Future<Position> determinePosition() async {
 StreamSubscription<Position> subscription =
     Geolocator.getPositionStream().listen((Position position) async {});
 
+Future<bool> checkPermissionLocation() async {
+  LocationPermission permission = await Geolocator.checkPermission();
+  if (permission == LocationPermission.denied) {
+    return false;
+  } else if (permission == LocationPermission.deniedForever) {
+    return false;
+  } else {
+    return true;
+  }
+}
