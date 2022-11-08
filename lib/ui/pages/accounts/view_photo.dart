@@ -2,8 +2,24 @@ import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ViewPhoto extends StatelessWidget {
+class ViewPhoto extends StatefulWidget {
   const ViewPhoto({super.key});
+
+  @override
+  State<ViewPhoto> createState() => _ViewPhotoState();
+}
+
+class _ViewPhotoState extends State<ViewPhoto> {
+  loadProfile() {
+    var user = Provider.of<UserControlProvider>(context, listen: false);
+    user.checkAccount();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +39,12 @@ class ViewPhoto extends StatelessWidget {
           width: double.infinity,
           child: Consumer<UserControlProvider>(
             builder: (context, value, child) {
-              return value.dataUser.foto == "" ? Image.asset("assets/image/profil_default.png") : Image.network(value.dataUser.foto, fit: BoxFit.cover,);
+              return value.dataUser.foto == ""
+                  ? Image.asset("assets/image/profil_default.png")
+                  : Image.network(
+                      value.dataUser.foto,
+                      fit: BoxFit.cover,
+                    );
             },
           ),
         ),

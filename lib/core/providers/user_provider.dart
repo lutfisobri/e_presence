@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 
 class UserControlProvider with ChangeNotifier {
   final String _baseUrl = "https://neko.id.orangeflasher.com/v1/user/";
+  bool isLogin = false;
   ModelUser dataUser = ModelUser(
     username: "",
     password: "",
@@ -59,6 +60,8 @@ class UserControlProvider with ChangeNotifier {
     if (response.statusCode == 200) {
       return 200;
     } else if (response.statusCode == 401) {
+      isLogin = false;
+      notifyListeners();
       return 401;
     } else {
       return 404;
@@ -83,6 +86,7 @@ class UserControlProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
+      isLogin = false;
       return false;
     }
   }
@@ -122,8 +126,11 @@ class UserControlProvider with ChangeNotifier {
       notifyListeners();
       return dataUser;
     } else if (response.statusCode == 401) {
+      isLogin = false;
+      notifyListeners();
       return dataUser.clear();
     } else {
+      isLogin = false;
       return dataUser.clear();
     }
   }
@@ -149,6 +156,7 @@ class UserControlProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final dataResponse = jsonDecode(response.body);
         dataUser = ModelUser.formJson(dataResponse);
+        isLogin = true;
         notifyListeners();
         return "200";
       } else if (response.statusCode == 401) {
@@ -179,6 +187,7 @@ class UserControlProvider with ChangeNotifier {
       if (response.statusCode == 200) {
         final dataResponse = jsonDecode(response.body);
         dataUser = ModelUser.formJson(dataResponse);
+        isLogin = true;
         notifyListeners();
         return true;
       } else {
@@ -202,11 +211,17 @@ class UserControlProvider with ChangeNotifier {
         },
       );
       if (response.statusCode == 202) {
+        isLogin = false;
+        notifyListeners();
         return true;
       } else {
+        isLogin = true;
+        notifyListeners();
         return false;
       }
     } catch (e) {
+      isLogin = false;
+      notifyListeners();
       return false;
     }
   }
@@ -216,7 +231,8 @@ class UserControlProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> updateProfile(String email, String? photo, String tglLahir) async {
+  Future<bool> updateProfile(
+      String email, String? photo, String tglLahir) async {
     final Uri url = Uri.parse("${_baseUrl}update_profile.php");
     var request = http.MultipartRequest('POST', url);
     if (photo != null) {
@@ -288,6 +304,4 @@ class UserControlProvider with ChangeNotifier {
   // }
 
   File? source;
-
-  
 }

@@ -133,7 +133,7 @@ connectionError(BuildContext context) {
     ),
     backgroundColor: const Color(0XFFFAFAFA),
     context: context,
-    constraints: BoxConstraints.expand(),
+    constraints: const BoxConstraints.expand(),
     builder: (context) => SizedBox(
       height: 441.h,
       width: double.infinity,
@@ -141,7 +141,7 @@ connectionError(BuildContext context) {
         children: [
           Container(
             height: 11,
-            margin: EdgeInsets.only(top: 11),
+            margin: const EdgeInsets.only(top: 11),
             width: 62,
             child: Container(
               width: 62,
@@ -149,7 +149,7 @@ connectionError(BuildContext context) {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(7),
               ),
-              child: Divider(
+              child: const Divider(
                 color: Color(0XFFD0D3D8),
                 height: 2.3,
                 thickness: 4,
@@ -221,9 +221,7 @@ connectionErrorHome(BuildContext context) {
   showBottomSheet(
     context: context,
     builder: (context) {
-      return Container(
-        
-      );
+      return Container();
     },
   );
 }

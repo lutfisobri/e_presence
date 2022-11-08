@@ -36,15 +36,16 @@ class _ChangePasswordState extends State<ChangePassword> {
     setState(() {
       deviceId = deviceID ?? "";
     });
-    user().checkAccount().then((value) {
-      if (value == 401) {
-        if (!mounted) return;
-        Navigator.pushReplacementNamed(context, "/login");
-        user().userClearData();
-      } else if (value == 200) {
-        return;
-      }
-    });
+    user().checkAccount();
+    // .then((value) {
+    //   if (value == 401) {
+    //     if (!mounted) return;
+    //     Navigator.pushReplacementNamed(context, "/login");
+    //     user().userClearData();
+    //   } else if (value == 200) {
+    //     return;
+    //   }
+    // });
   }
 
   UserControlProvider user() {
@@ -125,6 +126,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                 children: [
                   WidgetTextField(
                     controller: pwLama,
+                    type: TextInputType.visiblePassword,
                     obscure: true,
                     label: const Text(
                       "Password Lama*",
@@ -154,6 +156,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   WidgetTextField(
                     controller: pwBaru,
                     obscure: true,
+                    type: TextInputType.visiblePassword,
                     label: const Text(
                       "Password Baru*",
                       style: TextStyle(
@@ -182,6 +185,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   WidgetTextField(
                     controller: confpwBaru,
                     obscure: true,
+                    type: TextInputType.visiblePassword,
                     label: const Text(
                       "Konfirmasi Password Baru*",
                       style: TextStyle(

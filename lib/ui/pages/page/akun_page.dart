@@ -23,15 +23,19 @@ class _AkunPageState extends State<AkunPage> {
 
   loadProfile() async {
     final user = Provider.of<UserControlProvider>(context, listen: false);
-    user.checkAccount().then((value) {
-      if (value == 401) {
-        if (!mounted) return;
-        Navigator.pushReplacementNamed(context, "/login");
-        user.userClearData();
-      } else if (value == 200) {
-        return;
-      }
-    });
+    user.checkAccount();
+    // .then((value) {
+    //   if (value == 401) {
+    //     if (!mounted) return;
+    //     // Navigator.pushReplacementNamed(context, "/login");
+    //     // user.userClearData();
+    //     user.isLogin = false;
+    //   } else if (value == 203) {
+    //     return;
+    //   } else {
+    //     user.isLogin = false;
+    //   }
+    // });
   }
 
   @override
@@ -97,31 +101,41 @@ class _AkunPageState extends State<AkunPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    usrProv.dataUser.nama,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      fontFamily: "Roboto",
+                                  SizedBox(
+                                    width: 230,
+                                    child: Text(
+                                      usrProv.dataUser.nama,
+                                      overflow: TextOverflow.visible,
+                                      maxLines: 1,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: "Roboto",
+                                      ),
                                     ),
                                   ),
-                                  Text(
-                                    "NIS ${usrProv.dataUser.nis}",
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w300,
-                                      fontFamily: "Roboto",
+                                  SizedBox(
+                                    width: 230,
+                                    child: Text(
+                                      "NIS ${usrProv.dataUser.nis}",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w300,
+                                        fontFamily: "Roboto",
+                                      ),
                                     ),
                                   ),
-                                  Text(
-                                    usrProv.dataUser.email,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w300,
-                                      fontFamily: "Roboto",
+                                  SizedBox(
+                                    width: 230,
+                                    child: Text(
+                                      usrProv.dataUser.email,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w300,
+                                        fontFamily: "Roboto",
+                                      ),
                                     ),
                                   ),
                                 ],

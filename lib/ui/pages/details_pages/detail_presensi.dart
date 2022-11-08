@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:e_presence/core/providers/pelajaran_provider.dart';
 import 'package:e_presence/core/providers/user_provider.dart';
+import 'package:e_presence/core/services/locations.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
+import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:provider/provider.dart';
@@ -37,6 +40,33 @@ class _PresensiState extends State<DetailPresensi> {
   void initState() {
     super.initState();
     _chose = items[0];
+    location();
+  }
+
+  location() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return showDialog(
+        context: context,
+        builder: (context) => CustomDialog(
+            title: "LOKASI",
+            subtitle: "Mohon aktifkan lokasi",
+            image: "assets/icons/gagal.png"),
+      );
+    }
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {}
+
+    if (permission == LocationPermission.deniedForever) {}
+    Geolocator.getPositionStream().listen((Position position) async {
+      distance = Geolocator.distanceBetween(
+        -8.124655,
+        113.336256,
+        position.latitude,
+        position.longitude,
+      );
+    });
+    setState(() {});
   }
 
   double? distance;
@@ -45,22 +75,11 @@ class _PresensiState extends State<DetailPresensi> {
 
   @override
   Widget build(BuildContext context) {
-    // final user = Provider.of<UserControlProvider>(context, listen: false);
     final args = ModalRoute.of(context)!.settings.arguments;
     int index = int.parse(args.toString()) - 1;
-    // user.subscription.onData((data) {
-    //   setState(() {
-    //     distance = Geolocator.distanceBetween(
-    //       -8.124655,
-    //       113.336256,
-    //       data.latitude,
-    //       data.longitude,
-    //     );
-    //   });
-    // });
     return WillPopScope(
       onWillPop: () async {
-        // user.streamDispose();
+        subscription.cancel();
         return true;
       },
       child: Stack(
@@ -92,7 +111,11 @@ class _PresensiState extends State<DetailPresensi> {
                             ),
                           ),
                           Text(
-                            pelProv.listPresensi[index].namaMapel,
+                            pelProv.listPresensi
+                                .where((element) =>
+                                    element.idPresensi == args.toString())
+                                .first
+                                .namaMapel,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18,
@@ -118,7 +141,11 @@ class _PresensiState extends State<DetailPresensi> {
                           Text(
                             DateFormat("dd MMMM y - hh.mm", "id_ID").format(
                               DateTime.parse(
-                                pelProv.listPresensi[index].jamAwal,
+                                pelProv.listPresensi
+                                    .where((element) =>
+                                        element.idPresensi == args.toString())
+                                    .first
+                                    .jamAwal,
                               ),
                             ),
                             textAlign: TextAlign.center,
@@ -146,7 +173,11 @@ class _PresensiState extends State<DetailPresensi> {
                           Text(
                             DateFormat("dd MMMM y - hh.mm", "id_ID").format(
                               DateTime.parse(
-                                pelProv.listPresensi[index].jamAkhir,
+                                pelProv.listPresensi
+                                    .where((element) =>
+                                        element.idPresensi == args.toString())
+                                    .first
+                                    .jamAkhir,
                               ),
                             ),
                             textAlign: TextAlign.center,
@@ -172,7 +203,11 @@ class _PresensiState extends State<DetailPresensi> {
                             ),
                           ),
                           Text(
-                            pelProv.listPresensi[index].namaMapel,
+                            pelProv.listPresensi
+                                .where((element) =>
+                                    element.idPresensi == args.toString())
+                                .first
+                                .namaMapel,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 15,

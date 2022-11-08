@@ -1,4 +1,3 @@
-import 'package:e_presence/core/model/model_presensi.dart';
 import 'package:e_presence/core/providers/pelajaran_provider.dart';
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/utils/static.dart';
@@ -22,15 +21,17 @@ class _HomeState extends State<Home> {
     final loadPresen = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserControlProvider>(context, listen: false);
     loadPresen.loadPresensi(user.dataUser.idKelas);
-    user.checkAccount().then((value) {
-      if (value == 401) {
-        if (!mounted) return;
-        Navigator.pushReplacementNamed(context, "/login");
-        user.userClearData();
-      } else if (value == 200) {
-        return;
-      }
-    });
+    user.checkAccount();
+    // .then((value) {
+    //   if (value == 401) {
+    //     if (!mounted) return;
+    //     Navigator.pushReplacementNamed(context, "/login");
+    //     user.userClearData();
+    //     user.isLogin = false;
+    //   } else if (value == 200) {
+    //     return;
+    //   }
+    // });
   }
 
   @override

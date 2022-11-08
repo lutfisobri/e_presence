@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'accounts/auth/login.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -13,14 +15,15 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(
-      const Duration(seconds: 3),
-      () => Navigator.pushReplacementNamed(context, Login.routeName),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserControlProvider>(context);
+    Timer(
+      const Duration(seconds: 3),
+      () => user.isLogin ? Navigator.pushReplacementNamed(context, "/home") : Navigator.pushReplacementNamed(context, Login.routeName),
+    );
     return Scaffold(
       body: Stack(
         children: [

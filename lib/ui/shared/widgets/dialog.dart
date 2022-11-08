@@ -368,25 +368,26 @@ class DialogEmail extends StatelessWidget {
                 ),
               ),
             ),
-            Positioned(
+            Positioned.fill(
               top: 15,
-              left: 115.17,
-              right: 115.17,
-              child: Container(
-                width: 91.67,
-                height: 91.38,
-                margin: const EdgeInsets.symmetric(
-                  vertical: 4.15,
-                  horizontal: 4.17,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Image.asset(
-                  image,
-                  width: 91.67,
-                  height: 91.38,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Container(
+                  width: 100,
+                  height: 99.69,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 4.15,
+                    horizontal: 4.17,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Image.asset(
+                    image,
+                    width: 91.67,
+                    height: 91.38,
+                  ),
                 ),
               ),
             ),

@@ -4,6 +4,7 @@ import 'package:e_presence/core/model/model_user.dart';
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/core/services/image_service.dart';
 import 'package:e_presence/core/services/validation.dart';
+import 'package:e_presence/ui/pages/accounts/auth/login.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/ui/shared/widgets/bottom_shet.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
@@ -46,15 +47,24 @@ class _EditProfileState extends State<EditProfile> {
 
   loadProfile() {
     var user = Provider.of<UserControlProvider>(context, listen: false);
-    user.checkAccount().then((value) {
-      if (value == 401) {
-        if (!mounted) return;
-        Navigator.pushReplacementNamed(context, "/login");
-        user.userClearData();
-      } else if (value == 200) {
-        return;
-      }
-    });
+    user.checkAccount();
+    // .then((value) {
+    //   if (value == 401) {
+    //     // if (!mounted) return;
+    //     Timer(
+    //       Duration(seconds: 1),
+    //       () => Navigator.pop(context),
+    //     );
+    //     Timer(
+    //       Duration(milliseconds: 1200),
+    //       () {
+    //         Navigator.pushReplacementNamed(context, "/login");
+    //       },
+    //     );
+    //   } else if (value == 200) {
+    //     return;
+    //   }
+    // });
     user.loadProfile().then((value) {
       setState(() {
         modelUser = value;
@@ -359,6 +369,7 @@ class _EditProfileState extends State<EditProfile> {
                                     );
                                     delete.deletePhoto(modelUser.nis);
                                     loadProfile();
+                                    Navigator.pop(context);
                                   },
                                 ),
                               );

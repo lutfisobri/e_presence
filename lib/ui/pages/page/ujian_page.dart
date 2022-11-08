@@ -1,3 +1,4 @@
+import 'package:e_presence/core/model/model_ujian.dart';
 import 'package:e_presence/core/providers/pelajaran_provider.dart';
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/ui/shared/constant/tab_bar.dart';
@@ -18,8 +19,9 @@ class _JadwalPageState extends State<JadwalPage> {
   StyleThemeData styleThemeData = StyleThemeData();
   ScrollController scrollController = ScrollController();
   PageController pageController = PageController();
-  List data = [];
+  List<ModelUjian> data = [];
   int selectedTab = 1;
+  String hari = "senin";
 
   @override
   void initState() {
@@ -31,14 +33,23 @@ class _JadwalPageState extends State<JadwalPage> {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserControlProvider>(context, listen: false);
     dataMapel.loadMapel(user.dataUser.idKelas);
-    user.checkAccount().then((value) {
-      if (value == 401) {
-        if (!mounted) return;
-        Navigator.pushReplacementNamed(context, "/login");
-        user.userClearData();
-      } else if (value == 200) {
-        return;
-      }
+    user.checkAccount();
+    // .then((value) {
+    //   if (value == 401) {
+    //     if (!mounted) return;
+    //     Navigator.pushReplacementNamed(context, "/login");
+    //     user.userClearData();
+    //   } else if (value == 200) {
+    //     return;
+    //   }
+    // });
+    setState(() {
+      data = dataMapel.listUjian
+          .where((element) => element.hari.toLowerCase() == hari)
+          .toList();
+      data.sort(
+        (a, b) => a.jamAwal.compareTo(b.jamAwal),
+      );
     });
   }
 
@@ -84,7 +95,9 @@ class _JadwalPageState extends State<JadwalPage> {
               onChange: (selected) {
                 setState(() {
                   selectedTab = selected;
+                  hari = validator(selectedTab);
                 });
+                getData();
                 pageController.animateToPage(
                   selected - 1,
                   duration: const Duration(milliseconds: 500),
@@ -104,7 +117,9 @@ class _JadwalPageState extends State<JadwalPage> {
                     onPageChanged: (value) {
                       setState(() {
                         selectedTab = value + 1;
+                        hari = validator(selectedTab);
                       });
+                      getData();
                       if (selectedTab > 3) {
                         scrollController.animateTo(
                           100.00,
@@ -128,10 +143,10 @@ class _JadwalPageState extends State<JadwalPage> {
                         separatorBuilder: (context, index) => Container(
                           height: 12.6,
                         ),
-                        itemCount: pelProv.listUjian.length,
-                        itemBuilder: (context, index) {
-                          pelProv.listUjian
-                              .sort((a, b) => a.jadwal.compareTo(b.jadwal));
+                        itemCount: data.length,
+                        itemBuilder: (context, i) {
+                          // pelProv.listUjian
+                          //     .sort((a, b) => a.jadwal.compareTo(b.jadwal));
                           return Container(
                             height: 56.6,
                             width: double.infinity,
@@ -156,7 +171,7 @@ class _JadwalPageState extends State<JadwalPage> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(3.15),
                                   ),
-                                  child: iconMapel(pelProv, index,
+                                  child: iconMapel(pelProv, i,
                                       jenis: Pelajaran.ujian),
                                 ),
                                 const SizedBox(
@@ -167,7 +182,7 @@ class _JadwalPageState extends State<JadwalPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      pelProv.listUjian[index].namaMapel,
+                                      data[i].namaMapel,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,
@@ -175,11 +190,7 @@ class _JadwalPageState extends State<JadwalPage> {
                                       ),
                                     ),
                                     Text(
-                                      DateFormat('EEEE dd,y', 'id_ID').format(
-                                        DateTime.parse(
-                                          pelProv.listUjian[index].jadwal,
-                                        ),
-                                      ),
+                                      "Jam ${data[i].jamAwal} - ${data[i].jamAkhir} WIB",
                                       style: const TextStyle(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
@@ -202,5 +213,24 @@ class _JadwalPageState extends State<JadwalPage> {
         ),
       ],
     );
+  }
+
+  String validator(int i) {
+    switch (i) {
+      case 1:
+        return "senin";
+      case 2:
+        return "selasa";
+      case 3:
+        return "rabu";
+      case 4:
+        return "kamis";
+      case 5:
+        return "jumat";
+      case 6:
+        return "sabtu";
+      default:
+        return "minggu";
+    }
   }
 }
