@@ -18,6 +18,7 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
   Map<String, dynamic> dataUser = {};
   TextEditingController password = TextEditingController();
   TextEditingController confPassword = TextEditingController();
+  final _key = GlobalKey<FormState>();
 
   loadData() {
     final args = ModalRoute.of(context)!.settings.arguments;
@@ -50,56 +51,85 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
               left: 19,
               right: 19,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                WidgetTextField(
-                  controller: password,
-                  label: const Text(
-                    "Kata Sandi Baru*",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
+            child: Form(
+              key: _key,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  WidgetTextField(
+                    controller: password,
+                    label: const Text(
+                      "Kata Sandi Baru*",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  type: TextInputType.visiblePassword,
-                  primaryColor: Colors.black,
-                  obscure: true,
-                  sufixIcon1: const Icon(Icons.visibility_off),
-                  sufixIcon2: const Icon(Icons.visibility),
-                ),
-                const SizedBox(
-                  height: 19.5,
-                ),
-                WidgetTextField(
-                  controller: confPassword,
-                  label: const Text(
-                    "Konfirmasi Kata Sandi Baru*",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0XFF494949),
+                    type: TextInputType.visiblePassword,
+                    primaryColor: Colors.black,
+                    obscure: true,
+                    sufixIcon1: const Icon(Icons.visibility_off),
+                    sufixIcon2: const Icon(Icons.visibility),
+                    errorStyle: TextStyle(
+                      color: Color(0XFFC4C4C4),
                     ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (password) {
+                      if (password!.isEmpty) {
+                        return "wajib di isi";
+                      }
+                      if (password.length < 8) {
+                        return "minimal 8 karakter";
+                      }
+                      return null;
+                    },
                   ),
-                  type: TextInputType.visiblePassword,
-                  obscure: true,
-                  sufixIcon1: const Icon(Icons.visibility_off),
-                  sufixIcon2: const Icon(Icons.visibility),
-                  primaryColor: Colors.black,
-                ),
-                const SizedBox(
-                  height: 20.5,
-                ),
-                WidgetEleBtn(
-                  onPres: () {
-                    btnUbah();
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(7.77)),
-                  minimunSize: const Size(109, 46),
-                  child: const Text("Ubah"),
-                ),
-              ],
+                  const SizedBox(
+                    height: 19.5,
+                  ),
+                  WidgetTextField(
+                    controller: confPassword,
+                    label: const Text(
+                      "Konfirmasi Kata Sandi Baru*",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: Color(0XFF494949),
+                      ),
+                    ),
+                    type: TextInputType.visiblePassword,
+                    obscure: true,
+                    sufixIcon1: const Icon(Icons.visibility_off),
+                    sufixIcon2: const Icon(Icons.visibility),
+                    primaryColor: Colors.black,
+                    errorStyle: TextStyle(
+                      color: Color(0XFFC4C4C4),
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (password) {
+                      if (password!.isEmpty) {
+                        return "wajib di isi";
+                      }
+                      if (password.length < 8) {
+                        return "minimal 8 karakter";
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 20.5,
+                  ),
+                  WidgetEleBtn(
+                    onPres: () {
+                      btnUbah();
+                    },
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(7.77)),
+                    minimunSize: const Size(109, 46),
+                    child: const Text("Ubah"),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -110,6 +140,9 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
   btnUbah() {
     loadData();
     FocusManager.instance.primaryFocus?.unfocus();
+    if (!_key.currentState!.validate()) {
+      return;
+    }
     if (password.text != confPassword.text) {
       showDialog(
         context: context,

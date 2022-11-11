@@ -4,6 +4,7 @@ import 'package:e_presence/core/services/validation.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/dialog.dart';
+import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:platform_device_id/platform_device_id.dart';
@@ -39,9 +40,19 @@ class _ChangePasswordState extends State<ChangePassword> {
       if (!mounted) return;
       if (value == 401) {
         if (!mounted) return;
-        Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacementNamed(context, "/login");
-        user().isLogin = false;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: DialogSession(
+              onPress: () {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacementNamed(context, "/login");
+              },
+            ),
+          ),
+        );
       } else if (value == 203) {
         return;
       } else {
@@ -108,12 +119,17 @@ class _ChangePasswordState extends State<ChangePassword> {
           ),
         );
         Timer(
-                              Duration(seconds: 2),
-                              () => Navigator.pop(context),
-                            );
+          Duration(seconds: 2),
+          () => Navigator.pop(context),
+        );
       }
     });
   }
+
+  FocusNode pwbaru = FocusNode();
+  FocusNode pwlama = FocusNode();
+  FocusNode confpw = FocusNode();
+  final _key = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -138,13 +154,14 @@ class _ChangePasswordState extends State<ChangePassword> {
           child: Container(
             padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
             child: Form(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+              key: _key,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   WidgetTextField(
                     controller: pwLama,
                     type: TextInputType.visiblePassword,
+                    focusNode: pwlama,
                     obscure: true,
                     label: const Text(
                       "Password Lama*",
@@ -167,6 +184,17 @@ class _ChangePasswordState extends State<ChangePassword> {
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
+                    errorStyle: TextStyle(
+                      color: Color(0XFFC4C4C4),
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (password) {
+                      if (password!.isEmpty) {
+                        FocusScope.of(context).requestFocus(pwlama);
+                        return "wajib di isi";
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(
                     height: 20,
@@ -174,6 +202,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   WidgetTextField(
                     controller: pwBaru,
                     obscure: true,
+                    focusNode: pwbaru,
                     type: TextInputType.visiblePassword,
                     label: const Text(
                       "Password Baru*",
@@ -196,6 +225,19 @@ class _ChangePasswordState extends State<ChangePassword> {
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
+                    errorStyle: TextStyle(
+                      color: Color(0XFFC4C4C4),
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (password) {
+                      if (password!.isEmpty) {
+                        return "wajib di isi";
+                      }
+                      if (password.length < 8) {
+                        return "minimal 8 karakter";
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(
                     height: 20,
@@ -203,6 +245,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   WidgetTextField(
                     controller: confpwBaru,
                     obscure: true,
+                    focusNode: confpw,
                     type: TextInputType.visiblePassword,
                     label: const Text(
                       "Konfirmasi Password Baru*",
@@ -225,6 +268,19 @@ class _ChangePasswordState extends State<ChangePassword> {
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
+                    errorStyle: TextStyle(
+                      color: Color(0XFFC4C4C4),
+                    ),
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (password) {
+                      if (password!.isEmpty) {
+                        return "wajib di isi";
+                      }
+                      if (password.length < 8) {
+                        return "minimal 8 karakter";
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(
                     height: 16.5,
@@ -234,53 +290,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                     children: [
                       WidgetEleBtn(
                         onPres: () {
-                          FocusManager.instance.primaryFocus!.unfocus();
-                          var check = passwordIsSame(
-                            pwLama.text,
-                            pwBaru.text,
-                            confpwBaru.text,
-                          );
-                          if (!check) {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) => WillPopScope(
-                                onWillPop: () async => false,
-                                child: const CustomDialog(
-                                  title: "Gagal Tersimpan",
-                                  subtitle: "Periksa Kembali Kata Sandi Anda",
-                                  image: "assets/icons/gagal.png",
-                                ),
-                              ),
-                            );
-                            Timer(
-                              Duration(seconds: 2),
-                              () => Navigator.pop(context),
-                            );
-                            return;
-                          }
-                          final user = Provider.of<UserControlProvider>(context,
-                              listen: false);
-                          if (pwLama.text != user.dataUser.password) {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (context) => WillPopScope(
-                                onWillPop: () async => false,
-                                child: const CustomDialog(
-                                  title: "Gagal Tersimpan",
-                                  subtitle: "Periksa Kembali Kata Sandi Anda",
-                                  image: "assets/icons/gagal.png",
-                                ),
-                              ),
-                            );
-                            Timer(
-                              Duration(seconds: 2),
-                              () => Navigator.pop(context),
-                            );
-                            return;
-                          }
-                          btnChange();
+                          validationPW();
                           // connectionError(context);
                         },
                         shape: RoundedRectangleBorder(
@@ -300,5 +310,94 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
       ),
     );
+  }
+
+  validationPW() {
+    if (!_key.currentState!.validate()) {
+      return;
+    }
+    FocusManager.instance.primaryFocus!.unfocus();
+    var check = passwordIsSame(
+      pwLama.text,
+      pwBaru.text,
+      confpwBaru.text,
+    );
+    if (pwBaru.text == "" || pwLama.text == "" && confpwBaru.text == "") {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: const CustomDialog(
+            title: "Gagal Tersimpan",
+            subtitle: "Periksa Kembali Kata Sandi Anda",
+            image: "assets/icons/gagal.png",
+          ),
+        ),
+      );
+      Timer(
+        Duration(seconds: 2),
+        () => Navigator.pop(context),
+      );
+      return;
+    }
+    if (check == 1) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: DialogPasswordIsSame(
+            onPress: () {
+              Navigator.pop(context);
+            },
+          ),
+        ),
+      );
+      return;
+    }
+    if (check > 1) {
+      if (check == 2) {
+        pwbaru.requestFocus();
+      }
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: const CustomDialog(
+            title: "Gagal Tersimpan",
+            subtitle: "Periksa Kembali Kata Sandi Anda",
+            image: "assets/icons/gagal.png",
+          ),
+        ),
+      );
+      Timer(
+        Duration(seconds: 2),
+        () => Navigator.pop(context),
+      );
+      return;
+    }
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    if (pwLama.text != user.dataUser.password) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: const CustomDialog(
+            title: "Gagal Tersimpan",
+            subtitle: "Periksa Kembali Kata Sandi Anda",
+            image: "assets/icons/gagal.png",
+          ),
+        ),
+      );
+      Timer(
+        Duration(seconds: 2),
+        () => Navigator.pop(context),
+      );
+      return;
+    }
+    btnChange();
   }
 }

@@ -25,9 +25,20 @@ class _AkunPageState extends State<AkunPage> {
     user.checkAccount().then((value) {
       if (value == 401) {
         if (!mounted) return;
-        Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacementNamed(context, "/login");
-        user.isLogin = false;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: DialogSession(
+              onPress: () {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacementNamed(context, "/login");
+                user.isLogin = false;
+              },
+            ),
+          ),
+        );
       } else if (value == 203) {
         return;
       } else {
@@ -221,52 +232,53 @@ class _AkunPageState extends State<AkunPage> {
                         ),
                         const Divider(),
                         Consumer<UserControlProvider>(
-                            builder: (context, value, child) {
-                          return ListTile(
-                            leading: Image.asset(
-                              "assets/icons/keluar.png",
-                              height: 30,
-                              width: 30,
-                            ),
-                            title: const Text(
-                              "Keluar",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                                fontFamily: "Roboto",
+                          builder: (context, value, child) {
+                            return ListTile(
+                              leading: Image.asset(
+                                "assets/icons/keluar.png",
+                                height: 30,
+                                width: 30,
                               ),
-                            ),
-                            onTap: () {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (context) => WillPopScope(
-                                  onWillPop: () async => false,
-                                  child: DialogButton(
-                                    title: "Keluar Dari E-Presensi",
-                                    subtitle: "Apakah Anda ingin keluar?",
-                                    btnLeft: "TIDAK",
-                                    btnRight: "IYA",
-                                    onPresLeft: () {
-                                      Navigator.pop(context);
-                                    },
-                                    onPresRight: () async {
-                                      await value.userLogout().then((status) {
-                                        if (status) {
-                                          Navigator.popUntil(
-                                              context, (route) => route.isFirst);
-                                          Navigator.pushReplacementNamed(
-                                              context, "/login");
-                                        }
-                                      });
-                                    },
-                                  ),
+                              title: const Text(
+                                "Keluar",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                  fontFamily: "Roboto",
                                 ),
-                              );
-                            },
-                          );
-                        }),
+                              ),
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => WillPopScope(
+                                    onWillPop: () async => false,
+                                    child: DialogButton(
+                                      title: "Keluar Dari E-Presensi",
+                                      subtitle: "Apakah Anda ingin keluar?",
+                                      btnLeft: "TIDAK",
+                                      btnRight: "IYA",
+                                      onPresLeft: () {
+                                        Navigator.pop(context);
+                                      },
+                                      onPresRight: () async {
+                                        await value.userLogout().then((status) {
+                                          if (status) {
+                                            Navigator.popUntil(context,
+                                                (route) => route.isFirst);
+                                            Navigator.pushReplacementNamed(
+                                                context, "/login");
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
                         const Divider(),
                       ],
                     ),

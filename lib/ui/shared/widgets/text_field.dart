@@ -33,6 +33,9 @@ class WidgetTextField extends StatefulWidget {
     this.onChanged,
     this.textalign = TextAlign.start,
     this.counterText,
+    this.errorStyle,
+    this.errorBorder,
+    this.autovalidateMode,
   }) : super(key: key);
 
   final bool obscure;
@@ -45,13 +48,14 @@ class WidgetTextField extends StatefulWidget {
   final OutlineInputBorder? border;
   final bool? enable, filled, readOnly;
   final Color? fillColor, focusColor, primaryColor;
-  final TextStyle? hintStyle, style;
-  final InputBorder? enableBorder, disableBorder, focusBorder;
+  final TextStyle? hintStyle, style, errorStyle;
+  final InputBorder? enableBorder, disableBorder, focusBorder, errorBorder;
   final void Function()? onTap;
   final String? Function(String?)? validator;
   final int? maxlenght;
   final void Function(String)? onChanged;
   final TextAlign textalign;
+  final AutovalidateMode? autovalidateMode;
 
   @override
   State<WidgetTextField> createState() => _TextFieldState();
@@ -71,10 +75,13 @@ class _TextFieldState extends State<WidgetTextField> {
         maxLength: widget.maxlenght,
         textAlign: widget.textalign,
         keyboardType: widget.type,
+        autovalidateMode: widget.autovalidateMode,
         initialValue: widget.initialValue,
         validator: widget.validator,
         onChanged: widget.onChanged,
         decoration: InputDecoration(
+          errorStyle: widget.errorStyle,
+          errorBorder: widget.errorBorder,
           counterText: widget.counterText,
           focusedBorder: widget.focusBorder,
           label: widget.label,

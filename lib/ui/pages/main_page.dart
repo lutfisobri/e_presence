@@ -31,9 +31,20 @@ class _BerandaState extends State<Beranda> {
     await user.checkAccount().then((value) {
       if (value == 401) {
         if (!mounted) return;
-        Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacementNamed(context, "/login");
-        user.isLogin = false;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: DialogSession(
+              onPress: () {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacementNamed(context, "/login");
+                user.isLogin = false;
+              },
+            ),
+          ),
+        );
       } else if (value == 203) {
         return;
       } else {

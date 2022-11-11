@@ -233,6 +233,7 @@ class _VerificationOTPState extends State<VerificationOTP> {
                 ),
                 Row(
                   children: [
+                    counter > 3 ? 
                     detik != 0
                         ? Text(
                             "Kirim Ulang kode OTP dalam $detik detik lagi",
@@ -267,6 +268,13 @@ class _VerificationOTPState extends State<VerificationOTP> {
                                 color: Colors.black,
                                 decoration: TextDecoration.underline,
                               ),
+                            ),
+                          ) : Text(
+                            "Kirim Ulang kode OTP",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0XFF999999),
                             ),
                           ),
                   ],

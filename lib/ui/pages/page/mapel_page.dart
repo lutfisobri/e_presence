@@ -3,6 +3,7 @@ import 'package:e_presence/core/providers/pelajaran_provider.dart';
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/ui/shared/constant/tab_bar.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
+import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,9 +35,20 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
     user.checkAccount().then((value) {
       if (value == 401) {
         if (!mounted) return;
-        Navigator.popUntil(context, (route) => route.isFirst);
-        Navigator.pushReplacementNamed(context, "/login");
-        user.isLogin = false;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: DialogSession(
+              onPress: () {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacementNamed(context, "/login");
+                user.isLogin = false;
+              },
+            ),
+          ),
+        );
       } else if (value == 203) {
         return;
       } else {
