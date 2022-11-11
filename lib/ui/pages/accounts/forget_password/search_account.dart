@@ -1,6 +1,6 @@
 import 'dart:async';
-
 import 'package:e_presence/core/providers/user_provider.dart';
+import 'package:e_presence/core/services/validation.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
 import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
@@ -19,6 +19,9 @@ class LupaPassword extends StatefulWidget {
 class _LupaPasswordState extends State<LupaPassword> {
   TextEditingController username = TextEditingController();
   FocusNode focusNode = FocusNode();
+  Map<String, dynamic> dataUser = {};
+  bool isAccount = false;
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -27,9 +30,6 @@ class _LupaPasswordState extends State<LupaPassword> {
     FocusManager.instance.primaryFocus?.unfocus();
     super.dispose();
   }
-
-  bool isAccount = false;
-  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -75,13 +75,50 @@ class _LupaPasswordState extends State<LupaPassword> {
                             primaryColor: const Color(0XFF0B0B0B),
                           ),
                           const SizedBox(
-                            height: 10,
+                            height: 6.03,
+                          ),
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) => WillPopScope(
+                                      onWillPop: () async => false,
+                                      child: DialogSearchAccount(
+                                        onTapbtn: () {
+                                          Navigator.pop(context);
+                                        },
+                                        childbtn: const Text(
+                                          "LAPORKAN",
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: const Text(
+                                  "E-mail sudah tidak bisa diakses?",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 6.97,
                           ),
                           Row(
                             children: [
                               Expanded(
                                 child: WidgetEleBtn(
-                                  onPres: () {},
+                                  onPres: () {
+                                    btnConfirm(user);
+                                  },
                                   minimunSize: const Size(double.infinity, 41),
                                   textStyle: const TextStyle(
                                     fontSize: 16,
@@ -128,7 +165,7 @@ class _LupaPasswordState extends State<LupaPassword> {
                                 child: WidgetEleBtn(
                                   minimunSize: const Size(double.infinity, 41),
                                   onPres: () {
-                                    btnSearch(context, user);
+                                    btnSearch(user);
                                   },
                                   textStyle: const TextStyle(
                                     fontSize: 16,
@@ -160,18 +197,18 @@ class _LupaPasswordState extends State<LupaPassword> {
                     width: 100,
                     height: 100,
                   ),
-                  // CircularProgressIndicator(),
                   const SizedBox(
                     height: 2.63,
                   ),
                   const Text(
                     "Tunggu Proses",
                     style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 14,
-                        decoration: TextDecoration.none,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: "Poppins"),
+                      color: Colors.black,
+                      fontSize: 14,
+                      decoration: TextDecoration.none,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: "Poppins",
+                    ),
                   ),
                 ],
               ),
@@ -181,7 +218,81 @@ class _LupaPasswordState extends State<LupaPassword> {
     );
   }
 
-  void btnSearch(BuildContext context, UserControlProvider user) {
+  btnConfirm(UserControlProvider user) {
+    setState(() {
+      isLoading = true;
+    });
+    bool emailisValid = emailValidation(dataUser['email']);
+    if (!emailisValid) {
+      setState(() {
+        isLoading = false;
+      });
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: const CustomDialog(
+              title: "Terjadi Kesalahan",
+              subtitle: "Periksa kembali E-mail Anda",
+              image: "assets/icons/gagal.png"),
+        ),
+      );
+      Timer(
+        const Duration(seconds: 2),
+        () {
+          Navigator.pop(context);
+        },
+      );
+      return;
+    }
+    var otp = generateOTP();
+    user
+        .sendMail(
+      dataUser['nis'],
+      otp.toString(),
+      dataUser['email'],
+    )
+        .then((value) {
+      if (value) {
+        Map<String, dynamic> otpUser = {
+          "otp": otp.toString(),
+        };
+        dataUser.addEntries(otpUser.entries);
+        setState(() {
+          isLoading = false;
+        });
+        Navigator.pushReplacementNamed(
+          context,
+          "/verificationOTP",
+          arguments: dataUser,
+        );
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: const CustomDialog(
+                title: "Terjadi Kesalahan",
+                subtitle: "Periksa kembali E-mail Anda",
+                image: "assets/icons/gagal.png"),
+          ),
+        );
+        Timer(
+          const Duration(seconds: 2),
+          () {
+            Navigator.pop(context);
+          },
+        );
+      }
+    });
+  }
+
+  void btnSearch(UserControlProvider user) {
     setState(() {
       isLoading = true;
     });
@@ -195,11 +306,19 @@ class _LupaPasswordState extends State<LupaPassword> {
             isLoading = false;
             showDialog(
               context: context,
-              builder: (context) => const CustomDialog(
-                title: "Username Tidak Ditemukan",
-                subtitle: "Masukkan Kembali Username Anda",
-                image: "assets/icons/gagal.png",
+              barrierDismissible: false,
+              builder: (context) => WillPopScope(
+                onWillPop: () async => false,
+                child: const CustomDialog(
+                  title: "Username Tidak Ditemukan",
+                  subtitle: "Masukkan Kembali Username Anda",
+                  image: "assets/icons/gagal.png",
+                ),
               ),
+            );
+            Timer(
+              Duration(seconds: 2),
+              () => Navigator.pop(context),
             );
           });
         },
@@ -214,14 +333,22 @@ class _LupaPasswordState extends State<LupaPassword> {
             setState(() {
               showDialog(
                 context: context,
-                builder: (context) => const CustomDialog(
-                  title: "Username Tidak Ditemukan",
-                  subtitle: "Masukkan Kembali Username Anda",
-                  image: "assets/icons/gagal.png",
+                barrierDismissible: false,
+                builder: (context) => WillPopScope(
+                  onWillPop: () async => false,
+                  child: const CustomDialog(
+                    title: "Username Tidak Ditemukan",
+                    subtitle: "Masukkan Kembali Username Anda",
+                    image: "assets/icons/gagal.png",
+                  ),
                 ),
               );
               isLoading = false;
             });
+            Timer(
+              Duration(seconds: 2),
+              () => Navigator.pop(context),
+            );
           },
         );
         return;
@@ -233,14 +360,22 @@ class _LupaPasswordState extends State<LupaPassword> {
             setState(() {
               showDialog(
                 context: context,
-                builder: (context) => const CustomDialog(
-                  title: "Terjadi Kesalahan",
-                  subtitle: "Periksa Kembali E-mail Anda",
-                  image: "assets/icons/gagal.png",
+                barrierDismissible: false,
+                builder: (context) => WillPopScope(
+                  onWillPop: () async => false,
+                  child: const CustomDialog(
+                    title: "Terjadi Kesalahan",
+                    subtitle: "Periksa Kembali E-mail Anda",
+                    image: "assets/icons/gagal.png",
+                  ),
                 ),
               );
               isLoading = false;
             });
+            Timer(
+              Duration(seconds: 2),
+              () => Navigator.pop(context),
+            );
           },
         );
         return;
@@ -252,6 +387,7 @@ class _LupaPasswordState extends State<LupaPassword> {
               isAccount = true;
               isLoading = false;
               username.text = value['email'];
+              dataUser = value;
             });
           },
         );

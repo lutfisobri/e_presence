@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:e_presence/core/model/model_mapel.dart';
 import 'package:e_presence/core/model/model_user.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -23,47 +22,78 @@ class UserControlProvider with ChangeNotifier {
     isLogin: "",
     deviceId: "",
   );
-  List<ModelMapel> dataMapel = [];
+  Map<String, dynamic> dataOTP = {};
+
+  Future<bool> forgotChangePassword(String username, String password) async {
+    final Uri url = Uri.parse("${_baseUrl}change_password.php");
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "accept": "application/json",
+        },
+        body: {
+          "username": username,
+          "new_password": password,
+        },
+      );
+      if (response.statusCode == 202) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 
   Future<bool> changePassword(String password) async {
     final Uri url = Uri.parse("${_baseUrl}change_password.php");
-    final response = await http.post(
-      url,
-      headers: {
-        "accept": "application/json",
-      },
-      body: {
-        "username": dataUser.username,
-        "new_password": password,
-      },
-    );
-    if (response.statusCode == 202) {
-      return true;
-    } else {
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "accept": "application/json",
+        },
+        body: {
+          "username": dataUser.username,
+          "new_password": password,
+        },
+      );
+      if (response.statusCode == 202) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }
 
   Future<int> checkAccount() async {
     final Uri url = Uri.parse("${_baseUrl}login.php");
-    final response = await http.post(
-      url,
-      headers: {
-        "accept": "application/json",
-      },
-      body: {
-        "username": dataUser.username,
-        "password": dataUser.password,
-        "deviceId": dataUser.deviceId,
-      },
-    );
-    if (response.statusCode == 200) {
-      return 200;
-    } else if (response.statusCode == 401) {
-      isLogin = false;
-      notifyListeners();
-      return 401;
-    } else {
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "accept": "application/json",
+        },
+        body: {
+          "username": dataUser.username,
+          "password": dataUser.password,
+          "deviceId": dataUser.deviceId,
+        },
+      );
+      if (response.statusCode == 200) {
+        return 200;
+      } else if (response.statusCode == 401) {
+        isLogin = false;
+        notifyListeners();
+        return 401;
+      } else {
+        return 404;
+      }
+    } catch (e) {
       return 404;
     }
   }
@@ -91,46 +121,98 @@ class UserControlProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> sendMail(String nis, String otp, String email) async {
+    final Uri url = Uri.parse("${_baseUrl}send_email.php");
+    try {
+      final response = await http.post(
+        url,
+        body: {
+          "nis": nis,
+          "otp": otp,
+          "email": email,
+        },
+      );
+      if (response.statusCode == 202) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<int> verificationOTP(String otp) async {
+    final Uri url = Uri.parse("${_baseUrl}verif_otp.php");
+    try {
+      final response = await http.post(
+        url,
+        body: {
+          "otp": otp,
+        },
+      );
+      if (response.statusCode == 202) {
+        dataOTP = jsonDecode(response.body);
+        notifyListeners();
+        return 1;
+      } else if (response.statusCode == 400) {
+        return 2;
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      return 0;
+    }
+  }
+
   Future<Map<String, dynamic>> searchAccount(String username) async {
     Map<String, dynamic> output = {
       "username": "",
       "email": "",
     };
     final Uri url = Uri.parse("${_baseUrl}search_account.php");
-    final response = await http.post(
-      url,
-      body: {"username": username},
-    );
-    final dataResponse = jsonDecode(response.body);
-    if (response.statusCode == 200) {
-      output = dataResponse;
+    try {
+      final response = await http.post(
+        url,
+        body: {"username": username},
+      );
+      final dataResponse = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        output = dataResponse;
+      }
+      return output;
+    } catch (e) {
+      return output;
     }
-    return output;
   }
 
   Future<ModelUser> loadProfile() async {
     final Uri url = Uri.parse("${_baseUrl}login.php");
-    final response = await http.post(
-      url,
-      headers: {
-        "accept": "application/json",
-      },
-      body: {
-        "username": dataUser.username,
-        "password": dataUser.password,
-        "deviceId": dataUser.deviceId,
-      },
-    );
-    if (response.statusCode == 200) {
-      dataUser = ModelUser.formJson(await jsonDecode(response.body));
-      notifyListeners();
-      return dataUser;
-    } else if (response.statusCode == 401) {
-      isLogin = false;
-      notifyListeners();
-      return dataUser.clear();
-    } else {
-      isLogin = false;
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          "accept": "application/json",
+        },
+        body: {
+          "username": dataUser.username,
+          "password": dataUser.password,
+          "deviceId": dataUser.deviceId,
+        },
+      );
+      if (response.statusCode == 200) {
+        dataUser = ModelUser.formJson(await jsonDecode(response.body));
+        notifyListeners();
+        return dataUser;
+      } else if (response.statusCode == 401) {
+        isLogin = false;
+        notifyListeners();
+        return dataUser.clear();
+      } else {
+        isLogin = false;
+        return dataUser.clear();
+      }
+    } catch (e) {
       return dataUser.clear();
     }
   }
@@ -211,6 +293,7 @@ class UserControlProvider with ChangeNotifier {
         },
       );
       if (response.statusCode == 202) {
+        dataUser = dataUser.clear();
         isLogin = false;
         notifyListeners();
         return true;
@@ -221,41 +304,41 @@ class UserControlProvider with ChangeNotifier {
       }
     } catch (e) {
       isLogin = false;
+      dataUser = dataUser.clear();
       notifyListeners();
       return false;
     }
   }
 
-  userClearData() {
-    dataUser = dataUser.clear();
-    notifyListeners();
-  }
-
   Future<bool> updateProfile(
       String email, String? photo, String tglLahir) async {
     final Uri url = Uri.parse("${_baseUrl}update_profile.php");
-    var request = http.MultipartRequest('POST', url);
-    if (photo != null) {
-      request.fields.addAll({
-        'nis': dataUser.nis,
-        'email': email,
-        'tanggal_lahir': tglLahir,
-      });
-      request.files.add(await http.MultipartFile.fromPath('foto', photo));
-    } else {
-      request.fields.addAll({
-        'nis': dataUser.nis,
-        'email': email,
-        'tanggal_lahir': tglLahir,
-      });
-    }
+    try {
+      var request = http.MultipartRequest('POST', url);
+      if (photo != null) {
+        request.fields.addAll({
+          'nis': dataUser.nis,
+          'email': email,
+          'tanggal_lahir': tglLahir,
+        });
+        request.files.add(await http.MultipartFile.fromPath('foto', photo));
+      } else {
+        request.fields.addAll({
+          'nis': dataUser.nis,
+          'email': email,
+          'tanggal_lahir': tglLahir,
+        });
+      }
 
-    http.StreamedResponse response = await request.send();
+      http.StreamedResponse response = await request.send();
 
-    if (response.statusCode == 202) {
-      loadProfile();
-      return true;
-    } else {
+      if (response.statusCode == 202) {
+        loadProfile();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
       return false;
     }
   }

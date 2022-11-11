@@ -1,9 +1,11 @@
 import 'package:e_presence/ui/pages/accounts/auth/login.dart';
 import 'package:e_presence/ui/pages/accounts/change_password.dart';
 import 'package:e_presence/ui/pages/accounts/edit_profile.dart';
+import 'package:e_presence/ui/pages/accounts/forget_password/change_password.dart';
 import 'package:e_presence/ui/pages/accounts/forget_password/search_account.dart';
 import 'package:e_presence/ui/pages/accounts/view_photo.dart';
 import 'package:e_presence/ui/pages/details_pages/detail_presensi.dart';
+import 'package:e_presence/ui/pages/details_pages/verification_otp.dart';
 import 'package:e_presence/ui/pages/main_page.dart';
 import 'package:e_presence/ui/pages/splash_screen.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
@@ -50,6 +52,8 @@ class _MainState extends State<Main> {
             "/editProfile": (context) => const EditProfile(),
             "/lupaPassword": (context) => const LupaPassword(),
             "/viewPhoto": (context) => const ViewPhoto(),
+            "/verificationOTP": (context) => const VerificationOTP(),
+            "/forgotChangePassword": (context) => const ForgetChangePassword(),
           },
           debugShowCheckedModeBanner: false,
           home: const SplashScreen(),

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/ui/shared/widgets/dialog.dart';
@@ -23,19 +22,18 @@ class _AkunPageState extends State<AkunPage> {
 
   loadProfile() async {
     final user = Provider.of<UserControlProvider>(context, listen: false);
-    user.checkAccount();
-    // .then((value) {
-    //   if (value == 401) {
-    //     if (!mounted) return;
-    //     // Navigator.pushReplacementNamed(context, "/login");
-    //     // user.userClearData();
-    //     user.isLogin = false;
-    //   } else if (value == 203) {
-    //     return;
-    //   } else {
-    //     user.isLogin = false;
-    //   }
-    // });
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacementNamed(context, "/login");
+        user.isLogin = false;
+      } else if (value == 203) {
+        return;
+      } else {
+        user.isLogin = false;
+      }
+    });
   }
 
   @override
@@ -51,7 +49,7 @@ class _AkunPageState extends State<AkunPage> {
                   padding: const EdgeInsets.only(left: 20.54, right: 25),
                   height: 113,
                   child: SizedBox(
-                    width: double.infinity,
+                    // width: double.infinity,
                     child: Stack(
                       children: [
                         Row(
@@ -102,12 +100,13 @@ class _AkunPageState extends State<AkunPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(
-                                    width: 230,
+                                    width: 190,
                                     child: Text(
                                       usrProv.dataUser.nama,
                                       overflow: TextOverflow.visible,
                                       maxLines: 1,
                                       style: const TextStyle(
+                                        overflow: TextOverflow.visible,
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
                                         fontFamily: "Roboto",
@@ -115,24 +114,28 @@ class _AkunPageState extends State<AkunPage> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 230,
+                                    width: 190,
                                     child: Text(
                                       "NIS ${usrProv.dataUser.nis}",
-                                      overflow: TextOverflow.ellipsis,
+                                      overflow: TextOverflow.visible,
+                                      maxLines: 1,
                                       style: const TextStyle(
                                         fontSize: 15,
+                                        overflow: TextOverflow.visible,
                                         fontWeight: FontWeight.w300,
                                         fontFamily: "Roboto",
                                       ),
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 230,
+                                    width: 190,
                                     child: Text(
                                       usrProv.dataUser.email,
-                                      overflow: TextOverflow.ellipsis,
+                                      overflow: TextOverflow.visible,
+                                      maxLines: 1,
                                       style: const TextStyle(
                                         fontSize: 15,
+                                        overflow: TextOverflow.visible,
                                         fontWeight: FontWeight.w300,
                                         fontFamily: "Roboto",
                                       ),
@@ -237,28 +240,28 @@ class _AkunPageState extends State<AkunPage> {
                             onTap: () {
                               showDialog(
                                 context: context,
-                                builder: (context) => DialogButton(
-                                  title: "Keluar Dari E-Presensi",
-                                  subtitle: "Apakah Anda ingin keluar?",
-                                  btnLeft: "TIDAK",
-                                  btnRight: "IYA",
-                                  onPresLeft: () {
-                                    Navigator.pop(context);
-                                  },
-                                  onPresRight: () async {
-                                    await value.userLogout().then((status) {
-                                      if (status) {
-                                        Navigator.pushReplacementNamed(
-                                            context, "/login");
-                                        Timer(
-                                          const Duration(seconds: 1),
-                                          () {
-                                            value.userClearData();
-                                          },
-                                        );
-                                      }
-                                    });
-                                  },
+                                barrierDismissible: false,
+                                builder: (context) => WillPopScope(
+                                  onWillPop: () async => false,
+                                  child: DialogButton(
+                                    title: "Keluar Dari E-Presensi",
+                                    subtitle: "Apakah Anda ingin keluar?",
+                                    btnLeft: "TIDAK",
+                                    btnRight: "IYA",
+                                    onPresLeft: () {
+                                      Navigator.pop(context);
+                                    },
+                                    onPresRight: () async {
+                                      await value.userLogout().then((status) {
+                                        if (status) {
+                                          Navigator.popUntil(
+                                              context, (route) => route.isFirst);
+                                          Navigator.pushReplacementNamed(
+                                              context, "/login");
+                                        }
+                                      });
+                                    },
+                                  ),
                                 ),
                               );
                             },

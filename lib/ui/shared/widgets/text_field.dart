@@ -29,12 +29,16 @@ class WidgetTextField extends StatefulWidget {
     this.onTap,
     this.readOnly = false,
     this.validator,
+    this.maxlenght,
+    this.onChanged,
+    this.textalign = TextAlign.start,
+    this.counterText,
   }) : super(key: key);
 
   final bool obscure;
   final TextEditingController? controller;
   final FocusNode? focusNode;
-  final String? hintText, initialValue;
+  final String? hintText, initialValue, counterText;
   final Widget? label, prefixIcon, sufixIcon1, sufixIcon2;
   final double contenH, contenV;
   final TextInputType? type;
@@ -45,6 +49,9 @@ class WidgetTextField extends StatefulWidget {
   final InputBorder? enableBorder, disableBorder, focusBorder;
   final void Function()? onTap;
   final String? Function(String?)? validator;
+  final int? maxlenght;
+  final void Function(String)? onChanged;
+  final TextAlign textalign;
 
   @override
   State<WidgetTextField> createState() => _TextFieldState();
@@ -57,13 +64,18 @@ class _TextFieldState extends State<WidgetTextField> {
   Widget build(BuildContext context) {
     return Theme(
       data: ThemeData(
-        colorScheme: ThemeData().colorScheme.copyWith(primary: widget.primaryColor),
+        colorScheme:
+            ThemeData().colorScheme.copyWith(primary: widget.primaryColor),
       ),
       child: TextFormField(
+        maxLength: widget.maxlenght,
+        textAlign: widget.textalign,
         keyboardType: widget.type,
         initialValue: widget.initialValue,
         validator: widget.validator,
+        onChanged: widget.onChanged,
         decoration: InputDecoration(
+          counterText: widget.counterText,
           focusedBorder: widget.focusBorder,
           label: widget.label,
           enabledBorder: widget.enableBorder,
@@ -82,7 +94,7 @@ class _TextFieldState extends State<WidgetTextField> {
                   child: obscure ? widget.sufixIcon1 : widget.sufixIcon2,
                 )
               : widget.sufixIcon1,
-              suffixIconColor: Colors.black,
+          suffixIconColor: Colors.black,
           contentPadding: EdgeInsets.symmetric(
             horizontal: widget.contenH,
             vertical: widget.contenV,

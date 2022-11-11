@@ -1,7 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:e_presence/core/providers/user_provider.dart';
 import 'package:e_presence/ui/shared/widgets/button_elevated.dart';
+import 'package:e_presence/ui/shared/widgets/dialog.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 class ForgetChangePassword extends StatefulWidget {
   const ForgetChangePassword({super.key});
@@ -11,6 +15,22 @@ class ForgetChangePassword extends StatefulWidget {
 }
 
 class _ForgetChangePasswordState extends State<ForgetChangePassword> {
+  Map<String, dynamic> dataUser = {};
+  TextEditingController password = TextEditingController();
+  TextEditingController confPassword = TextEditingController();
+
+  loadData() {
+    final args = ModalRoute.of(context)!.settings.arguments;
+    setState(() {
+      dataUser = jsonDecode(jsonEncode(args));
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -24,59 +44,156 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
         ),
-        body: GestureDetector(
-          onTap: () {},
-          child: SafeArea(
-              child: Padding(
-            padding: EdgeInsets.only(
-              left: 18.r,
-              right: 18.r,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(
+              left: 19,
+              right: 19,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 WidgetTextField(
-                  label: Text(
-                    "Password Baru*",
+                  controller: password,
+                  label: const Text(
+                    "Kata Sandi Baru*",
                     style: TextStyle(
-                      fontSize: 10.sp,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      // color: const Color(0XFF494949),
                     ),
                   ),
+                  type: TextInputType.visiblePassword,
                   primaryColor: Colors.black,
                   obscure: true,
                   sufixIcon1: const Icon(Icons.visibility_off),
                   sufixIcon2: const Icon(Icons.visibility),
+                ),
+                const SizedBox(
+                  height: 19.5,
                 ),
                 WidgetTextField(
-                  label: Text(
-                    "Konfirmasi Password Baru*",
+                  controller: confPassword,
+                  label: const Text(
+                    "Konfirmasi Kata Sandi Baru*",
                     style: TextStyle(
-                      fontSize: 10.sp,
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      color: const Color(0XFF494949),
+                      color: Color(0XFF494949),
                     ),
                   ),
+                  type: TextInputType.visiblePassword,
                   obscure: true,
                   sufixIcon1: const Icon(Icons.visibility_off),
                   sufixIcon2: const Icon(Icons.visibility),
                   primaryColor: Colors.black,
                 ),
-                SizedBox(
-                  height: 6.5.r,
+                const SizedBox(
+                  height: 20.5,
                 ),
                 WidgetEleBtn(
                   onPres: () {
-                    FocusManager.instance.primaryFocus?.unfocus();
+                    btnUbah();
                   },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(7.77)),
+                  minimunSize: const Size(109, 46),
                   child: const Text("Ubah"),
                 ),
               ],
             ),
-          )),
+          ),
         ),
       ),
     );
+  }
+
+  btnUbah() {
+    loadData();
+    FocusManager.instance.primaryFocus?.unfocus();
+    if (password.text != confPassword.text) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: const CustomDialog(
+            title: "Gagal Tersimpan",
+            subtitle: "Periksa kembali Kata Sandi Anda",
+            image: "assets/icons/gagal.png",
+          ),
+        ),
+      );
+      Timer(
+        const Duration(seconds: 2),
+        () => Navigator.pop(context),
+      );
+      return;
+    }
+    if (confPassword.text.length < 8) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: const CustomDialog(
+            title: "Gagal Tersimpan",
+            subtitle: "Periksa kembali Kata Sandi Anda",
+            image: "assets/icons/gagal.png",
+          ),
+        ),
+      );
+      Timer(
+        const Duration(seconds: 2),
+        () => Navigator.pop(context),
+      );
+      return;
+    }
+    final usr = Provider.of<UserControlProvider>(context, listen: false);
+    usr
+        .forgotChangePassword(
+      dataUser['username'].toString(),
+      password.text,
+    )
+        .then((value) {
+      if (value) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: const CustomDialog(
+              title: "Berhasil",
+              subtitle: "Woah,  Kata Sandi anda berhasil diubah",
+              image: "assets/icons/sukses.png",
+            ),
+          ),
+        );
+        Timer(
+          const Duration(seconds: 2),
+          () => Navigator.pop(context),
+        );
+        Timer(
+          const Duration(seconds: 2),
+          () => Navigator.pop(context),
+        );
+      } else {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: const CustomDialog(
+              title: "Gagal Tersimpan",
+              subtitle: "Periksa kembali Kata Sandi Anda",
+              image: "assets/icons/gagal.png",
+            ),
+          ),
+        );
+        Timer(
+          const Duration(seconds: 2),
+          () => Navigator.pop(context),
+        );
+      }
+    });
   }
 }

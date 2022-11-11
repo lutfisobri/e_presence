@@ -21,17 +21,18 @@ class _HomeState extends State<Home> {
     final loadPresen = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserControlProvider>(context, listen: false);
     loadPresen.loadPresensi(user.dataUser.idKelas);
-    user.checkAccount();
-    // .then((value) {
-    //   if (value == 401) {
-    //     if (!mounted) return;
-    //     Navigator.pushReplacementNamed(context, "/login");
-    //     user.userClearData();
-    //     user.isLogin = false;
-    //   } else if (value == 200) {
-    //     return;
-    //   }
-    // });
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacementNamed(context, "/login");
+        user.isLogin = false;
+      } else if (value == 203) {
+        return;
+      } else {
+        user.isLogin = false;
+      }
+    });
   }
 
   @override
@@ -142,11 +143,11 @@ class _HomeState extends State<Home> {
                   offset: const Offset(1, 2),
                   blurRadius: 2,
                 ),
-                // BoxShadow(
-                //   offset: Offset(0, 1),
-                //   blurRadius: 5,
-                //   color: Color(0XFF000000).withOpacity(0.25),
-                // ),
+                BoxShadow(
+                  color: const Color(0XFF909090).withOpacity(0.20),
+                  offset: const Offset(0, 1),
+                  blurRadius: 2,
+                ),
               ]),
           child: Center(
             child: Row(
@@ -258,8 +259,8 @@ class _HomeState extends State<Home> {
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0XFF909090).withOpacity(0.08),
-                  offset: const Offset(1, 2),
+                  color: const Color(0XFF909090).withOpacity(0.20),
+                  offset: const Offset(0, 1),
                   blurRadius: 2,
                 ),
               ],

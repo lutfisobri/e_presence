@@ -11,8 +11,19 @@ class ViewPhoto extends StatefulWidget {
 
 class _ViewPhotoState extends State<ViewPhoto> {
   loadProfile() {
-    var user = Provider.of<UserControlProvider>(context, listen: false);
-    user.checkAccount();
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacementNamed(context, "/login");
+        user.isLogin = false;
+      } else if (value == 203) {
+        return;
+      } else {
+        user.isLogin = false;
+      }
+    });
   }
 
   @override

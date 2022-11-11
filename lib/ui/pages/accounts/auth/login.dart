@@ -41,7 +41,7 @@ class _LoginState extends State<Login> {
   }
 
   actionBtnLogin(
-    BuildContext context,
+    // BuildContext context,
     UserControlProvider userControlProvider,
   ) async {
     FocusManager.instance.primaryFocus?.unfocus();
@@ -58,13 +58,26 @@ class _LoginState extends State<Login> {
         () {
           showDialog(
             context: context,
-            builder: (context) => const CustomDialogLogin(),
+            barrierDismissible: false,
+            builder: (context) => WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: const CustomDialogLogin(),
+            ),
+          );
+          Timer(
+            const Duration(seconds: 2),
+            () {
+              Navigator.pop(context, false);
+            },
           );
         },
       );
+      return;
     } else {
       Timer(
-        const Duration(seconds: 1),
+        const Duration(milliseconds: 200),
         () async {
           await userControlProvider
               .userLogin(
@@ -92,7 +105,17 @@ class _LoginState extends State<Login> {
                   } else {
                     showDialog(
                       context: context,
-                      builder: (context) => const CustomDialogLogin(),
+                      barrierDismissible: false,
+                      builder: (context) => WillPopScope(
+                        onWillPop: () async => false,
+                        child: const CustomDialogLogin(),
+                      ),
+                    );
+                    Timer(
+                      const Duration(seconds: 2),
+                      () {
+                        Navigator.pop(context);
+                      },
                     );
                   }
                 },
@@ -100,7 +123,20 @@ class _LoginState extends State<Login> {
             } else {
               showDialog(
                 context: context,
-                builder: (context) => const CustomDialogLogin(),
+                barrierDismissible: false,
+                builder: (context) => WillPopScope(
+                  onWillPop: () async => false,
+                  child: const CustomDialogLogin(),
+                ),
+              );
+              Timer(
+                const Duration(seconds: 2),
+                () {
+                  setState(() {
+                    // back = true;
+                  });
+                  Navigator.pop(context);
+                },
               );
             }
           });
@@ -271,7 +307,8 @@ class _LoginState extends State<Login> {
                                             isLoading = true;
                                           });
                                           actionBtnLogin(
-                                              context, userControlProvider);
+                                              // context, 
+                                              userControlProvider);
                                         },
                                         minimunSize: const Size(248, 41),
                                         shape: RoundedRectangleBorder(

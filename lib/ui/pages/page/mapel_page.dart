@@ -31,16 +31,18 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserControlProvider>(context, listen: false);
     dataMapel.loadMapel(user.dataUser.idKelas);
-    user.checkAccount();
-    // /.then((value) {
-    //   if (value == 401) {
-    //     if (!mounted) return;
-    //     Navigator.pushReplacementNamed(context, "/login");
-    //     user.userClearData();
-    //   } else if (value == 200) {
-    //     return;
-    //   }
-    // });
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacementNamed(context, "/login");
+        user.isLogin = false;
+      } else if (value == 203) {
+        return;
+      } else {
+        user.isLogin = false;
+      }
+    });
     setState(() {
       data = dataMapel.listMapel
           .where((element) => element.hari.toLowerCase() == hari)
@@ -157,9 +159,10 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                                 color: Colors.white,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.25),
+                                    color: const Color(0XFF909090)
+                                        .withOpacity(0.20),
                                     offset: const Offset(0, 1),
-                                    blurRadius: 5,
+                                    blurRadius: 2,
                                   ),
                                 ],
                               ),

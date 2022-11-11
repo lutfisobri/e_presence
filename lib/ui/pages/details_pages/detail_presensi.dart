@@ -41,6 +41,23 @@ class _PresensiState extends State<DetailPresensi> {
     super.initState();
     _chose = items[0];
     location();
+    checkAccount();
+  }
+
+  checkAccount() {
+    final user = Provider.of<UserControlProvider>(context, listen: false);
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacementNamed(context, "/login");
+        user.isLogin = false;
+      } else if (value == 203) {
+        return;
+      } else {
+        user.isLogin = false;
+      }
+    });
   }
 
   location() async {
@@ -48,7 +65,7 @@ class _PresensiState extends State<DetailPresensi> {
     if (!serviceEnabled) {
       return showDialog(
         context: context,
-        builder: (context) => CustomDialog(
+        builder: (context) => const CustomDialog(
             title: "LOKASI",
             subtitle: "Mohon aktifkan lokasi",
             image: "assets/icons/gagal.png"),
@@ -350,7 +367,7 @@ class _PresensiState extends State<DetailPresensi> {
                             setState(() {
                               isLoading = true;
                             });
-                            validationTime(
+                            var date = validationTime(
                               DateTime.parse(
                                 pelProv.listPresensi[index].jamAwal,
                               ),
@@ -417,14 +434,15 @@ class _PresensiState extends State<DetailPresensi> {
     );
   }
 
-  Future validationTime(DateTime jamAwal, DateTime jamAkhir) async {
+  Future<DateTime> validationTime(DateTime jamAwal, DateTime jamAkhir) async {
     final int offset = await NTP.getNtpOffset(
       localTime: DateTime.now(),
       lookUpAddress: "0.id.pool.ntp.org",
     );
-    DateTime internetTime = DateTime.now().add(Duration(milliseconds: offset));
+    // DateTime internetTime =
+    return DateTime.now().add(Duration(milliseconds: offset));
     // print(internetTime.isAfter(jamAkhir));
-    if (internetTime.isBefore(jamAwal)) return false;
-    if (internetTime.isAfter(jamAkhir)) return false;
+    // if (internetTime.isBefore(jamAwal)) return false;
+    // if (internetTime.isAfter(jamAkhir)) return false;
   }
 }

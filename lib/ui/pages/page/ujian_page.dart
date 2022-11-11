@@ -5,7 +5,6 @@ import 'package:e_presence/ui/shared/constant/tab_bar.dart';
 import 'package:e_presence/ui/shared/theme_data.dart';
 import 'package:e_presence/utils/static.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class JadwalPage extends StatefulWidget {
@@ -32,17 +31,19 @@ class _JadwalPageState extends State<JadwalPage> {
   getData() {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserControlProvider>(context, listen: false);
-    dataMapel.loadMapel(user.dataUser.idKelas);
-    user.checkAccount();
-    // .then((value) {
-    //   if (value == 401) {
-    //     if (!mounted) return;
-    //     Navigator.pushReplacementNamed(context, "/login");
-    //     user.userClearData();
-    //   } else if (value == 200) {
-    //     return;
-    //   }
-    // });
+    dataMapel.loadUjian(user.dataUser.idKelas);
+    user.checkAccount().then((value) {
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacementNamed(context, "/login");
+        user.isLogin = false;
+      } else if (value == 203) {
+        return;
+      } else {
+        user.isLogin = false;
+      }
+    });
     setState(() {
       data = dataMapel.listUjian
           .where((element) => element.hari.toLowerCase() == hari)
@@ -157,9 +158,10 @@ class _JadwalPageState extends State<JadwalPage> {
                               color: Colors.white,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.25),
+                                  color:
+                                      const Color(0XFF909090).withOpacity(0.20),
                                   offset: const Offset(0, 1),
-                                  blurRadius: 5,
+                                  blurRadius: 2,
                                 ),
                               ],
                             ),
@@ -171,8 +173,11 @@ class _JadwalPageState extends State<JadwalPage> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(3.15),
                                   ),
-                                  child: iconMapel(pelProv, i,
-                                      jenis: Pelajaran.ujian),
+                                  child: iconMapel(
+                                    pelProv,
+                                    i,
+                                    jenis: Pelajaran.ujian,
+                                  ),
                                 ),
                                 const SizedBox(
                                   width: 12.6,

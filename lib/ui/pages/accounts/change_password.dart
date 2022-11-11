@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:e_presence/ui/shared/widgets/text_field.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:provider/provider.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -36,16 +35,19 @@ class _ChangePasswordState extends State<ChangePassword> {
     setState(() {
       deviceId = deviceID ?? "";
     });
-    user().checkAccount();
-    // .then((value) {
-    //   if (value == 401) {
-    //     if (!mounted) return;
-    //     Navigator.pushReplacementNamed(context, "/login");
-    //     user().userClearData();
-    //   } else if (value == 200) {
-    //     return;
-    //   }
-    // });
+    user().checkAccount().then((value) {
+      if (!mounted) return;
+      if (value == 401) {
+        if (!mounted) return;
+        Navigator.popUntil(context, (route) => route.isFirst);
+        Navigator.pushReplacementNamed(context, "/login");
+        user().isLogin = false;
+      } else if (value == 203) {
+        return;
+      } else {
+        user().isLogin = false;
+      }
+    });
   }
 
   UserControlProvider user() {
@@ -72,27 +74,43 @@ class _ChangePasswordState extends State<ChangePassword> {
       if (value) {
         showDialog(
           context: context,
-          builder: (context) => const CustomDialog(
-            title: "Berhasil",
-            subtitle: "Woah, Kata Sandi anda berhasil diubah",
-            image: "assets/icons/sukses.png",
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: const CustomDialog(
+              title: "Berhasil",
+              subtitle: "Woah, Kata Sandi anda berhasil diubah",
+              image: "assets/icons/sukses.png",
+            ),
           ),
         );
         user.userLogin(user.dataUser.username, pwBaru.text, deviceId);
         Timer(
-          const Duration(milliseconds: 500),
-          () => clearText(),
+          const Duration(seconds: 2),
+          () {
+            clearText();
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
         );
         // clearText();
       } else {
         showDialog(
           context: context,
-          builder: (context) => const CustomDialog(
-            title: "Gagal Tersimpan",
-            subtitle: "Periksa Kembali Kata Sandi Anda",
-            image: "assets/icons/gagal.png",
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: const CustomDialog(
+              title: "Gagal Tersimpan",
+              subtitle: "Periksa Kembali Kata Sandi Anda",
+              image: "assets/icons/gagal.png",
+            ),
           ),
         );
+        Timer(
+                              Duration(seconds: 2),
+                              () => Navigator.pop(context),
+                            );
       }
     });
   }
@@ -225,11 +243,19 @@ class _ChangePasswordState extends State<ChangePassword> {
                           if (!check) {
                             showDialog(
                               context: context,
-                              builder: (context) => const CustomDialog(
-                                title: "Gagal Tersimpan",
-                                subtitle: "Periksa Kembali Kata Sandi Anda",
-                                image: "assets/icons/gagal.png",
+                              barrierDismissible: false,
+                              builder: (context) => WillPopScope(
+                                onWillPop: () async => false,
+                                child: const CustomDialog(
+                                  title: "Gagal Tersimpan",
+                                  subtitle: "Periksa Kembali Kata Sandi Anda",
+                                  image: "assets/icons/gagal.png",
+                                ),
                               ),
+                            );
+                            Timer(
+                              Duration(seconds: 2),
+                              () => Navigator.pop(context),
                             );
                             return;
                           }
@@ -238,11 +264,19 @@ class _ChangePasswordState extends State<ChangePassword> {
                           if (pwLama.text != user.dataUser.password) {
                             showDialog(
                               context: context,
-                              builder: (context) => const CustomDialog(
-                                title: "Gagal Tersimpan",
-                                subtitle: "Periksa Kembali Kata Sandi Anda",
-                                image: "assets/icons/gagal.png",
+                              barrierDismissible: false,
+                              builder: (context) => WillPopScope(
+                                onWillPop: () async => false,
+                                child: const CustomDialog(
+                                  title: "Gagal Tersimpan",
+                                  subtitle: "Periksa Kembali Kata Sandi Anda",
+                                  image: "assets/icons/gagal.png",
+                                ),
                               ),
+                            );
+                            Timer(
+                              Duration(seconds: 2),
+                              () => Navigator.pop(context),
                             );
                             return;
                           }
