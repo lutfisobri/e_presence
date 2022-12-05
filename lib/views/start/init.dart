@@ -1,5 +1,6 @@
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
+import 'package:app_presensi/views/pages/detail_informasi.dart';
 import 'package:app_presensi/views/pages/presensi.dart';
 import 'package:app_presensi/views/start/main.dart';
 import 'package:app_presensi/views/start/splash_screen.dart';
@@ -48,6 +49,7 @@ class _MainState extends State<Main> {
             "/login": (context) => const Login(),
             "/home": (context) => const Beranda(),
             "/detailPresensi": (context) => const DetailPresensi(),
+            "/detailInformasi": (context) => const DetailInformasi(),
             "/ubahPassword": (context) => const ChangePassword(),
             "/editProfile": (context) => const EditProfile(),
             "/lupaPassword": (context) => const LupaPassword(),
