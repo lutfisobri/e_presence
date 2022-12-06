@@ -9,13 +9,14 @@ import 'package:http/http.dart' as http;
 import 'package:ntp/ntp.dart';
 
 class PelajaranProvider with ChangeNotifier {
-  final _baseUrl = "https://neko.id.orangeflasher.com/v1/pelajaran/";
+  final _baseUrl = "https://kateruriyu.my.id/api/v3/pelajaran/";
   List<ModelPresensi> listPresensi = [];
   List<ModelMapel> listMapel = [];
   List<ModelUjian> listUjian = [];
 
   loadPresensi(String idKelas) async {
-    final Uri url = Uri.parse("${_baseUrl}presensi.php?id_kelas=$idKelas");
+    final Uri url =
+        Uri.parse("${_baseUrl}jadwal-presensi.php?id_kelas=$idKelas");
     final int offset = await NTP.getNtpOffset(
       localTime: DateTime.now(),
       lookUpAddress: "0.id.pool.ntp.org",
@@ -23,7 +24,7 @@ class PelajaranProvider with ChangeNotifier {
     DateTime internetTime = DateTime.now().add(Duration(milliseconds: offset));
     final response = await http.get(url);
     if (response.statusCode == 200) {
-      Iterable iterable = jsonDecode(response.body);
+      Iterable iterable = jsonDecode(response.body)['data'];
       var pres = iterable.map((e) => ModelPresensi.formJson(e)).toList();
       listPresensi = pres.where((element) {
         return internetTime.isAfter(DateTime.parse(element.jamAwal)) &&
@@ -33,28 +34,45 @@ class PelajaranProvider with ChangeNotifier {
     }
   }
 
+  Future<List> mapel(String idKelas) async {
+    final Uri url = Uri.parse("${_baseUrl}jadwal-mapel.php?id_kelas=$idKelas");
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        Iterable iterable = jsonDecode(response.body)['data'];
+        listMapel = iterable.map((e) => ModelMapel.formJson(e)).toList();
+        notifyListeners();
+      }
+    } catch (e) {
+      return [];
+    }
+    return listMapel;
+  }
+
   loadMapel(String idKelas) async {
-    final Uri url = Uri.parse("${_baseUrl}mapel.php?id_kelas=$idKelas");
+    final Uri url =
+        Uri.parse("${_baseUrl}jadwal-pelajaran.php?id_kelas=$idKelas");
     final response = await http.get(url);
+    print(response.body);
     if (response.statusCode == 200) {
-      Iterable iterable = jsonDecode(response.body);
+      Iterable iterable = jsonDecode(response.body)['data'];
       listMapel = iterable.map((e) => ModelMapel.formJson(e)).toList();
       notifyListeners();
     }
   }
 
   loadUjian(String idKelas) async {
-    final Uri url = Uri.parse("${_baseUrl}ujian.php?id_kelas=$idKelas");
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      Iterable iterable = jsonDecode(response.body);
-      listUjian = iterable.map((e) => ModelUjian.formJson(e)).toList();
-      notifyListeners();
-    }
+    final Uri url = Uri.parse("${_baseUrl}jadwal-ujian.php?id_kelas=$idKelas");
+    // final response = await http.get(url);
+    // if (response.statusCode == 200) {
+    //   Iterable iterable = jsonDecode(response.body)['data'];
+    //   listUjian = iterable.map((e) => ModelUjian.formJson(e)).toList();
+    //   notifyListeners();
+    // }
   }
 
   submitPresensi(Map<String, dynamic> json) async {
-    final Uri url = Uri.parse("${_baseUrl}submit-presensi.php");
+    final Uri url = Uri.parse("${_baseUrl}presensi.php");
     var data = SubmitPresensi.send(json);
     try {
       final response = await http.post(

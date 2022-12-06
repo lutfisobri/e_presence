@@ -1,6 +1,7 @@
 import 'package:app_presensi/app/models/mapel.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
+import 'package:app_presensi/resources/utils/days.dart';
 import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/constant/tab_bar.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
@@ -118,7 +119,9 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                   curve: Curves.decelerate,
                 );
               },
-              scrollController: scrollController, count: 7, hari: const [],
+              scrollController: scrollController,
+              count: days.length,
+              hari: days,
             ),
             Container(
               height: 400,

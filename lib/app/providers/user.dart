@@ -14,9 +14,6 @@ class UserProvider with ChangeNotifier {
     kelas: '',
     idKelas: '',
     tglLahir: '',
-    foto: '',
-    email: '',
-    deviceId: '',
   );
   Map<String, dynamic> dataOTP = {};
 
@@ -133,8 +130,10 @@ class UserProvider with ChangeNotifier {
         },
         body: {
           "username": dataUser.username,
+          'deviceId': dataUser.deviceId,
         },
       );
+      print(response.body);
       if (response.statusCode == 200) {
         dataUser = dataUser.clear();
         isLogin = false;
@@ -146,6 +145,7 @@ class UserProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
+      print(e);
       isLogin = false;
       dataUser = dataUser.clear();
       notifyListeners();

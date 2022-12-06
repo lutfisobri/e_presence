@@ -2,8 +2,6 @@ class ModelUser {
   final String username, nama, kelas, idKelas, tglLahir;
   String? foto, email, deviceId;
 
-  // {username: 12345678, nama: Lutfi Sobri, kelas: X 1, id_kelas: 3, tanggal_lahir: 2022-12-02, foto: null, email: lutfisobri@gmail.com, no_hp: null, alamat: null, isLogin: 1, deviceId: f2dbdf048b7f4422, nama_kelas: X 1}
-
   ModelUser({
     required this.username,
     required this.nama,
@@ -30,7 +28,7 @@ class ModelUser {
 
   Map<String, dynamic> toJson() {
     return {
-      'username': username,
+      'nis': username,
       'nama': nama,
       'kelas': kelas,
       'id_kelas': idKelas,
@@ -43,7 +41,7 @@ class ModelUser {
 
   clear() {
     Map<String, dynamic> hapus = {
-      'username': '',
+      'nis': '',
       'nama': '',
       'kelas': '',
       'id_kelas': '',

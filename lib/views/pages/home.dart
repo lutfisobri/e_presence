@@ -1,7 +1,9 @@
+import 'package:app_presensi/app/providers/informasi.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -51,6 +53,9 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     loadPresensi();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Provider.of<InformasiProvider>(context, listen: false).getData();
+    });
   }
 
   @override
@@ -122,7 +127,7 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
-                  inforAkademik(value),
+                  inforAkademik(),
                 ],
               ),
             ),
@@ -132,96 +137,111 @@ class _HomeState extends State<Home> {
     );
   }
 
-  SizedBox inforAkademik(PelajaranProvider value) {
+  SizedBox inforAkademik() {
     return SizedBox(
       height: 177,
-      child: ListView.separated(
-        separatorBuilder: (context, index) => Container(
-          width: 14,
-        ),
-        scrollDirection: Axis.horizontal,
-        itemCount: 6,
-        shrinkWrap: true,
-        padding: const EdgeInsets.only(left: 19, right: 19, top: 8, bottom: 8),
-        itemBuilder: (context, index) => GestureDetector(
-          onTap: () {
-            Navigator.pushNamed(context, "/detailInformasi");
-          },
-          child: Container(
-            width: 246,
-            height: 119,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(6),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0XFF909090).withOpacity(0.08),
-                    offset: const Offset(1, 2),
-                    blurRadius: 2,
-                  ),
-                  BoxShadow(
-                    color: const Color(0XFF909090).withOpacity(0.20),
-                    offset: const Offset(0, 1),
-                    blurRadius: 2,
-                  ),
-                ]),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(
-                        left: 12.6, right: 12.6, top: 13, bottom: 4),
-                    width: 57,
-                    height: 57,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(3.15),
-                      child: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                        ),
-                      ), // child: Image.network(value.listMapel[0].namaMapel),
+      child: Consumer<InformasiProvider>(builder: (context, informasi, child) {
+        return ListView.separated(
+          separatorBuilder: (context, index) => Container(
+            width: 14,
+          ),
+          scrollDirection: Axis.horizontal,
+          itemCount:
+              informasi.informasi.length > 4 ? 4 : informasi.informasi.length,
+          shrinkWrap: true,
+          padding:
+              const EdgeInsets.only(left: 19, right: 19, top: 8, bottom: 8),
+          itemBuilder: (context, index) => GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, "/detailInformasi",
+                  arguments: informasi.informasi[index].id);
+            },
+            child: Container(
+              width: 246,
+              height: 119,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0XFF909090).withOpacity(0.08),
+                      offset: const Offset(1, 2),
+                      blurRadius: 2,
                     ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.only(left: 12, right: 12, top: 4),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Ujian Tengah Semester Ganjil Akan segera dilaksanakan Minggu depan. Jadi untuk siswa yang masih belum melunaskan uang ujian untuk segera di lunaskan.",
-                          maxLines: 1,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0XFF193D28),
-                            overflow: TextOverflow.visible,
-                            fontFamily: "Roboto",
-                          ),
-                        ),
-                        Container(
-                          child: Text(
-                            "Maret 8 2023",
+                    BoxShadow(
+                      color: const Color(0XFF909090).withOpacity(0.20),
+                      offset: const Offset(0, 1),
+                      blurRadius: 2,
+                    ),
+                  ]),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(
+                          left: 12.6, right: 12.6, top: 13, bottom: 4),
+                      width: 57,
+                      height: 57,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(3.15),
+                        child: Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: informasi.informasi[index].image == null
+                                ? Image.asset(
+                                    "assets/image/icondefaultinformasi.png",
+                                    fit: BoxFit.cover,
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: informasi.informasi[index].image!,
+                                  )
+                            // child: CircularProgressIndicator(
+                            //   strokeWidth: 2,
+                            // ),
+                            //  child: Image.network(informasi.informasi[index].image),
+                            ),
+                      ),
+                    ),
+                    Container(
+                      margin:
+                          const EdgeInsets.only(left: 12, right: 12, top: 4),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            informasi.informasi[index].judul,
+                            maxLines: 1,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 15,
                               fontWeight: FontWeight.w600,
                               color: Color(0XFF193D28),
+                              overflow: TextOverflow.visible,
                               fontFamily: "Roboto",
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                          Container(
+                            child: Text(
+                              informasi.informasi[index].updatedAt,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0XFF193D28),
+                                fontFamily: "Roboto",
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 

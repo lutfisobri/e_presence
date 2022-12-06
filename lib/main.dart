@@ -1,3 +1,4 @@
+import 'package:app_presensi/app/providers/informasi.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/views/start/init.dart';
@@ -14,6 +15,7 @@ void main(List<String> args) async {
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => PelajaranProvider()),
+        ChangeNotifierProvider(create: (_) => InformasiProvider()),
       ],
       child: const Main(),
     ),

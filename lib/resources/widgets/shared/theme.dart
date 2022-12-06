@@ -6,11 +6,11 @@ class StyleThemeData {
   static ThemeData themeData(BuildContext context) {
     return ThemeData(
       fontFamily: "Poppins",
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         centerTitle: false,
         color: green,
         titleTextStyle: TextStyle(
-          fontSize: 20.sp,
+          fontSize: 20,
           color: Colors.black,
           fontWeight: FontWeight.w600,
         ),
