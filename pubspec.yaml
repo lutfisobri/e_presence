@@ -49,6 +49,7 @@ dependencies:
   collection: ^1.16.0
   ntp: ^2.0.0
   shared_preferences: ^2.0.15
+  cached_network_image: ^3.2.3
 
 dev_dependencies:
   flutter_test:

@@ -177,30 +177,24 @@ class _HomeState extends State<Home> {
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
                       margin: const EdgeInsets.only(
-                          left: 12.6, right: 12.6, top: 13, bottom: 4),
-                      width: 57,
-                      height: 57,
+                          left: 12.6, right: 12.6, top: 4),
+                      width: 246,
+                      height: 90,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(3.15),
-                        child: Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: informasi.informasi[index].image == null
-                                ? Image.asset(
-                                    "assets/image/icondefaultinformasi.png",
-                                    fit: BoxFit.cover,
-                                  )
-                                : CachedNetworkImage(
-                                    imageUrl: informasi.informasi[index].image!,
-                                  )
-                            // child: CircularProgressIndicator(
-                            //   strokeWidth: 2,
-                            // ),
-                            //  child: Image.network(informasi.informasi[index].image),
-                            ),
+                        child: informasi.informasi[index].image == null
+                            ? Image.asset(
+                                "assets/image/icondefaultinformasi.png",
+                                fit: BoxFit.cover,
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: informasi.informasi[index].image!,
+                                fit: BoxFit.cover,
+                              ),
                       ),
                     ),
                     Container(
@@ -221,15 +215,13 @@ class _HomeState extends State<Home> {
                               fontFamily: "Roboto",
                             ),
                           ),
-                          Container(
-                            child: Text(
-                              informasi.informasi[index].updatedAt,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Color(0XFF193D28),
-                                fontFamily: "Roboto",
-                              ),
+                          Text(
+                            informasi.informasi[index].updatedAt,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0XFF193D28),
+                              fontFamily: "Roboto",
                             ),
                           ),
                         ],

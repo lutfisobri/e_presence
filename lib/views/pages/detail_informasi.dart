@@ -65,9 +65,26 @@ class _DetailInformasiState extends State<DetailInformasi> {
                       value.find(args).desc,
                       style: TextStyle(
                         color: Color.fromRGBO(25, 61, 40, 1),
+                        fontSize: 16,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w700,
+                      ),
+                    );
+                  }),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  margin: const EdgeInsets.only(left: 19, right: 19, top: 10),
+                  decoration: const BoxDecoration(),
+                  child: Consumer<InformasiProvider>(
+                      builder: (context, value, child) {
+                    return Text(
+                      "Ujian Tengah Semester Ganjil Akan segera dilaksanakan Minggu depan. Jadi untuk siswa yang masih belum melunaskan uang ujian untuk segera di lunaskan.",
+                      style: TextStyle(
+                        color: Color.fromRGBO(25, 61, 40, 1),
                         fontSize: 14,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w500,
                       ),
                     );
                   }),
@@ -82,8 +99,8 @@ class _DetailInformasiState extends State<DetailInformasi> {
                       value.find(args).updatedAt,
                       style: TextStyle(
                         color: Color.fromRGBO(25, 61, 40, 1),
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
+                        fontSize: 13,
+                        fontFamily: 'Roboto',
                         fontWeight: FontWeight.w600,
                       ),
                     );
