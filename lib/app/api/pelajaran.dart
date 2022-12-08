@@ -35,6 +35,16 @@ Future jadwalPresensi(String id) async {
   }
 }
 
+Future logP(String nis) async {
+  final response = await http.get(
+      Uri.parse("${Url.baseUrl}pelajaran/log-presensi.php?nis=$nis"),
+      headers: Url.headers);
+  if (response.statusCode == 200) {
+    return jsonDecode(response.body)['data'];
+  } else {
+    throw Exception("Failed to load data");
+  }
+}
 
 Future presensi(Object data) async {
   final response = await http.post(
@@ -42,7 +52,7 @@ Future presensi(Object data) async {
       headers: Url.headers,
       body: data);
   if (response.statusCode == 200) {
-    return "200";
+    return true;
   } else {
     throw Exception("Failed to load data");
   }

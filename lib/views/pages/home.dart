@@ -23,7 +23,9 @@ class _HomeState extends State<Home> {
   loadPresensi() async {
     final loadPresen = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
-    loadPresen.loadPresensi(user.dataUser.idKelas);
+    // loadPresen.loadPresensi(user.dataUser.idKelas);
+    loadPresen.allPresensi(
+        idKelas: user.dataUser.idKelas, nis: user.dataUser.username);
     user.checkAccount().then((value) {
       if (value == 401) {
         if (!mounted) return;
