@@ -1,95 +1,77 @@
-import 'dart:convert';
-
+import 'package:app_presensi/app/api/pelajaran.dart';
+import 'package:app_presensi/app/models/log_presensi.dart';
 import 'package:app_presensi/app/models/mapel.dart';
 import 'package:app_presensi/app/models/presensi.dart';
-import 'package:app_presensi/app/models/submit_presensi.dart';
 import 'package:app_presensi/app/models/ujian.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:http/http.dart' as http;
 import 'package:ntp/ntp.dart';
 
 class PelajaranProvider with ChangeNotifier {
-  final _baseUrl = "https://kateruriyu.my.id/api/v3/pelajaran/";
   List<ModelPresensi> listPresensi = [];
   List<ModelMapel> listMapel = [];
   List<ModelUjian> listUjian = [];
+  List<LogPresensi> log = [];
 
-  loadPresensi(String idKelas) async {
-    final Uri url =
-        Uri.parse("${_baseUrl}jadwal-presensi.php?id_kelas=$idKelas");
+  allMapel({required String idKelas}) async {
+    Iterable iterable = await jadwalMapel(idKelas);
+    listMapel = iterable.map((e) => ModelMapel.formJson(e)).toList();
+    notifyListeners();
+  }
+
+  allUjian({required String idKelas}) async {
+    Iterable iterable = await jadwalUjian(idKelas);
+    listUjian = iterable.map((e) => ModelUjian.formJson(e)).toList();
+    notifyListeners();
+  }
+
+  allPresensi({required String idKelas, required String nis}) async {
+    Iterable iterable = await jadwalPresensi(idKelas);
     final int offset = await NTP.getNtpOffset(
       localTime: DateTime.now(),
       lookUpAddress: "0.id.pool.ntp.org",
     );
     DateTime internetTime = DateTime.now().add(Duration(milliseconds: offset));
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      Iterable iterable = jsonDecode(response.body)['data'];
-      var pres = iterable.map((e) => ModelPresensi.formJson(e)).toList();
-      listPresensi = pres.where((element) {
-        return internetTime.isAfter(DateTime.parse(element.jamAwal)) &&
-            internetTime.isBefore((DateTime.parse(element.jamAkhir)));
-      }).toList();
-      notifyListeners();
-    }
-  }
-
-  Future<List> mapel(String idKelas) async {
-    final Uri url = Uri.parse("${_baseUrl}jadwal-mapel.php?id_kelas=$idKelas");
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        Iterable iterable = jsonDecode(response.body)['data'];
-        listMapel = iterable.map((e) => ModelMapel.formJson(e)).toList();
-        notifyListeners();
+    listPresensi = iterable
+        .map((e) => ModelPresensi.formJson(e))
+        .toList()
+        .where((element) {
+      return internetTime.isAfter(DateTime.parse(element.jamAwal)) &&
+          internetTime.isBefore((DateTime.parse(element.jamAkhir)));
+    }).toList();
+    logPresensi(nis: nis);
+    listPresensi = iterable.map((e) => ModelPresensi.formJson(e)).toList();
+    for (var i = 0; i < log.length; i++) {
+      for (var j = 0; j < listPresensi.length; j++) {
+        if (log[i].id == listPresensi[j].idPresensi) {
+          listPresensi.removeAt(j);
+        }
       }
-    } catch (e) {
-      return [];
     }
-    return listMapel;
+    notifyListeners();
   }
 
-  loadMapel(String idKelas) async {
-    final Uri url =
-        Uri.parse("${_baseUrl}jadwal-pelajaran.php?id_kelas=$idKelas");
-    final response = await http.get(url);
-    print(response.body);
-    if (response.statusCode == 200) {
-      Iterable iterable = jsonDecode(response.body)['data'];
-      listMapel = iterable.map((e) => ModelMapel.formJson(e)).toList();
-      notifyListeners();
-    }
-  }
-
-  loadUjian(String idKelas) async {
-    final Uri url = Uri.parse("${_baseUrl}jadwal-ujian.php?id_kelas=$idKelas");
-    // final response = await http.get(url);
-    // if (response.statusCode == 200) {
-    //   Iterable iterable = jsonDecode(response.body)['data'];
-    //   listUjian = iterable.map((e) => ModelUjian.formJson(e)).toList();
-    //   notifyListeners();
-    // }
+  findPresensi({required String id}) {
+    return listPresensi.firstWhere((element) => element.idPresensi == id);
   }
 
   submitPresensi(Map<String, dynamic> json) async {
-    final Uri url = Uri.parse("${_baseUrl}presensi.php");
-    var data = SubmitPresensi.send(json);
-    try {
-      final response = await http.post(
-        url,
-        headers: {
-          "accept": "application/json",
-        },
-        body: data.toJson(),
-      );
-      if (response.statusCode == 200) {
-      } else if (response.statusCode == 401) {
-        return "401";
-      } else {
-        return "gagal";
-      }
-    } catch (e) {
-      return "gagal";
-    }
+    await presensi({
+      "id": json['id'],
+      "nis": json['username'],
+      "nama": json['nama'],
+      "time": json['time'],
+      "mapel": json['mapel'],
+      "kelas": json['kelas'],
+      "status": json['status'],
+      "koordinat": json['koordinat'],
+      "bukti": json['bukti'],
+      "id_semester": json['id_semester'],
+    });
+  }
+
+  logPresensi({required String nis}) async {
+    Iterable iterable = await logP(nis);
+    log = iterable.map((e) => LogPresensi.fromJson(e)).toList();
+    notifyListeners();
   }
 }

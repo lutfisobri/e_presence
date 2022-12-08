@@ -32,7 +32,7 @@ class _JadwalPageState extends State<JadwalPage> {
   getData() {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
-    dataMapel.loadUjian(user.dataUser.idKelas);
+    dataMapel.allUjian(idKelas: user.dataUser.idKelas);
     user.checkAccount().then((value) {
       if (value == 401) {
         if (!mounted) return;
@@ -116,7 +116,9 @@ class _JadwalPageState extends State<JadwalPage> {
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.decelerate,
                 );
-              }, count: 7, hari: [],
+              },
+              count: 7,
+              hari: [],
             ),
             Container(
               height: 400,
