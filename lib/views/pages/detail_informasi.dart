@@ -62,7 +62,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                   child: Consumer<InformasiProvider>(
                       builder: (context, value, child) {
                     return Text(
-                      value.find(args).desc,
+                      value.find(args).judul,
                       style: TextStyle(
                         color: Color.fromRGBO(25, 61, 40, 1),
                         fontSize: 16,
@@ -79,7 +79,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                   child: Consumer<InformasiProvider>(
                       builder: (context, value, child) {
                     return Text(
-                      "Ujian Tengah Semester Ganjil Akan segera dilaksanakan Minggu depan. Jadi untuk siswa yang masih belum melunaskan uang ujian untuk segera di lunaskan.",
+                      value.find(args).desc,
                       style: TextStyle(
                         color: Color.fromRGBO(25, 61, 40, 1),
                         fontSize: 14,
