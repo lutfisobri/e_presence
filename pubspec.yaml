@@ -50,6 +50,7 @@ dependencies:
   ntp: ^2.0.0
   shared_preferences: ^2.0.15
   cached_network_image: ^3.2.3
+  image_cropper: ^3.0.1
 
 dev_dependencies:
   flutter_test:

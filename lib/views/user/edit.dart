@@ -4,6 +4,7 @@ import 'package:app_presensi/app/models/user.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/app/services/image.dart';
 import 'package:app_presensi/app/services/validation.dart';
+import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
@@ -11,6 +12,7 @@ import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -39,6 +41,41 @@ class _EditProfileState extends State<EditProfile> {
     email: "",
     deviceId: "",
   );
+
+  Future<File?> _cropImage({required File imageFile}) async {
+    try {
+      CroppedFile? croppedImage = await ImageCropper().cropImage(
+        sourcePath: imageFile.path,
+        maxWidth: 1080,
+        maxHeight: 1080,
+        aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Sunting Foto',
+              toolbarColor: Colors.black,
+              toolbarWidgetColor: Colors.white,
+              backgroundColor: Colors.black,
+              statusBarColor: Colors.white,
+              dimmedLayerColor: Colors.black,
+              cropFrameColor: Colors.white,
+              cropGridColor: Colors.white,
+              activeControlsWidgetColor: Color.fromRGBO(104, 187, 97, 1),
+              showCropGrid: true,
+              lockAspectRatio: false),
+          IOSUiSettings(
+            title: 'Sunting Foto',
+          ),
+        ],
+      );
+      if (croppedImage != null) {
+        return File(croppedImage.path);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   loadProfile() {
     var user = Provider.of<UserProvider>(context, listen: false);
@@ -115,7 +152,7 @@ class _EditProfileState extends State<EditProfile> {
                 elevation: 0,
                 foregroundColor: Colors.black,
                 title: const Text(
-                  "Edit Profile",
+                  "Ubah Profil",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -348,8 +385,16 @@ class _EditProfileState extends State<EditProfile> {
                                   pickImage().then(
                                     (value) {
                                       if (value != null) {
-                                        setState(() {
-                                          foto = value;
+                                        // setState(() {
+                                        //   foto = value;
+                                        // });
+                                        _cropImage(imageFile: value)
+                                            .then((value) {
+                                          if (value != null) {
+                                            setState(() {
+                                              foto = value;
+                                            });
+                                          }
                                         });
                                       }
                                     },
@@ -360,8 +405,16 @@ class _EditProfileState extends State<EditProfile> {
                                   takePhoto().then(
                                     (value) {
                                       if (value != null) {
-                                        setState(() {
-                                          foto = value;
+                                        // setState(() {
+                                        //   foto = value;
+                                        // });
+                                        _cropImage(imageFile: value)
+                                            .then((value) {
+                                          if (value != null) {
+                                            setState(() {
+                                              foto = value;
+                                            });
+                                          }
                                         });
                                       }
                                     },
