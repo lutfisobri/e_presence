@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:app_presensi/app/providers/informasi.dart';
+import 'package:app_presensi/views/pages/skeleton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +18,11 @@ class _DetailInformasiState extends State<DetailInformasi> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<InformasiProvider>(context, listen: false).getData();
-      setState(() {
-        isLoading = false;
-      });
+      Future.delayed(
+          const Duration(seconds: 1),
+          () => setState(() {
+                isLoading = false;
+              }));
     });
   }
 
@@ -38,75 +42,165 @@ class _DetailInformasiState extends State<DetailInformasi> {
             centerTitle: false,
           ),
           body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Container(
-                  height: 263,
-                  child: Consumer<InformasiProvider>(
-                      builder: (context, value, child) {
-                    return Center(
-                      child: value.find(args).image == null
-                          ? Image(
-                              image: AssetImage(
-                                  'assets/image/icondefaultinformasi.png'),
-                            )
-                          : CachedNetworkImage(
-                              imageUrl: value.find(args).image!),
-                    );
-                  }),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.only(left: 19, right: 19),
-                  decoration: const BoxDecoration(),
-                  child: Consumer<InformasiProvider>(
-                      builder: (context, value, child) {
-                    return Text(
-                      value.find(args).desc,
-                      style: TextStyle(
-                        color: Color.fromRGBO(25, 61, 40, 1),
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
+            child: isLoading
+                ? Column(
+                    children: [
+                      Container(
+                        height: 263,
+                        child: SkeletonContainer.square(
+                          height: 263,
+                          width: MediaQuery.of(context).size.width,
+                        ),
                       ),
-                    );
-                  }),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  margin: const EdgeInsets.only(left: 242, right: 19, top: 67),
-                  decoration: const BoxDecoration(),
-                  child: Consumer<InformasiProvider>(
-                      builder: (context, value, child) {
-                    return Text(
-                      value.find(args).updatedAt,
-                      style: TextStyle(
-                        color: Color.fromRGBO(25, 61, 40, 1),
-                        fontSize: 14,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.only(
+                            left: 19, right: 230, top: 19),
+                        decoration: const BoxDecoration(),
+                        child: SkeletonContainer.square(
+                          height: 25,
+                          width: MediaQuery.of(context).size.width,
+                        ),
                       ),
-                    );
-                  }),
-                ),
-              ],
-            ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin:
+                            const EdgeInsets.only(left: 19, right: 19, top: 10),
+                        decoration: const BoxDecoration(),
+                        child: SkeletonContainer.square(
+                          height: 20,
+                          width: MediaQuery.of(context).size.width,
+                        ),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin:
+                            const EdgeInsets.only(left: 19, right: 19, top: 10),
+                        decoration: const BoxDecoration(),
+                        child: SkeletonContainer.square(
+                          height: 20,
+                          width: MediaQuery.of(context).size.width,
+                        ),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.only(
+                            left: 242, right: 19, top: 67),
+                        decoration: const BoxDecoration(),
+                        child: SkeletonContainer.square(
+                          height: 18,
+                          width: MediaQuery.of(context).size.width,
+                        ),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.only(
+                            left: 242, right: 19, top: 10),
+                        decoration: const BoxDecoration(),
+                        child: SkeletonContainer.square(
+                          height: 18,
+                          width: MediaQuery.of(context).size.width,
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      Container(
+                        height: 263,
+                        child: Consumer<InformasiProvider>(
+                            builder: (context, value, child) {
+                          return Center(
+                            child: value.find(args).image == null
+                                ? Image(
+                                    image: AssetImage(
+                                        'assets/image/icondefaultinformasi.png'),
+                                  )
+                                : CachedNetworkImage(
+                                    imageUrl: value.find(args).image!),
+                          );
+                        }),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin:
+                            const EdgeInsets.only(left: 19, right: 19, top: 10),
+                        decoration: const BoxDecoration(),
+                        child: Consumer<InformasiProvider>(
+                            builder: (context, value, child) {
+                          return Text(
+                            value.find(args).judul,
+                            style: TextStyle(
+                              color: Color.fromRGBO(25, 61, 40, 1),
+                              fontSize: 16,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          );
+                        }),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin:
+                            const EdgeInsets.only(left: 19, right: 19, top: 10),
+                        decoration: const BoxDecoration(),
+                        child: Consumer<InformasiProvider>(
+                            builder: (context, value, child) {
+                          return Text(
+                            value.find(args).desc,
+                            style: TextStyle(
+                              color: Color.fromRGBO(25, 61, 40, 1),
+                              fontSize: 14,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          );
+                        }),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        margin: const EdgeInsets.only(
+                            left: 242, right: 19, top: 67),
+                        decoration: const BoxDecoration(),
+                        child: Consumer<InformasiProvider>(
+                            builder: (context, value, child) {
+                          return Text(
+                            value.find(args).updatedAt,
+                            style: TextStyle(
+                              color: Color.fromRGBO(25, 61, 40, 1),
+                              fontSize: 13,
+                              fontFamily: 'Roboto',
+                              fontWeight: FontWeight.w600,
+                            ),
+                          );
+                        }),
+                      ),
+                    ],
+                  ),
           ),
         ),
-        if (isLoading)
-          Container(
-            alignment: Alignment.center,
-            color: Colors.white.withOpacity(0.3),
-            child: const Center(
-              child: SizedBox(
-                height: 75,
-                width: 75,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                ),
-              ),
-            ),
-          )
+        // if (isLoading)
+        //   Column(
+        //     children: const [
+        //       Shimmer(),
+        //       Shimmer(),
+        //       Shimmer(),
+        //     ],
+        //   )
+
+        // Container(
+        //   alignment: Alignment.center,
+        //   color: Colors.white.withOpacity(0.3),
+        //   child: const Center(
+        //     child: SizedBox(
+        //       height: 75,
+        //       width: 75,
+        //       child: CircularProgressIndicator(
+        //         strokeWidth: 2,
+        //       ),
+        //     ),
+        //   ),
+        // )
       ],
     );
   }

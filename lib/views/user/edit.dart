@@ -4,6 +4,7 @@ import 'package:app_presensi/app/models/user.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/app/services/image.dart';
 import 'package:app_presensi/app/services/validation.dart';
+import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
@@ -11,8 +12,11 @@ import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../pages/skeleton.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -39,6 +43,41 @@ class _EditProfileState extends State<EditProfile> {
     email: "",
     deviceId: "",
   );
+
+  Future<File?> _cropImage({required File imageFile}) async {
+    try {
+      CroppedFile? croppedImage = await ImageCropper().cropImage(
+        sourcePath: imageFile.path,
+        maxWidth: 1080,
+        maxHeight: 1080,
+        aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Sunting Foto',
+              toolbarColor: Colors.black,
+              toolbarWidgetColor: Colors.white,
+              backgroundColor: Colors.black,
+              statusBarColor: Colors.white,
+              dimmedLayerColor: Colors.black,
+              cropFrameColor: Colors.white,
+              cropGridColor: Colors.white,
+              activeControlsWidgetColor: Color.fromRGBO(104, 187, 97, 1),
+              showCropGrid: true,
+              lockAspectRatio: false),
+          IOSUiSettings(
+            title: 'Sunting Foto',
+          ),
+        ],
+      );
+      if (croppedImage != null) {
+        return File(croppedImage.path);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   loadProfile() {
     var user = Provider.of<UserProvider>(context, listen: false);
@@ -115,7 +154,7 @@ class _EditProfileState extends State<EditProfile> {
                 elevation: 0,
                 foregroundColor: Colors.black,
                 title: const Text(
-                  "Edit Profile",
+                  "Ubah Profil",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
@@ -123,262 +162,296 @@ class _EditProfileState extends State<EditProfile> {
               ),
               body: SafeArea(
                 child: SingleChildScrollView(
-                  child: Stack(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                  child: isLoading
+                      ? Stack(
                           children: [
-                            photoProfile(),
-                            SizedBox(
-                              height: 14.28.r,
-                            ),
-                            const Text(
-                              "Nama Lengkap",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0XFF858585),
+                            Container(
+                              height: 263,
+                              child: SkeletonContainer.square(
+                                height: 263,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            )
+                          ],
+                        )
+                      : Stack(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 20, right: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  photoProfile(),
+                                  SizedBox(
+                                    height: 14.28.r,
+                                  ),
+                                  const Text(
+                                    "Nama Lengkap",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0XFF858585),
+                                    ),
+                                  ),
+                                  WtextField(
+                                    controller: nama,
+                                    contenH: 0,
+                                    enable: false,
+                                    style: const TextStyle(
+                                      color: Color(0XFF858585),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    disableBorder: const UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                        width: 0.5,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10.5,
+                                  ),
+                                  Text(
+                                    emailController.text != ""
+                                        ? "E-mail"
+                                        : "E-mail *",
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0XFF858585),
+                                    ),
+                                  ),
+                                  WtextField(
+                                    controller: emailController,
+                                    contenH: 0,
+                                    primaryColor: Colors.black,
+                                    style: const TextStyle(
+                                      // color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10.5,
+                                  ),
+                                  const Text(
+                                    "Nisn",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0XFF858585),
+                                    ),
+                                  ),
+                                  WtextField(
+                                    controller: nis,
+                                    contenH: 0,
+                                    style: const TextStyle(
+                                      color: Color(0XFF858585),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    enable: false,
+                                  ),
+                                  const SizedBox(
+                                    height: 10.5,
+                                  ),
+                                  Text(
+                                    tglLahir.text != ""
+                                        ? "Tanggal Lahir"
+                                        : "Tanggal Lahir *",
+                                    style: const TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0XFF858585),
+                                    ),
+                                  ),
+                                  WtextField(
+                                    onTap: () {
+                                      showDatePicker(
+                                        context: context,
+                                        initialDate:
+                                            DateTime.parse(tglLahir.text),
+                                        firstDate: DateTime(1990),
+                                        lastDate: DateTime(2100),
+                                        // initialEntryMode:
+                                        //     DatePickerEntryMode.calendarOnly,
+                                      ).then((value) {
+                                        if (value != null &&
+                                            value.isAfter(DateTime(1990))) {
+                                          setState(() {
+                                            tglLahir.text =
+                                                DateFormat('y-MM-dd')
+                                                    .format(value);
+                                          });
+                                        }
+                                      });
+                                    },
+                                    controller: tglLahir,
+                                    primaryColor: Colors.black,
+                                    readOnly: true,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    sufixIcon1:
+                                        const Icon(Icons.calendar_month),
+                                  ),
+                                  const SizedBox(
+                                    height: 10.5,
+                                  ),
+                                  const Text(
+                                    "Kelas",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0XFF858585),
+                                    ),
+                                  ),
+                                  WtextField(
+                                    enable: false,
+                                    controller: kelas,
+                                    style: const TextStyle(
+                                      color: Color(0XFF858585),
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 20.5,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Consumer<UserProvider>(
+                                          builder: (context, value, child) {
+                                        return Button(
+                                          onPres: () {
+                                            btnSave(value);
+                                          },
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(7.77),
+                                          ),
+                                          minimunSize: const Size(109, 46),
+                                          textStyle: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: "Roboto",
+                                          ),
+                                          child: const Text("SIMPAN"),
+                                        );
+                                      }),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                ],
                               ),
                             ),
-                            WtextField(
-                              controller: nama,
-                              contenH: 0,
-                              enable: false,
-                              style: const TextStyle(
-                                color: Color(0XFF858585),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              disableBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  width: 0.5,
+                            Positioned(
+                              top: 60.45.r,
+                              left: 196.2.r,
+                              right: 131.4.r,
+                              child: Container(
+                                height: 30.6.h,
+                                width: 30.6.w,
+                                decoration: BoxDecoration(
+                                    border: Border.all(),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(100)),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(100),
+                                  onTap: () {
+                                    serviceCamera(
+                                      context,
+                                      hapus: () {
+                                        Navigator.pop(context);
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (context) => WillPopScope(
+                                            onWillPop: () async => false,
+                                            child: DialogButton(
+                                              title: "Hapus foto profil",
+                                              subtitle:
+                                                  "Apakah anda ingin menghapus",
+                                              btnLeft: "TIDAK",
+                                              btnRight: "IYA",
+                                              onPresLeft: () {
+                                                Navigator.pop(context);
+                                              },
+                                              onPresRight: () {
+                                                final delete =
+                                                    Provider.of<UserProvider>(
+                                                  context,
+                                                  listen: false,
+                                                );
+                                                delete.deletePhoto(
+                                                    modelUser.username);
+                                                loadProfile();
+                                                setState(() {
+                                                  foto = null;
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      galeri: () {
+                                        pickImage().then(
+                                          (value) {
+                                            if (value != null) {
+                                              // setState(() {
+                                              //   foto = value;
+                                              // });
+                                              _cropImage(imageFile: value)
+                                                  .then((value) {
+                                                if (value != null) {
+                                                  setState(() {
+                                                    foto = value;
+                                                  });
+                                                }
+                                              });
+                                            }
+                                          },
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      kamera: () {
+                                        takePhoto().then(
+                                          (value) {
+                                            if (value != null) {
+                                              // setState(() {
+                                              //   foto = value;
+                                              // });
+                                              _cropImage(imageFile: value)
+                                                  .then((value) {
+                                                if (value != null) {
+                                                  setState(() {
+                                                    foto = value;
+                                                  });
+                                                }
+                                              });
+                                            }
+                                          },
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                                  },
+                                  child: const Icon(
+                                    Icons.camera_alt_outlined,
+                                    size: 30,
+                                  ),
                                 ),
                               ),
                             ),
-                            const SizedBox(
-                              height: 10.5,
-                            ),
-                            Text(
-                              emailController.text != ""
-                                  ? "E-mail"
-                                  : "E-mail *",
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0XFF858585),
-                              ),
-                            ),
-                            WtextField(
-                              controller: emailController,
-                              contenH: 0,
-                              primaryColor: Colors.black,
-                              style: const TextStyle(
-                                // color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10.5,
-                            ),
-                            const Text(
-                              "Nisn",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0XFF858585),
-                              ),
-                            ),
-                            WtextField(
-                              controller: nis,
-                              contenH: 0,
-                              style: const TextStyle(
-                                color: Color(0XFF858585),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              enable: false,
-                            ),
-                            const SizedBox(
-                              height: 10.5,
-                            ),
-                            Text(
-                              tglLahir.text != ""
-                                  ? "Tanggal Lahir"
-                                  : "Tanggal Lahir *",
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0XFF858585),
-                              ),
-                            ),
-                            WtextField(
-                              onTap: () {
-                                showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.parse(tglLahir.text),
-                                  firstDate: DateTime(1990),
-                                  lastDate: DateTime(2100),
-                                  // initialEntryMode:
-                                  //     DatePickerEntryMode.calendarOnly,
-                                ).then((value) {
-                                  if (value != null &&
-                                      value.isAfter(DateTime(1990))) {
-                                    setState(() {
-                                      tglLahir.text =
-                                          DateFormat('y-MM-dd').format(value);
-                                    });
-                                  }
-                                });
-                              },
-                              controller: tglLahir,
-                              primaryColor: Colors.black,
-                              readOnly: true,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              sufixIcon1: const Icon(Icons.calendar_month),
-                            ),
-                            const SizedBox(
-                              height: 10.5,
-                            ),
-                            const Text(
-                              "Kelas",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0XFF858585),
-                              ),
-                            ),
-                            WtextField(
-                              enable: false,
-                              controller: kelas,
-                              style: const TextStyle(
-                                color: Color(0XFF858585),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 20.5,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Consumer<UserProvider>(
-                                    builder: (context, value, child) {
-                                  return Button(
-                                    onPres: () {
-                                      btnSave(value);
-                                    },
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(7.77),
-                                    ),
-                                    minimunSize: const Size(109, 46),
-                                    textStyle: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      fontFamily: "Roboto",
-                                    ),
-                                    child: const Text("SIMPAN"),
-                                  );
-                                }),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
                           ],
                         ),
-                      ),
-                      Positioned(
-                        top: 60.45.r,
-                        left: 196.2.r,
-                        right: 131.4.r,
-                        child: Container(
-                          height: 30.6.h,
-                          width: 30.6.w,
-                          decoration: BoxDecoration(
-                              border: Border.all(),
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(100)),
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(100),
-                            onTap: () {
-                              serviceCamera(
-                                context,
-                                hapus: () {
-                                  Navigator.pop(context);
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (context) => WillPopScope(
-                                      onWillPop: () async => false,
-                                      child: DialogButton(
-                                        title: "Hapus foto profil",
-                                        subtitle: "Apakah anda ingin menghapus",
-                                        btnLeft: "TIDAK",
-                                        btnRight: "IYA",
-                                        onPresLeft: () {
-                                          Navigator.pop(context);
-                                        },
-                                        onPresRight: () {
-                                          final delete =
-                                              Provider.of<UserProvider>(
-                                            context,
-                                            listen: false,
-                                          );
-                                          delete
-                                              .deletePhoto(modelUser.username);
-                                          loadProfile();
-                                          setState(() {
-                                            foto = null;
-                                          });
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ),
-                                  );
-                                },
-                                galeri: () {
-                                  pickImage().then(
-                                    (value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          foto = value;
-                                        });
-                                      }
-                                    },
-                                  );
-                                  Navigator.pop(context);
-                                },
-                                kamera: () {
-                                  takePhoto().then(
-                                    (value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          foto = value;
-                                        });
-                                      }
-                                    },
-                                  );
-                                  Navigator.pop(context);
-                                },
-                              );
-                            },
-                            child: const Icon(
-                              Icons.camera_alt_outlined,
-                              size: 30,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),

@@ -49,6 +49,13 @@ dependencies:
   collection: ^1.16.0
   ntp: ^2.0.0
   shared_preferences: ^2.0.15
+  cached_network_image: ^3.2.3
+  image_cropper: ^3.0.1
+  shimmer: ^2.0.0
+  skeletons: ^0.0.3
+  skeleton_text: ^3.0.0
+  internet_connection_checker: ^1.0.0+1
+  connectivity_plus: ^3.0.2
 
 dev_dependencies:
   flutter_test:

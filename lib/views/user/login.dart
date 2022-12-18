@@ -4,7 +4,10 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
@@ -17,6 +20,10 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlert = false;
+
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
 
@@ -25,9 +32,50 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
+    getConnectivity();
     super.initState();
     loadData();
   }
+
+  getConnectivity() =>
+      subscription = Connectivity().onConnectivityChanged.listen(
+        (ConnectivityResult result) async {
+          isDeviceConnected = await InternetConnectionChecker().hasConnection;
+          if (!isDeviceConnected && !isAlert) {
+            showDialogbox();
+            setState(() => isAlert = true);
+          }
+        },
+      );
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  showDialogbox() => showCupertinoDialog<String>(
+        context: context,
+        builder: (BuildContext contex) => CupertinoAlertDialog(
+          title: const Text("Tidak Ada Koneksi Internet"),
+          content: const Text("Tidak ada koneksi internet"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context, 'cancel');
+                setState(() => isAlert = false);
+                isDeviceConnected =
+                    await InternetConnectionChecker().hasConnection;
+                if (!isDeviceConnected) {
+                  showDialogbox();
+                  setState(() => isAlert = true);
+                }
+              },
+              child: const Text("Tutup"),
+            ),
+          ],
+        ),
+      );
 
   loadData() async {
     String? deviceID = await PlatformDeviceId.getDeviceId;

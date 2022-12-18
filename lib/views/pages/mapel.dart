@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app_presensi/app/models/mapel.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
@@ -6,7 +8,10 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/constant/tab_bar.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
 class Mapel extends StatefulWidget {
@@ -17,6 +22,9 @@ class Mapel extends StatefulWidget {
 }
 
 class _MapelState extends State<Mapel> with TickerProviderStateMixin {
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlert = false;
   StyleThemeData styleThemeData = StyleThemeData();
   ScrollController scrollController = ScrollController();
   PageController pageController = PageController();
@@ -25,9 +33,50 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
   List<ModelMapel> data = [];
   @override
   void initState() {
+    getConnectivity();
     super.initState();
     getData();
   }
+
+  getConnectivity() =>
+      subscription = Connectivity().onConnectivityChanged.listen(
+        (ConnectivityResult result) async {
+          isDeviceConnected = await InternetConnectionChecker().hasConnection;
+          if (!isDeviceConnected && !isAlert) {
+            showDialogbox();
+            setState(() => isAlert = true);
+          }
+        },
+      );
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  showDialogbox() => showCupertinoDialog<String>(
+        context: context,
+        builder: (BuildContext contex) => CupertinoAlertDialog(
+          title: const Text("Peringatan"),
+          content: const Text("Tidak ada koneksi internet"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context, 'cancel');
+                setState(() => isAlert = false);
+                isDeviceConnected =
+                    await InternetConnectionChecker().hasConnection;
+                if (!isDeviceConnected) {
+                  showDialogbox();
+                  setState(() => isAlert = true);
+                }
+              },
+              child: const Text("Tutup"),
+            ),
+          ],
+        ),
+      );
 
   getData() {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
