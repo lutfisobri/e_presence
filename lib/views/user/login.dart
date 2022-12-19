@@ -64,9 +64,9 @@ class _LoginState extends State<Login> {
         top: Radius.circular(20),
       )),
       builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.4,
+          initialChildSize: 0.6,
           maxChildSize: 0.9,
-          minChildSize: 0.32,
+          minChildSize: 0.6,
           expand: false,
           builder: (context, scrollController) {
             return SingleChildScrollView(
