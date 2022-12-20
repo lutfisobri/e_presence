@@ -82,7 +82,7 @@ class _EditProfileState extends State<EditProfile> {
   loadProfile() {
     var user = Provider.of<UserProvider>(context, listen: false);
     user.checkAccount().then((value) {
-      if (value == 401) {
+      if (!value) {
         if (!mounted) return;
         showDialog(
           context: context,
@@ -98,21 +98,15 @@ class _EditProfileState extends State<EditProfile> {
             ),
           ),
         );
-      } else if (value == 203) {
-        return;
       } else {
-        user.isLogin = false;
+        setState(() {
+          nama.text = user.dataUser.nama;
+          emailController.text = user.dataUser.email ?? "";
+          nis.text = user.dataUser.username;
+          tglLahir.text = user.dataUser.tglLahir ?? "";
+          kelas.text = user.dataUser.kelas ?? "";
+        });
       }
-    });
-    user.loadProfile().then((value) {
-      setState(() {
-        modelUser = value;
-        nama.text = value.nama;
-        emailController.text = value.email ?? "";
-        nis.text = value.username;
-        tglLahir.text = value.tglLahir;
-        kelas.text = value.kelas;
-      });
     });
   }
 
@@ -132,11 +126,16 @@ class _EditProfileState extends State<EditProfile> {
     return WillPopScope(
       onWillPop: () async {
         if (usr.isLogin) Navigator.pop(context);
-        usr.loadProfile();
-        if (usr.dataUser.email == "") {
+        // usr.loadProfile();
+        if (usr.dataUser.email == null) {
           return false;
         }
+
         if (usr.dataUser.email == "" && emailController.text != "") {
+          return false;
+        }
+
+        if (usr.dataUser.tglLahir == "" && tglLahir.text != "") {
           return false;
         }
 

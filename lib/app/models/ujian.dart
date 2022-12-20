@@ -1,14 +1,14 @@
 class ModelUjian {
-  final String idMapel, idKelas, namaMapel, hari, jamAwal, jamAkhir, kelas;
+  final String? idMapel, idKelas, namaMapel, hari, jamAwal, jamAkhir, kelas;
 
   ModelUjian({
-    required this.idMapel,
-    required this.idKelas,
-    required this.namaMapel,
-    required this.hari,
-    required this.jamAwal,
-    required this.jamAkhir,
-    required this.kelas,
+    this.idMapel,
+    this.idKelas,
+    this.namaMapel,
+    this.hari,
+    this.jamAwal,
+    this.jamAkhir,
+    this.kelas,
   });
 
   factory ModelUjian.formJson(Map<String, dynamic> json) {

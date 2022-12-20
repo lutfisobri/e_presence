@@ -2,114 +2,128 @@ import 'dart:convert';
 import 'package:app_presensi/app/api/config/url.dart';
 import 'package:http/http.dart' as http;
 
-Future login(Map<String, dynamic> json) async {
-  final response = await http.post(Uri.parse("${Url.baseUrl}user/login.php"),
-      headers: Url.headers, body: json);
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['data'];
-  } else {
-    throw Exception("Failed to load data");
+class User {
+  static Future login(Map<String, dynamic> json) async {
+    final response = await http.post(Uri.parse("${Url.baseUrl}user/login"),
+        headers: Url.headers, body: json);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      User.newLogin(json);
+    }
   }
-}
 
-Future newLogin(Map<String, dynamic> json) async {
-  final response = await http.post(
-      Uri.parse("${Url.baseUrl}user/new-login.php"),
+  static Future newLogin(Map<String, dynamic> json) async {
+    final response = await http.post(Uri.parse("${Url.baseUrl}user/new-login"),
+        headers: Url.headers, body: json);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    }
+  }
+
+  static Future logout(String username) async {
+    final response = await http.post(
+      Uri.parse("${Url.baseUrl}user/logout"),
       headers: Url.headers,
-      body: json);
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['data'];
-  } else {
-    throw Exception("Failed to load data");
+      body: {"username": username},
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception("Failed to logout");
+    }
   }
-}
 
-Future logout() async {
-  final response = await http.get(Uri.parse("${Url.baseUrl}user/logout.php"),
-      headers: Url.headers);
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['data'];
-  } else {
-    throw Exception("Failed to logout");
+  static Future update(Map<String, dynamic> json) async {
+    final url = Uri.parse("${Url.baseUrl}user/update-profile");
+    var request = http.MultipartRequest('POST', url);
+    if (json['foto'] != null) {
+      request.files
+          .add(await http.MultipartFile.fromPath('foto', json['foto']));
+    }
+    request.fields.addAll({
+      'username': json['username'],
+      'email': json['email'],
+      'tanggal_lahir': json['tanggal_lahir'],
+    });
+    var response = await request.send();
+    if (response.statusCode == 200) {
+      return jsonDecode(await response.stream.bytesToString())['data'];
+    } else {
+      throw Exception("Failed to load data");
+    }
   }
-}
 
-Future update(Map<String, dynamic> json) async {
-  final response = await http.post(
-      Uri.parse("${Url.baseUrl}user/update-profile.php"),
-      headers: Url.headers,
-      body: json);
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['data'];
-  } else {
-    throw Exception("Failed to load data");
+  static Future deleteFoto({required String username}) async {
+    final response = await http.post(
+        Uri.parse("${Url.baseUrl}user/delete-foto"),
+        headers: Url.headers,
+        body: jsonEncode({"username": username}));
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception("Failed to load data");
+    }
   }
-}
 
-Future deleteFoto({required String username}) async {
-  final response = await http.post(
-      Uri.parse("${Url.baseUrl}user/delete-foto.php"),
-      headers: Url.headers,
-      body: jsonEncode({"username": username}));
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['data'];
-  } else {
-    throw Exception("Failed to load data");
+  static Future updatePw(Map<String, dynamic> json) async {
+    final response = await http.post(
+        Uri.parse("${Url.baseUrl}user/change-password"),
+        headers: Url.headers,
+        body: json);
+    print(response.body);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception("Failed to load data");
+    }
   }
-}
 
-Future updatePw(Map<String, dynamic> json) async {
-  final response = await http.post(
-      Uri.parse("${Url.baseUrl}user/update-password.php"),
-      headers: Url.headers,
-      body: json);
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['data'];
-  } else {
-    throw Exception("Failed to load data");
+  static Future changePw(Map<String, dynamic> json) async {
+    final response = await http.post(
+        Uri.parse("${Url.baseUrl}user/reset-password"),
+        headers: Url.headers,
+        body: json);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception("Failed to load data");
+    }
   }
-}
 
-Future changePw(Map<String, dynamic> json) async {
-  final response = await http.post(
-      Uri.parse("${Url.baseUrl}user/reset-password.php"),
-      headers: Url.headers,
-      body: json);
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['data'];
-  } else {
-    throw Exception("Failed to load data");
+  static Future search({required String username}) async {
+    final response = await http.get(
+        Uri.parse("${Url.baseUrl}user/search/$username"),
+        headers: Url.headers);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception("Failed to load data");
+    }
   }
-}
 
-Future search(Map<String, dynamic> json) async {
-  final response = await http.post(
-      Uri.parse("${Url.baseUrl}user/search-account.php"),
-      headers: Url.headers,
-      body: json);
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['data'];
-  } else {
-    throw Exception("Failed to load data");
+  static Future mail(Map<String, dynamic> json) async {
+    final response = await http.post(Uri.parse("${Url.baseUrl}mail/send"),
+        headers: Url.headers, body: json);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception("Failed to load data");
+    }
   }
-}
 
-Future mail(Map<String, dynamic> json) async {
-  final response = await http.post(Uri.parse("${Url.baseUrl}user/send-mail.php"),
-      headers: Url.headers, body: json);
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['data'];
-  } else {
-    throw Exception("Failed to load data");
-  }
-}
-
-Future verifyotp(Map<String, dynamic> json) async {
-  final response = await http.post(Uri.parse("${Url.baseUrl}user/verify-otp.php"),
-      headers: Url.headers, body: json);
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body)['data'];
-  } else {
-    throw Exception("Failed to load data");
+  static Future verifyotp(Map<String, dynamic> json) async {
+    final response = await http.post(Uri.parse("${Url.baseUrl}user/verify-otp"),
+        headers: Url.headers, body: json);
+    print(response.body);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['status'];
+    } else if (response.statusCode == 401) {
+      return jsonDecode(response.body)['status'];
+    } else if (response.statusCode == 410) {
+      return jsonDecode(response.body)['status'];
+    } else {
+      throw Exception("Failed to load data");
+    }
   }
 }

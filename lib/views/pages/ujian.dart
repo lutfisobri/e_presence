@@ -81,7 +81,7 @@ class _JadwalPageState extends State<JadwalPage> {
   getData() {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
-    dataMapel.allUjian(idKelas: user.dataUser.idKelas);
+    dataMapel.allUjian(idKelas: user.dataUser.idKelas ?? "");
     user.checkAccount().then((value) {
       if (value == 401) {
         if (!mounted) return;
@@ -99,18 +99,20 @@ class _JadwalPageState extends State<JadwalPage> {
             ),
           ),
         );
-      } else if (value == 203) {
-        return;
-      } else {
+      }
+      //  else if (value == 203) {
+      //   return;
+      // } 
+      else {
         user.isLogin = false;
       }
     });
     setState(() {
       data = dataMapel.listUjian
-          .where((element) => element.hari.toLowerCase() == hari)
+          .where((element) => element.hari?.toLowerCase() == hari)
           .toList();
       data.sort(
-        (a, b) => a.jamAwal.compareTo(b.jamAwal),
+        (a, b) => a.jamAwal!.compareTo(b.jamAwal!),
       );
     });
   }
@@ -248,7 +250,7 @@ class _JadwalPageState extends State<JadwalPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      data[i].namaMapel,
+                                      data[i].namaMapel ?? "",
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w600,

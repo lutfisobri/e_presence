@@ -134,41 +134,43 @@ class _LoginState extends State<Login> {
             deviceId: deviceId,
           )
               .then((value) {
-            if (value == "200") {
+            if (value) {
               Navigator.pushReplacementNamed(context, "/home");
-            } else if (value == "401") {
-              userControlProvider
-                  .newLogin(
-                username: username.text,
-                password: password.text,
-                deviceId: deviceId,
-              )
-                  .then(
-                (value) {
-                  if (value) {
-                    Navigator.pushReplacementNamed(
-                      context,
-                      "/home",
-                    );
-                  } else {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (context) => WillPopScope(
-                        onWillPop: () async => false,
-                        child: const CustomDialogLogin(),
-                      ),
-                    );
-                    Timer(
-                      const Duration(seconds: 2),
-                      () {
-                        Navigator.pop(context);
-                      },
-                    );
-                  }
-                },
-              );
-            } else {
+            }
+            //  else if (value == "401") {
+            //   userControlProvider
+            //       .newLogin(
+            //     username: username.text,
+            //     password: password.text,
+            //     deviceId: deviceId,
+            //   )
+            //       .then(
+            //     (value) {
+            //       if (value) {
+            //         Navigator.pushReplacementNamed(
+            //           context,
+            //           "/home",
+            //         );
+            //       } else {
+            //         showDialog(
+            //           context: context,
+            //           barrierDismissible: false,
+            //           builder: (context) => WillPopScope(
+            //             onWillPop: () async => false,
+            //             child: const CustomDialogLogin(),
+            //           ),
+            //         );
+            //         Timer(
+            //           const Duration(seconds: 2),
+            //           () {
+            //             Navigator.pop(context);
+            //           },
+            //         );
+            //       }
+            //     },
+            //   );
+            // }
+            else {
               showDialog(
                 context: context,
                 barrierDismissible: false,

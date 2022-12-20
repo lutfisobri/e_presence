@@ -181,10 +181,11 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
       );
       return;
     }
+    print(dataUser);
     final usr = Provider.of<UserProvider>(context, listen: false);
     usr
         .forgotChangePassword(
-      username: dataUser['username'].toString(),
+      username: dataUser['nis'],
       password: password.text,
     )
         .then((value) {
