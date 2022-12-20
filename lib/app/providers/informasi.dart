@@ -6,7 +6,7 @@ class InformasiProvider extends ChangeNotifier {
   List<ModelInformasi> informasi = [];
 
   getData() async {
-    Iterable iterable = await getInformasi();
+    Iterable iterable = await Informasi.getInformasi();
     informasi = iterable.map((e) => ModelInformasi.formJson(e)).toList();
     notifyListeners();
   }

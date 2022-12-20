@@ -129,7 +129,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                         child: Consumer<InformasiProvider>(
                             builder: (context, value, child) {
                           return Text(
-                            value.find(args).judul,
+                            value.find(args).judul ?? "",
                             style: TextStyle(
                               color: Color.fromRGBO(25, 61, 40, 1),
                               fontSize: 16,
@@ -147,7 +147,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                         child: Consumer<InformasiProvider>(
                             builder: (context, value, child) {
                           return Text(
-                            value.find(args).desc,
+                            value.find(args).desc ?? "",
                             style: TextStyle(
                               color: Color.fromRGBO(25, 61, 40, 1),
                               fontSize: 14,
@@ -165,7 +165,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                         child: Consumer<InformasiProvider>(
                             builder: (context, value, child) {
                           return Text(
-                            value.find(args).updatedAt,
+                            value.find(args).createdAt ?? "",
                             style: TextStyle(
                               color: Color.fromRGBO(25, 61, 40, 1),
                               fontSize: 13,

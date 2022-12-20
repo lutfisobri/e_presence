@@ -6,7 +6,7 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino(1).dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -33,7 +33,7 @@ class _HomeState extends State<Home> {
     final user = Provider.of<UserProvider>(context, listen: false);
     // loadPresen.loadPresensi(user.dataUser.idKelas);
     loadPresen.allPresensi(
-        idKelas: user.dataUser.idKelas, nis: user.dataUser.username);
+        idKelas: user.dataUser.idKelas ?? "", nis: user.dataUser.username);
     user.checkAccount().then((value) {
       if (value == 401) {
         if (!mounted) return;
@@ -236,7 +236,8 @@ class _HomeState extends State<Home> {
                       height: 90,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(3.15),
-                        child: informasi.informasi[index].image == null
+                        child: informasi.informasi[index].image == null ||
+                                informasi.informasi[index].image == ""
                             ? Image.asset(
                                 "assets/image/icondefaultinformasi.png",
                                 fit: BoxFit.cover,
@@ -255,9 +256,9 @@ class _HomeState extends State<Home> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            informasi.informasi[index].judul,
+                            informasi.informasi[index].judul ?? "",
                             maxLines: 1,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                               color: Color(0XFF193D28),
@@ -266,8 +267,8 @@ class _HomeState extends State<Home> {
                             ),
                           ),
                           Text(
-                            informasi.informasi[index].updatedAt,
-                            style: TextStyle(
+                            informasi.informasi[index].createdAt ?? "",
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Color(0XFF193D28),

@@ -246,18 +246,8 @@ class _LupaPasswordState extends State<LupaPassword> {
       );
       return;
     }
-    var otp = generateOTP();
-    user
-        .sendMail(
-      dataUser['nis'],
-      dataUser['email'],
-    )
-        .then((value) {
+    user.sendMail(dataUser['nis'], dataUser['email']).then((value) {
       if (value) {
-        Map<String, dynamic> otpUser = {
-          "otp": otp.toString(),
-        };
-        dataUser.addEntries(otpUser.entries);
         setState(() {
           isLoading = false;
         });
@@ -325,7 +315,8 @@ class _LupaPasswordState extends State<LupaPassword> {
       return;
     }
     user.searchAccount(username.text).then((value) {
-      if (value['username'] == "") {
+      print(value);
+      if (value['nis'] == "") {
         Timer(
           const Duration(milliseconds: 300),
           () {
@@ -364,7 +355,7 @@ class _LupaPasswordState extends State<LupaPassword> {
                   onWillPop: () async => false,
                   child: const CustomDialog(
                     title: "Terjadi Kesalahan",
-                    subtitle: "Periksa Kembali E-mail Anda",
+                    subtitle: "Usernmae Tidak Memiliki E-mail",
                     image: "assets/icons/gagal.png",
                   ),
                 ),
@@ -372,7 +363,7 @@ class _LupaPasswordState extends State<LupaPassword> {
               isLoading = false;
             });
             Timer(
-              Duration(seconds: 2),
+              const Duration(seconds: 2),
               () => Navigator.pop(context),
             );
           },
@@ -385,7 +376,7 @@ class _LupaPasswordState extends State<LupaPassword> {
             setState(() {
               isAccount = true;
               isLoading = false;
-              username.text = value['email'];
+              username.text = value['email'].toString();
               dataUser = value;
             });
           },

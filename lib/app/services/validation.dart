@@ -13,6 +13,7 @@ int passwordIsSame(String password, String newPassword, String confNewPw) {
   if (newPassword != confNewPw) return 2;
   if (newPassword.length < 8 || confNewPw.length < 8) return 3;
   if (password == newPassword || password == confNewPw) return 4;
+  if (password == "" || newPassword == "" || confNewPw == "") return 5;
   return 0;
 }
 

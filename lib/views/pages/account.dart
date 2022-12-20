@@ -17,13 +17,13 @@ class _AkunPageState extends State<AkunPage> {
   @override
   void initState() {
     super.initState();
-    loadProfile();
+    // loadProfile();
   }
 
   loadProfile() async {
     final user = Provider.of<UserProvider>(context, listen: false);
     user.checkAccount().then((value) {
-      if (value == 401) {
+      if (value) {
         if (!mounted) return;
         showDialog(
           context: context,
@@ -39,9 +39,11 @@ class _AkunPageState extends State<AkunPage> {
             ),
           ),
         );
-      } else if (value == 203) {
-        return;
-      } else {
+      }
+      // else if (value == 203) {
+      //   return;
+      // }
+      else {
         user.isLogin = false;
       }
     });
@@ -81,7 +83,7 @@ class _AkunPageState extends State<AkunPage> {
                                     return ClipRRect(
                                       borderRadius: BorderRadius.circular(100),
                                       child: value.dataUser.foto == "" ||
-                                              value.dataUser.foto == null
+                                              value.dataUser.foto == "null"
                                           ? const Image(
                                               image: AssetImage(
                                                   "assets/image/profil_default.png"),
