@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
+import 'package:app_presensi/resources/widgets/shared/button_connection.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -42,7 +43,7 @@ class _LoginState extends State<Login> {
         (ConnectivityResult result) async {
           isDeviceConnected = await InternetConnectionChecker().hasConnection;
           if (!isDeviceConnected && !isAlert) {
-            showDialogbox();
+            _showModalBottomSheet(context);
             setState(() => isAlert = true);
           }
         },
@@ -54,28 +55,130 @@ class _LoginState extends State<Login> {
     super.dispose();
   }
 
-  showDialogbox() => showCupertinoDialog<String>(
-        context: context,
-        builder: (BuildContext contex) => CupertinoAlertDialog(
-          title: const Text("Tidak Ada Koneksi Internet"),
-          content: const Text("Tidak ada koneksi internet"),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context, 'cancel');
-                setState(() => isAlert = false);
-                isDeviceConnected =
-                    await InternetConnectionChecker().hasConnection;
-                if (!isDeviceConnected) {
-                  showDialogbox();
-                  setState(() => isAlert = true);
-                }
-              },
-              child: const Text("Tutup"),
-            ),
-          ],
-        ),
-      );
+  void _showModalBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      )),
+      builder: (context) => DraggableScrollableSheet(
+          initialChildSize: 0.6,
+          maxChildSize: 0.9,
+          minChildSize: 0.6,
+          expand: false,
+          builder: (context, scrollController) {
+            return SingleChildScrollView(
+              controller: scrollController,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: -15,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 20),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+                  Column(children: [
+                    Container(
+                      margin: const EdgeInsets.only(top: 11),
+                      alignment: AlignmentDirectional.topCenter,
+                      clipBehavior: Clip.none,
+                      width: 60,
+                      height: 3,
+                      color: Color.fromRGBO(208, 211, 216, 1),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 28),
+                      child: Image.asset(
+                        'assets/image/no_internet1.png',
+                        width: 240,
+                        height: 234.86,
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        'Tidak Ada Koneksi Internet',
+                        style: TextStyle(
+                          color: Color.fromRGBO(114, 182, 108, 1),
+                          fontSize: 18,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 6),
+                      child: Text(
+                        'Mohon Periksa Kembali Koneksi\nInternet Anda.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Color.fromRGBO(100, 97, 97, 1),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(left: 19, right: 19),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Button(
+                              onPres: () async {
+                                Navigator.pop(context, 'cancel');
+                                setState(() => isAlert = false);
+                                isDeviceConnected =
+                                    await InternetConnectionChecker()
+                                        .hasConnection;
+                                if (!isDeviceConnected) {
+                                  _showModalBottomSheet(context);
+                                }
+                              },
+                              minimunSize: const Size(248, 41),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              textStyle: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              child: const Text("COBA LAGI"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // SignInButton(
+                    //   onTap: () async {
+                    //     Navigator.pop(context, 'cancel');
+                    //     setState(() => isAlert = false);
+                    //     isDeviceConnected =
+                    //         await InternetConnectionChecker().hasConnection;
+                    //     if (!isDeviceConnected) {
+                    //       _showModalBottomSheet(context);
+                    //       setState(() => isAlert = true);
+                    //     }
+                    //   },
+                    //   textLabel: 'COBA LAGI',
+                    //   backgroundColor: Color.fromRGBO(114, 182, 108, 1),
+                    //   elevation: 0.0,
+                    // ),
+                  ])
+                ],
+              ),
+            );
+          }),
+    );
+  }
 
   loadData() async {
     String? deviceID = await PlatformDeviceId.getDeviceId;
@@ -90,9 +193,15 @@ class _LoginState extends State<Login> {
 
   actionBtnLogin(
     // BuildContext context,
+
     UserProvider userControlProvider,
   ) async {
+    // isDeviceConnected = await InternetConnectionChecker().hasConnection;
     FocusManager.instance.primaryFocus?.unfocus();
+    if (!isDeviceConnected) {
+      _showModalBottomSheet(context);
+      isLoading = false;
+    } else if (isDeviceConnected) {
     if (username.text == "" || password.text == "") {
       Timer(
         const Duration(milliseconds: 700),
@@ -192,9 +301,102 @@ class _LoginState extends State<Login> {
           });
           setState(() {
             isLoading = false;
-          });
-        },
-      );
+          }),
+        );
+        Future.delayed(const Duration(milliseconds: 700));
+        Timer(
+          const Duration(milliseconds: 800),
+          () {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => WillPopScope(
+                onWillPop: () async {
+                  return false;
+                },
+                child: const CustomDialogLogin(),
+              ),
+            );
+            Timer(
+              const Duration(seconds: 2),
+              () {
+                Navigator.pop(context, false);
+              },
+            );
+          },
+        );
+        return;
+      } else {
+        Timer(
+          const Duration(milliseconds: 200),
+          () async {
+            await userControlProvider
+                .login(
+              username: username.text,
+              password: password.text,
+              deviceId: deviceId,
+            )
+                .then((value) {
+              if (value == "200") {
+                Navigator.pushReplacementNamed(context, "/home");
+              } else if (value == "401") {
+                userControlProvider
+                    .newLogin(
+                  username: username.text,
+                  password: password.text,
+                  deviceId: deviceId,
+                )
+                    .then(
+                  (value) {
+                    if (value) {
+                      Navigator.pushReplacementNamed(
+                        context,
+                        "/home",
+                      );
+                    } else {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => WillPopScope(
+                          onWillPop: () async => false,
+                          child: const CustomDialogLogin(),
+                        ),
+                      );
+                      Timer(
+                        const Duration(seconds: 2),
+                        () {
+                          Navigator.pop(context);
+                        },
+                      );
+                    }
+                  },
+                );
+              } else {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => WillPopScope(
+                    onWillPop: () async => false,
+                    child: const CustomDialogLogin(),
+                  ),
+                );
+                Timer(
+                  const Duration(seconds: 2),
+                  () {
+                    setState(() {
+                      // back = true;
+                    });
+                    Navigator.pop(context);
+                  },
+                );
+              }
+            });
+            setState(() {
+              isLoading = false;
+            });
+          },
+        );
+      }
     }
   }
 
