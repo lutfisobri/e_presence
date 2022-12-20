@@ -202,10 +202,104 @@ class _LoginState extends State<Login> {
       _showModalBottomSheet(context);
       isLoading = false;
     } else if (isDeviceConnected) {
-      if (username.text == "" || password.text == "") {
-        Timer(
-          const Duration(milliseconds: 700),
-          () => setState(() {
+    if (username.text == "" || password.text == "") {
+      Timer(
+        const Duration(milliseconds: 700),
+        () => setState(() {
+          isLoading = false;
+        }),
+      );
+      Future.delayed(const Duration(milliseconds: 700));
+      Timer(
+        const Duration(milliseconds: 800),
+        () {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => WillPopScope(
+              onWillPop: () async {
+                return false;
+              },
+              child: const CustomDialogLogin(),
+            ),
+          );
+          Timer(
+            const Duration(seconds: 2),
+            () {
+              Navigator.pop(context, false);
+            },
+          );
+        },
+      );
+      return;
+    } else {
+      Timer(
+        const Duration(milliseconds: 200),
+        () async {
+          await userControlProvider
+              .login(
+            username: username.text,
+            password: password.text,
+            deviceId: deviceId,
+          )
+              .then((value) {
+            if (value) {
+              Navigator.pushReplacementNamed(context, "/home");
+            }
+            //  else if (value == "401") {
+            //   userControlProvider
+            //       .newLogin(
+            //     username: username.text,
+            //     password: password.text,
+            //     deviceId: deviceId,
+            //   )
+            //       .then(
+            //     (value) {
+            //       if (value) {
+            //         Navigator.pushReplacementNamed(
+            //           context,
+            //           "/home",
+            //         );
+            //       } else {
+            //         showDialog(
+            //           context: context,
+            //           barrierDismissible: false,
+            //           builder: (context) => WillPopScope(
+            //             onWillPop: () async => false,
+            //             child: const CustomDialogLogin(),
+            //           ),
+            //         );
+            //         Timer(
+            //           const Duration(seconds: 2),
+            //           () {
+            //             Navigator.pop(context);
+            //           },
+            //         );
+            //       }
+            //     },
+            //   );
+            // }
+            else {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => WillPopScope(
+                  onWillPop: () async => false,
+                  child: const CustomDialogLogin(),
+                ),
+              );
+              Timer(
+                const Duration(seconds: 2),
+                () {
+                  setState(() {
+                    // back = true;
+                  });
+                  Navigator.pop(context);
+                },
+              );
+            }
+          });
+          setState(() {
             isLoading = false;
           }),
         );

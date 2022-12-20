@@ -25,6 +25,21 @@ class _VerificationOTPState extends State<VerificationOTP> {
     timeSendBack();
   }
 
+  @override
+  void dispose() {
+    otp1.dispose();
+    otp2.dispose();
+    otp3.dispose();
+    otp4.dispose();
+    Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        timer.cancel();
+      },
+    );
+    super.dispose();
+  }
+
   int detik = 0;
   int counter = 1;
 
@@ -80,6 +95,7 @@ class _VerificationOTPState extends State<VerificationOTP> {
   }
 
   verification(String otp) async {
+    print(dataUser);
     if (otp.isEmpty) {
       dialog();
       setState(() {
@@ -92,14 +108,27 @@ class _VerificationOTPState extends State<VerificationOTP> {
       return;
     }
     final userProv = Provider.of<UserProvider>(context, listen: false);
-    await userProv.verificationOTP(otp).then((value) {
-      if (value == 1) {
+    await userProv.verificationOTP(otp, dataUser['nis']).then((value) {
+      print(value);
+      if (value == 200) {
         setState(() {
           isLoading = false;
         });
         Navigator.pushReplacementNamed(context, "/forgotChangePassword",
             arguments: dataUser);
-      } else if (value == 2) {
+      } else if (value == 401) {
+        dialog();
+        setState(() {
+          isLoading = false;
+        });
+        Timer(
+          const Duration(seconds: 2),
+          () {
+            Navigator.pop(context);
+          },
+        );
+        return;
+      } else if (value == 410) {
         dialog();
         setState(() {
           isLoading = false;
@@ -231,49 +260,61 @@ class _VerificationOTPState extends State<VerificationOTP> {
                   height: 36.03,
                 ),
                 Row(
+                  children: const [
+                    Text(
+                      "Tidak menerima kode OTP?",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0XFF999999),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
                   children: [
-                    counter > 3 ? 
-                    detik != 0
+                    counter > 3
                         ? Text(
-                            "Kirim Ulang kode OTP dalam $detik detik lagi",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0XFF999999),
-                            ),
-                          )
-                        : GestureDetector(
-                            onTap: () {
-                              FocusManager.instance.primaryFocus!.unfocus();
-                              final user = Provider.of<UserProvider>(
-                                  context,
-                                  listen: false);
-                              user.sendMail(
-                                dataUser['nis'],
-                                dataUser['email'],
-                              );
-                              timeSendBack();
-                              setState(() {
-                                counter++;
-                              });
-                            },
-                            child: const Text(
-                              "Kirim Ulang kode OTP",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ) : Text(
                             "Kirim Ulang kode OTP",
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Color(0XFF999999),
                             ),
-                          ),
+                          )
+                        : detik == 0
+                            ? GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    counter++;
+                                  });
+                                  FocusManager.instance.primaryFocus!.unfocus();
+                                  final user = Provider.of<UserProvider>(
+                                      context,
+                                      listen: false);
+                                  user.sendMail(
+                                    dataUser['nis'],
+                                    dataUser['email'],
+                                  );
+                                  timeSendBack();
+                                },
+                                child: Text(
+                                  "Kirim Ulang kode OTP",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                "Kirim Ulang kode OTP dalam $detik detik lagi",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0XFF999999),
+                                ),
+                              ),
                   ],
                 ),
                 const SizedBox(

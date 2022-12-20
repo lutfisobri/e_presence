@@ -27,11 +27,10 @@ class _BerandaState extends State<Beranda> {
     final user = Provider.of<UserProvider>(context, listen: false);
     await loadPelajaran.allMapel(idKelas: user.dataUser.username);
     await loadPelajaran.allPresensi(
-        idKelas: user.dataUser.idKelas, nis: user.dataUser.username);
-    await loadPelajaran.allUjian(idKelas: user.dataUser.idKelas);
-    await user.loadProfile();
+        idKelas: user.dataUser.idKelas ?? "", nis: user.dataUser.username);
+    await loadPelajaran.allUjian(idKelas: user.dataUser.idKelas ?? "");
     await user.checkAccount().then((value) {
-      if (value == 401) {
+      if (value) {
         if (!mounted) return;
         showDialog(
           context: context,
@@ -47,8 +46,6 @@ class _BerandaState extends State<Beranda> {
             ),
           ),
         );
-      } else if (value == 203) {
-        return;
       } else {
         user.isLogin = false;
       }
@@ -57,7 +54,7 @@ class _BerandaState extends State<Beranda> {
 
   checkEmail() async {
     final user = Provider.of<UserProvider>(context, listen: false);
-    if (user.dataUser.email == "" || user.dataUser.email == null) {
+    if (user.dataUser.email == "" || user.dataUser.email == null || user.dataUser.email == "null") {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
           context: context,

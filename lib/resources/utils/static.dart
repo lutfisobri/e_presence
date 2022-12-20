@@ -41,7 +41,7 @@ Widget iconMapel(PelajaranProvider pelProv, int index, {Pelajaran? jenis}) {
       : (jenis == Pelajaran.presensi)
           ? pelProv.listPresensi[index].namaMapel
           : pelProv.listUjian[index].namaMapel;
-  switch (nama.toLowerCase()) {
+  switch (nama!.toLowerCase()) {
     case "agama":
       return Image.asset("assets/mapel/agama.png");
     case "bahasa indonesia":

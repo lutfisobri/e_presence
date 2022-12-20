@@ -1,12 +1,12 @@
 class LogPresensi {
-  final String id, nis, nama, tanggal, jam, keterangan;
+  final String? id, nis, nama, tanggal, jam, keterangan;
   LogPresensi({
-    required this.id,
-    required this.nis,
-    required this.nama,
-    required this.tanggal,
-    required this.jam,
-    required this.keterangan,
+    this.id,
+    this.nis,
+    this.nama,
+    this.tanggal,
+    this.jam,
+    this.keterangan,
   });
 
   factory LogPresensi.fromJson(Map<String, dynamic> json) {

@@ -1,13 +1,13 @@
 class ModelUser {
-  final String username, nama, kelas, idKelas, tglLahir;
-  String? foto, email, deviceId;
+  final String username, nama;
+  String? foto, email, kelas, idKelas, deviceId, tglLahir;
 
   ModelUser({
     required this.username,
     required this.nama,
-    required this.kelas,
-    required this.idKelas,
-    required this.tglLahir,
+    this.idKelas,
+    this.tglLahir,
+    this.kelas,
     this.foto,
     this.email,
     this.deviceId,
@@ -15,14 +15,14 @@ class ModelUser {
 
   factory ModelUser.formJson(Map<String, dynamic> json) {
     return ModelUser(
-      username: json['nis'],
-      nama: json['nama'],
-      kelas: json['kelas'],
-      idKelas: json['id_kelas'],
-      tglLahir: json['tanggal_lahir'],
-      foto: json['foto'],
+      username: json['nis'].toString(),
+      nama: json['nama'].toString(),
+      kelas: json['kelas'].toString(),
+      idKelas: json['id_kelas'].toString(),
+      tglLahir: json['tanggal_lahir'].toString(),
+      foto: json['foto'].toString(),
       email: json['email'],
-      deviceId: json['deviceId'],
+      deviceId: json['deviceId'].toString(),
     );
   }
 

@@ -80,7 +80,9 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   btnChange() async {
     final user = Provider.of<UserProvider>(context, listen: false);
-    await user.changePassword(password: pwBaru.text,).then((value) {
+    await user
+        .changePassword(password: pwLama.text, newPassword: pwBaru.text)
+        .then((value) {
       if (value) {
         showDialog(
           context: context,
@@ -94,7 +96,10 @@ class _ChangePasswordState extends State<ChangePassword> {
             ),
           ),
         );
-        user.login(username: user.dataUser.username, password: pwBaru.text, deviceId: deviceId);
+        user.login(
+            username: user.dataUser.username,
+            password: pwBaru.text,
+            deviceId: deviceId);
         Timer(
           const Duration(seconds: 2),
           () {
@@ -321,7 +326,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       pwBaru.text,
       confpwBaru.text,
     );
-    if (pwBaru.text == "" || pwLama.text == "" && confpwBaru.text == "") {
+    if (check == 5) {
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -359,26 +364,6 @@ class _ChangePasswordState extends State<ChangePassword> {
       if (check == 2) {
         pwbaru.requestFocus();
       }
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => WillPopScope(
-          onWillPop: () async => false,
-          child: const CustomDialog(
-            title: "Gagal Tersimpan",
-            subtitle: "Periksa Kembali Kata Sandi Anda",
-            image: "assets/icons/gagal.png",
-          ),
-        ),
-      );
-      Timer(
-        Duration(seconds: 2),
-        () => Navigator.pop(context),
-      );
-      return;
-    }
-    final user = Provider.of<UserProvider>(context, listen: false);
-    if (pwLama.text != null) {
       showDialog(
         context: context,
         barrierDismissible: false,
