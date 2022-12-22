@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
-import 'package:app_presensi/resources/widgets/shared/button_connection.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -45,6 +44,9 @@ class _LoginState extends State<Login> {
           if (!isDeviceConnected && !isAlert) {
             _showModalBottomSheet(context);
             setState(() => isAlert = true);
+          } else if (isDeviceConnected && isAlert) {
+            Navigator.pop(context);
+            setState(() => isAlert = false);
           }
         },
       );
@@ -136,12 +138,6 @@ class _LoginState extends State<Login> {
                               onPres: () async {
                                 Navigator.pop(context, 'cancel');
                                 setState(() => isAlert = false);
-                                isDeviceConnected =
-                                    await InternetConnectionChecker()
-                                        .hasConnection;
-                                if (!isDeviceConnected) {
-                                  _showModalBottomSheet(context);
-                                }
                               },
                               minimunSize: const Size(248, 41),
                               shape: RoundedRectangleBorder(
