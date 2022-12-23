@@ -44,9 +44,6 @@ class _LoginState extends State<Login> {
           if (!isDeviceConnected && !isAlert) {
             _showModalBottomSheet(context);
             setState(() => isAlert = true);
-          } else if (isDeviceConnected && isAlert) {
-            Navigator.pop(context);
-            setState(() => isAlert = false);
           }
         },
       );
@@ -136,7 +133,7 @@ class _LoginState extends State<Login> {
                           Expanded(
                             child: Button(
                               onPres: () async {
-                                Navigator.pop(context, 'cancel');
+                                Navigator.pop(context);
                                 setState(() => isAlert = false);
                               },
                               minimunSize: const Size(248, 41),
@@ -177,79 +174,79 @@ class _LoginState extends State<Login> {
 
     UserProvider userControlProvider,
   ) async {
-    // isDeviceConnected = await InternetConnectionChecker().hasConnection;
+    isDeviceConnected = await InternetConnectionChecker().hasConnection;
     FocusManager.instance.primaryFocus?.unfocus();
-    if (!isDeviceConnected) {
+    if (!isDeviceConnected && !isAlert) {
       _showModalBottomSheet(context);
+      setState(() => isAlert = true);
       isLoading = false;
-      return;
-    }
-
-    if (username.text == "" || password.text == "") {
-      Timer(
-        const Duration(milliseconds: 700),
-        () => setState(() {
-          isLoading = false;
-        }),
-      );
-      Future.delayed(const Duration(milliseconds: 700));
-      Timer(
-        const Duration(milliseconds: 800),
-        () {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => WillPopScope(
-              onWillPop: () async {
-                return false;
-              },
-              child: const CustomDialogLogin(),
-            ),
-          );
-          Timer(
-            const Duration(seconds: 2),
-            () {
-              Navigator.pop(context, false);
-            },
-          );
-        },
-      );
-      return;
-    } else {
-      Timer(const Duration(milliseconds: 200), () async {
-        await userControlProvider
-            .login(
-          username: username.text,
-          password: password.text,
-          deviceId: deviceId,
-        )
-            .then((value) {
-          if (value) {
-            Navigator.pushReplacementNamed(context, "/home");
-          } else {
+    } else if (isDeviceConnected) {
+      if (username.text == "" || password.text == "") {
+        Timer(
+          const Duration(milliseconds: 700),
+          () => setState(() {
+            isLoading = false;
+          }),
+        );
+        Future.delayed(const Duration(milliseconds: 700));
+        Timer(
+          const Duration(milliseconds: 800),
+          () {
             showDialog(
               context: context,
               barrierDismissible: false,
               builder: (context) => WillPopScope(
-                onWillPop: () async => false,
+                onWillPop: () async {
+                  return false;
+                },
                 child: const CustomDialogLogin(),
               ),
             );
             Timer(
               const Duration(seconds: 2),
               () {
-                setState(() {
-                  // back = true;
-                });
-                Navigator.pop(context);
+                Navigator.pop(context, false);
               },
             );
-          }
+          },
+        );
+        return;
+      } else {
+        Timer(const Duration(milliseconds: 200), () async {
+          await userControlProvider
+              .login(
+            username: username.text,
+            password: password.text,
+            deviceId: deviceId,
+          )
+              .then((value) {
+            if (value) {
+              Navigator.pushReplacementNamed(context, "/home");
+            } else {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => WillPopScope(
+                  onWillPop: () async => false,
+                  child: const CustomDialogLogin(),
+                ),
+              );
+              Timer(
+                const Duration(seconds: 2),
+                () {
+                  setState(() {
+                    // back = true;
+                  });
+                  Navigator.pop(context);
+                },
+              );
+            }
+          });
+          setState(() {
+            isLoading = false;
+          });
         });
-        setState(() {
-          isLoading = false;
-        });
-      });
+      }
     }
   }
 
