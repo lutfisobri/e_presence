@@ -1,6 +1,6 @@
 class ModelUser {
   final String username, nama;
-  String? foto, email, kelas, idKelas, deviceId, tglLahir;
+  String? foto, email, kelas, idKelas, deviceId, tglLahir, idKelasAjaran;
 
   ModelUser({
     required this.username,
@@ -11,6 +11,7 @@ class ModelUser {
     this.foto,
     this.email,
     this.deviceId,
+    this.idKelasAjaran,
   });
 
   factory ModelUser.formJson(Map<String, dynamic> json) {
@@ -23,6 +24,7 @@ class ModelUser {
       foto: json['foto'].toString(),
       email: json['email'],
       deviceId: json['deviceId'].toString(),
+      idKelasAjaran: json['id_kelas_ajaran'].toString(),
     );
   }
 
@@ -36,6 +38,7 @@ class ModelUser {
       'foto': foto,
       'email': email,
       'deviceId': deviceId,
+      'id_kelas_ajaran': idKelasAjaran,
     };
   }
 
@@ -49,6 +52,7 @@ class ModelUser {
       'foto': null,
       'email': null,
       'deviceId': null,
+      'id_kelas_ajaran': null,
     };
     return ModelUser.formJson(hapus);
   }

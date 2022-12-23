@@ -142,7 +142,7 @@ class _PresensiState extends State<DetailPresensi> {
                                 .where((element) =>
                                     element.idPresensi == args.toString())
                                 .first
-                                .namaMapel,
+                                .namaMapel!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 18,
@@ -172,7 +172,7 @@ class _PresensiState extends State<DetailPresensi> {
                                     .where((element) =>
                                         element.idPresensi == args.toString())
                                     .first
-                                    .jamAwal,
+                                    .mulaiPresensi!,
                               ),
                             ),
                             textAlign: TextAlign.center,
@@ -204,7 +204,7 @@ class _PresensiState extends State<DetailPresensi> {
                                     .where((element) =>
                                         element.idPresensi == args.toString())
                                     .first
-                                    .jamAkhir,
+                                    .akhirPresensi!,
                               ),
                             ),
                             textAlign: TextAlign.center,
@@ -234,7 +234,7 @@ class _PresensiState extends State<DetailPresensi> {
                                 .where((element) =>
                                     element.idPresensi == args.toString())
                                 .first
-                                .namaMapel,
+                                .namaMapel!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 15,
@@ -379,10 +379,10 @@ class _PresensiState extends State<DetailPresensi> {
                             });
                             var date = validationTime(
                               DateTime.parse(
-                                pelProv.listPresensi[index].jamAwal,
+                                pelProv.listPresensi[index].mulaiPresensi!,
                               ),
                               DateTime.parse(
-                                pelProv.listPresensi[index].jamAwal,
+                                pelProv.listPresensi[index].akhirPresensi!,
                               ),
                             );
                             Timer(
