@@ -25,7 +25,7 @@ class _BerandaState extends State<Beranda> {
     final loadPelajaran =
         Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
-    await loadPelajaran.allMapel(idKelas: user.dataUser.username);
+    await loadPelajaran.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
     await loadPelajaran.allPresensi(
         idKelas: user.dataUser.idKelas ?? "", nis: user.dataUser.username);
     await loadPelajaran.allUjian(idKelas: user.dataUser.idKelas ?? "");

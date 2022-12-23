@@ -367,7 +367,7 @@ class _HomeState extends State<Home> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      value.listPresensi[index].namaMapel,
+                      value.listPresensi[index].namaMapel!,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -377,11 +377,11 @@ class _HomeState extends State<Home> {
                     Text(
                       "Jam ${DateFormat('hh:mm', 'id_ID').format(
                         DateTime.parse(
-                          value.listPresensi[index].jamAwal,
+                          value.listPresensi[index].mulaiPresensi!,
                         ),
                       )} - ${DateFormat('hh:mm', 'id_ID').format(
                         DateTime.parse(
-                          value.listPresensi[index].jamAkhir,
+                          value.listPresensi[index].akhirPresensi!,
                         ),
                       )} WIB",
                       style: const TextStyle(

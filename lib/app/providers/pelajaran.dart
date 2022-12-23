@@ -3,6 +3,7 @@ import 'package:app_presensi/app/models/log_presensi.dart';
 import 'package:app_presensi/app/models/mapel.dart';
 import 'package:app_presensi/app/models/presensi.dart';
 import 'package:app_presensi/app/models/ujian.dart';
+import 'package:app_presensi/resources/utils/static.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ntp/ntp.dart';
 
@@ -12,20 +13,20 @@ class PelajaranProvider with ChangeNotifier {
   List<ModelUjian> listUjian = [];
   List<LogPresensi> log = [];
 
-  allMapel({required String idKelas}) async {
-    Iterable iterable = await jadwalMapel(idKelas);
+  allMapel({required String idKelasAjaran}) async {
+    Iterable iterable = await ApiPelajaran.jadwalMapel(idKelasAjaran);
     listMapel = iterable.map((e) => ModelMapel.formJson(e)).toList();
     notifyListeners();
   }
 
   allUjian({required String idKelas}) async {
-    Iterable iterable = await jadwalUjian(idKelas);
+    Iterable iterable = await ApiPelajaran.jadwalUjian(idKelas);
     listUjian = iterable.map((e) => ModelUjian.formJson(e)).toList();
     notifyListeners();
   }
 
   allPresensi({required String idKelas, required String nis}) async {
-    Iterable iterable = await jadwalPresensi(idKelas);
+    Iterable iterable = await ApiPelajaran.jadwalPresensi(idKelas);
     final int offset = await NTP.getNtpOffset(
       localTime: DateTime.now(),
       lookUpAddress: "0.id.pool.ntp.org",
@@ -35,8 +36,11 @@ class PelajaranProvider with ChangeNotifier {
         .map((e) => ModelPresensi.formJson(e))
         .toList()
         .where((element) {
-      return internetTime.isAfter(DateTime.parse(element.jamAwal)) &&
-          internetTime.isBefore((DateTime.parse(element.jamAkhir)));
+          if (element.mulaiPresensi == null || element.akhirPresensi == null) {
+            return false;
+          }
+      return internetTime.isAfter(DateTime.parse(element.mulaiPresensi!)) &&
+          internetTime.isBefore((DateTime.parse(element.akhirPresensi!)));
     }).toList();
     logPresensi(nis: nis);
     listPresensi = iterable.map((e) => ModelPresensi.formJson(e)).toList();
@@ -55,7 +59,7 @@ class PelajaranProvider with ChangeNotifier {
   }
 
   submitPresensi(Map<String, dynamic> json) async {
-    await presensi({
+    await ApiPelajaran.presensi({
       "id": json['id'],
       "nis": json['username'],
       "nama": json['nama'],
@@ -70,7 +74,7 @@ class PelajaranProvider with ChangeNotifier {
   }
 
   logPresensi({required String nis}) async {
-    Iterable iterable = await logP(nis);
+    Iterable iterable = await ApiPelajaran.logP(nis);
     log = iterable.map((e) => LogPresensi.fromJson(e)).toList();
     notifyListeners();
   }

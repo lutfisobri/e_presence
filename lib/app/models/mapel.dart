@@ -1,45 +1,37 @@
 class ModelMapel {
-  final String idKelas, idMapel, namaMapel, hari, jamAwal, jamAkhir;
+  String? hari, pelajaran, jamMulai, jamSelesai;
 
   ModelMapel({
-    required this.idKelas,
-    required this.idMapel,
-    required this.namaMapel,
-    required this.hari,
-    required this.jamAwal,
-    required this.jamAkhir,
+    this.hari,
+    this.pelajaran,
+    this.jamMulai,
+    this.jamSelesai,
   });
 
   factory ModelMapel.formJson(Map<String, dynamic> json) {
     return ModelMapel(
-      idKelas: json['id_kelas'],
-      idMapel: json['id_mapel'],
-      namaMapel: json['nama_mapel'],
-      hari: json['hari'],
-      jamAwal: json['jam_awal'],
-      jamAkhir: json['jam_akhir'],
+      hari: json['hari'].toString(),
+      pelajaran: json['pelajaran'].toString(),
+      jamMulai: json['jam_mulai'].toString(),
+      jamSelesai: json['jam_selesai'].toString(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'idKelas': idKelas,
-      'id_mapel': idMapel,
-      'nama_mapel': namaMapel,
       'hari': hari,
-      'jam_awal': jamAwal,
-      'jam_akhir': jamAkhir,
+      'pelajaran': pelajaran,
+      'jam_mulai': jamMulai,
+      'jam_selesai': jamSelesai,
     };
   }
 
   clear() {
     Map<String, dynamic> hapus = {
-      "id_kelas": "",
-      "id_mapel": "",
-      "nama_mapel": "",
-      "hari": "",
-      "jam_awal": "",
-      "jam_akhir": ""
+      'hari': null,
+      'pelajaran': null,
+      'jam_mulai': null,
+      'jam_selesai': null,
     };
     return ModelMapel.formJson(hapus);
   }

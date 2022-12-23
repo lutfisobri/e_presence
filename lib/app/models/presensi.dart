@@ -1,33 +1,36 @@
 class ModelPresensi {
-  String idPresensi, namaGuru, namaMapel, jamAwal, jamAkhir, namaKelas;
+  String? namaMapel, idPresensi, mulaiPresensi, akhirPresensi, hari, jamKe, idKelas;
+
   ModelPresensi({
-    required this.idPresensi,
-    required this.namaGuru,
-    required this.namaMapel,
-    required this.jamAwal,
-    required this.jamAkhir,
-    required this.namaKelas,
+    this.namaMapel,
+    this.idPresensi,
+    this.mulaiPresensi,
+    this.akhirPresensi,
+    this.hari,
+    this.jamKe,
+    this.idKelas,
   });
 
   factory ModelPresensi.formJson(Map<String, dynamic> json) {
     return ModelPresensi(
-      idPresensi: json['id_presensi'],
-      namaGuru: json['nama_guru'],
-      namaMapel: json['nama_mapel'],
-      jamAwal: json['jam_awal'],
-      jamAkhir: json['jam_akhir'],
-      namaKelas: json['nama_kelas'],
+      namaMapel: json['namaMapel'],
+      idPresensi: json['idPresensi'],
+      mulaiPresensi: json['mulaiPresensi'],
+      akhirPresensi: json['akhirPresensi'],
+      hari: json['hari'],
+      jamKe: json['jamKe'],
+      idKelas: json['idKelas'],
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id_presensi': idPresensi,
-      'nama_guru': namaGuru,
-      'nama_mapel': namaMapel,
-      'jam_awal': jamAwal,
-      'jam_akhir': jamAkhir,
-      'nama_kelas': namaKelas,
+      'idPresensi': idPresensi,
+      'mulaiPresensi': mulaiPresensi,
+      'akhirPresensi': akhirPresensi,
+      'hari': hari,
+      'jamKe': jamKe,
+      'idKelas': idKelas,
     };
   }
 }
