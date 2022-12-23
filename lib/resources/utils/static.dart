@@ -37,7 +37,7 @@ enum Pelajaran { presensi, mapel, ujian }
 
 Widget iconMapel(PelajaranProvider pelProv, int index, {Pelajaran? jenis}) {
   var nama = (jenis == Pelajaran.mapel)
-      ? pelProv.listMapel[index].namaMapel
+      ? pelProv.listMapel[index].pelajaran
       : (jenis == Pelajaran.presensi)
           ? pelProv.listPresensi[index].namaMapel
           : pelProv.listUjian[index].namaMapel;

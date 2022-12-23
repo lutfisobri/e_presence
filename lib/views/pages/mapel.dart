@@ -81,7 +81,7 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
   getData() {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
-    dataMapel.allMapel(idKelas: user.dataUser.idKelas ?? "");
+    dataMapel.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
     user.checkAccount().then((value) {
       if (value == 401) {
         if (!mounted) return;
@@ -107,10 +107,10 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
     });
     setState(() {
       data = dataMapel.listMapel
-          .where((element) => element.hari.toLowerCase() == hari)
+          .where((element) => element.hari!.toLowerCase() == hari)
           .toList();
       data.sort(
-        (a, b) => a.jamAwal.compareTo(b.jamAwal),
+        (a, b) => a.jamMulai!.compareTo(b.jamSelesai!),
       );
     });
   }
@@ -250,7 +250,7 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        data[i].namaMapel,
+                                        data[i].pelajaran!,
                                         style: const TextStyle(
                                           fontSize: 15,
                                           fontWeight: FontWeight.w600,
@@ -258,7 +258,7 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                                         ),
                                       ),
                                       Text(
-                                        "Jam ${data[i].jamAwal} - ${data[i].jamAkhir} WIB",
+                                        "Jam ${data[i].jamMulai} - ${data[i].jamSelesai} WIB",
                                         style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
