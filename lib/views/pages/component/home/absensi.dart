@@ -54,7 +54,7 @@ class ContentPresensi extends StatelessWidget {
                           top: 10.8, left: 12.6, bottom: 10.8),
                       height: 35,
                       width: 35,
-                      child: iconMapel(value, index, jenis: Pelajaran.presensi),
+                      child: icons(nama: value.listPresensi[index].namaMapel!),
                     ),
                     const SizedBox(
                       width: 12.6,

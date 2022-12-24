@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 Future<dynamic> serviceCamera(
   BuildContext context, {
+  required String type,
   required void Function() kamera,
   required void Function() galeri,
   required void Function() hapus,
@@ -15,11 +16,11 @@ Future<dynamic> serviceCamera(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Padding(
-              padding: EdgeInsets.only(top: 15, left: 25),
+            Padding(
+              padding: const EdgeInsets.only(top: 15, left: 25),
               child: Text(
-                "Foto Profil",
-                style: TextStyle(
+                type,
+                style: const TextStyle(
                   fontSize: 17,
                 ),
               ),

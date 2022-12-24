@@ -85,6 +85,59 @@ Widget iconMapel(PelajaranProvider pelProv, int index, {Pelajaran? jenis}) {
     case "teknik informatika":
       return Image.asset("assets/mapel/ti.png");
     default:
-      return Image.asset("assets/mapel/defaulmapel.png");
+      return Image.asset("assets/mapel/defaultMapel.png");
+  }
+}
+
+Widget icons({required String nama}) {
+  switch (nama.toLowerCase()) {
+    case "agama":
+      return Image.asset("assets/mapel/agama.png");
+    case "matematika":
+      return Image.asset("assets/mapel/matematika.png");
+    case "bahasa indonesia":
+      return Image.asset("assets/mapel/bahasaIndonesia.png");
+    case "bahasa inggris":
+      return Image.asset("assets/mapel/bahasaInggris.png");
+    case "bahasa daerah madura":
+      return Image.asset("assets/mapel/bahasaMadura.png");
+    case "bahasa sastra arab":
+      return Image.asset("assets/mapel/bahasaSastraArab.png");
+    case "bahasa sastra indonesia":
+      return Image.asset("assets/mapel/bahasaSastraIndonesia.png");
+    case "bimbingan konseling":
+      return Image.asset("assets/mapel/bimbinganKonseling.png");
+    case "biologi":
+      return Image.asset("assets/mapel/biologi.png");
+    case "ekonomi":
+      return Image.asset("assets/mapel/ekonomi.png");
+    case "fisika":
+      return Image.asset("assets/mapel/fisika.png");
+    case "geografi":
+      return Image.asset("assets/mapel/geografi.png");
+    case "kimia":
+      return Image.asset("assets/mapel/kimia.png");
+    case "matematika peminatan":
+      return Image.asset("assets/mapel/matematikaPeminatan.png");
+    case "pendidikan jasmani, olahraga, dan kesehatan":
+      return Image.asset("assets/mapel/pjok.png");
+    case "pendidikan pancasila dan kewarganegaraan":
+      return Image.asset("assets/mapel/pkn.png");
+    case "pendidikan prakarya dan kewirausahaan ":
+      return Image.asset("assets/mapel/pkwu.png");
+    case "sejarah":
+      return Image.asset("assets/mapel/sejarah.png");
+    case "sejarah indonesia":
+      return Image.asset("assets/mapel/sejarahIndonesia.png");
+    case "seni budaya":
+      return Image.asset("assets/mapel/seniBudaya.png");
+    case "seni teater":
+      return Image.asset("assets/mapel/seniTeater.png");
+    case "sosiologi":
+      return Image.asset("assets/mapel/sosiologi.png");
+    case "teknik informatika":
+      return Image.asset("assets/mapel/ti.png");
+    default:
+      return Image.asset("assets/mapel/defaultMapel.png");
   }
 }
