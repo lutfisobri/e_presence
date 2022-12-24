@@ -1,8 +1,14 @@
+import 'dart:async';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
+import 'package:app_presensi/views/pages/skeleton.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
+
+import '../../app/providers/informasi.dart';
 
 class AkunPage extends StatefulWidget {
   const AkunPage({super.key});
@@ -13,13 +19,47 @@ class AkunPage extends StatefulWidget {
 
 class _AkunPageState extends State<AkunPage> {
   final styleThemeData = StyleThemeData();
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlert = false;
 
   @override
   void initState() {
     super.initState();
+    getConnectivity();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<InformasiProvider>(context, listen: false).getData();
+      Future.delayed(
+          const Duration(seconds: 1),
+          () => setState(() {
+                isLoading = false;
+                getConnectivity();
+              }));
+    });
     // loadProfile();
   }
 
+  getConnectivity() =>
+      subscription = Connectivity().onConnectivityChanged.listen(
+        (ConnectivityResult result) async {
+          isDeviceConnected = await InternetConnectionChecker().hasConnection;
+          if (!isDeviceConnected && !isAlert) {
+            isLoading = true;
+            setState(() => isAlert = true);
+          } else if (isDeviceConnected && isAlert) {
+            isLoading = false;
+            setState(() => isAlert = false);
+          }
+        },
+      );
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
+  }
+
+  bool isLoading = true;
   loadProfile() async {
     final user = Provider.of<UserProvider>(context, listen: false);
     user.checkAccount().then((value) {
@@ -63,119 +103,203 @@ class _AkunPageState extends State<AkunPage> {
                   height: 113,
                   child: SizedBox(
                     // width: double.infinity,
-                    child: Stack(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(width: 3),
-                                  borderRadius: BorderRadius.circular(100),
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(context, "/viewPhoto");
-                                  },
-                                  child: Consumer<UserProvider>(
-                                      builder: (context, value, child) {
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(100),
-                                      child: value.dataUser.foto == "" ||
-                                              value.dataUser.foto == "null"
-                                          ? const Image(
+                    child: isLoading
+                        ? Stack(
+                            children: [
+                              Row(
+                                children: [
+                                  Center(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(width: 3),
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
+                                      child: GestureDetector(
+                                        child: Consumer<UserProvider>(
+                                            builder: (context, value, child) {
+                                          return ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            child: Image(
                                               image: AssetImage(
                                                   "assets/image/profil_default.png"),
                                               width: 61,
                                               height: 61,
                                               fit: BoxFit.cover,
-                                            )
-                                          : Image(
-                                              image: NetworkImage(
-                                                value.dataUser.foto!,
-                                              ),
-                                              width: 61,
-                                              height: 61,
-                                              fit: BoxFit.cover,
                                             ),
-                                    );
-                                  }),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 22.96,
-                            ),
-                            Consumer<UserProvider>(
-                                builder: (context, usrProv, child) {
-                              return Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: 190,
-                                    child: Text(
-                                      usrProv.dataUser.nama,
-                                      overflow: TextOverflow.visible,
-                                      maxLines: 1,
-                                      style: const TextStyle(
-                                        overflow: TextOverflow.visible,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: "Roboto",
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 190,
-                                    child: Text(
-                                      "NIS ${usrProv.dataUser.username}",
-                                      overflow: TextOverflow.visible,
-                                      maxLines: 1,
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                        overflow: TextOverflow.visible,
-                                        fontWeight: FontWeight.w300,
-                                        fontFamily: "Roboto",
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 190,
-                                    child: Text(
-                                      usrProv.dataUser.email ?? "",
-                                      overflow: TextOverflow.visible,
-                                      maxLines: 1,
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                        overflow: TextOverflow.visible,
-                                        fontWeight: FontWeight.w300,
-                                        fontFamily: "Roboto",
+                                          );
+                                        }),
                                       ),
                                     ),
                                   ),
                                 ],
-                              );
-                            }),
-                          ],
-                        ),
-                        Positioned(
-                          right: 1.5,
-                          top: 25,
-                          child: InkWell(
-                            onTap: () {
-                              Navigator.pushNamed(context, "/editProfile");
-                            },
-                            child: Image.asset(
-                              "assets/icons/edit_profile.png",
-                              height: 30,
-                              width: 30,
-                            ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: const EdgeInsets.only(
+                                  left: 90,
+                                  right: 160,
+                                  top: 30,
+                                  bottom: 68,
+                                ),
+                                decoration: const BoxDecoration(),
+                                child: SkeletonContainer.square(
+                                  height: 60,
+                                  width: MediaQuery.of(context).size.width,
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: const EdgeInsets.only(
+                                    left: 90, right: 100, top: 53, bottom: 48),
+                                decoration: const BoxDecoration(),
+                                child: SkeletonContainer.square(
+                                  height: 60,
+                                  width: MediaQuery.of(context).size.width,
+                                ),
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width,
+                                margin: const EdgeInsets.only(
+                                    left: 90, right: 30, top: 73, bottom: 28),
+                                decoration: const BoxDecoration(),
+                                child: SkeletonContainer.square(
+                                  height: 60,
+                                  width: MediaQuery.of(context).size.width,
+                                ),
+                              ),
+                              Positioned(
+                                right: 1.5,
+                                top: 25,
+                                child: Image.asset(
+                                  "assets/icons/edit_profile.png",
+                                  height: 30,
+                                  width: 30,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Stack(
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(width: 3),
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, "/viewPhoto");
+                                        },
+                                        child: Consumer<UserProvider>(
+                                            builder: (context, value, child) {
+                                          return ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                            child: value.dataUser.foto == "" ||
+                                                    value.dataUser.foto ==
+                                                        "null"
+                                                ? const Image(
+                                                    image: AssetImage(
+                                                        "assets/image/profil_default.png"),
+                                                    width: 61,
+                                                    height: 61,
+                                                    fit: BoxFit.cover,
+                                                  )
+                                                : Image(
+                                                    image: NetworkImage(
+                                                      value.dataUser.foto!,
+                                                    ),
+                                                    width: 61,
+                                                    height: 61,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                          );
+                                        }),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 22.96,
+                                  ),
+                                  Consumer<UserProvider>(
+                                      builder: (context, usrProv, child) {
+                                    return Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 190,
+                                          child: Text(
+                                            usrProv.dataUser.nama,
+                                            overflow: TextOverflow.visible,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              overflow: TextOverflow.visible,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w700,
+                                              fontFamily: "Roboto",
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 190,
+                                          child: Text(
+                                            "NIS ${usrProv.dataUser.username}",
+                                            overflow: TextOverflow.visible,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              overflow: TextOverflow.visible,
+                                              fontWeight: FontWeight.w300,
+                                              fontFamily: "Roboto",
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 190,
+                                          child: Text(
+                                            usrProv.dataUser.email ?? "",
+                                            overflow: TextOverflow.visible,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              overflow: TextOverflow.visible,
+                                              fontWeight: FontWeight.w300,
+                                              fontFamily: "Roboto",
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }),
+                                ],
+                              ),
+                              Positioned(
+                                right: 1.5,
+                                top: 25,
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                        context, "/editProfile");
+                                  },
+                                  child: Image.asset(
+                                    "assets/icons/edit_profile.png",
+                                    height: 30,
+                                    width: 30,
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                        )
-                      ],
-                    ),
                   ),
                 ),
                 Expanded(

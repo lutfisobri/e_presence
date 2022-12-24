@@ -135,14 +135,8 @@ class _LoginState extends State<Login> {
                           Expanded(
                             child: Button(
                               onPres: () async {
-                                Navigator.pop(context, 'cancel');
+                                Navigator.pop(context);
                                 setState(() => isAlert = false);
-                                isDeviceConnected =
-                                    await InternetConnectionChecker()
-                                        .hasConnection;
-                                if (!isDeviceConnected) {
-                                  _showModalBottomSheet(context);
-                                }
                               },
                               minimunSize: const Size(248, 41),
                               shape: RoundedRectangleBorder(

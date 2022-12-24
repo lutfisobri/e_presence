@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:animations/animations.dart';
 import 'package:app_presensi/app/providers/informasi.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
@@ -9,7 +10,6 @@ import 'package:app_presensi/views/pages/component/home/null.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:ntp/ntp.dart';
 import 'package:provider/provider.dart';
 
@@ -79,7 +79,7 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
-  showDialogbox() => showCupertinoModalPopup<String>(
+  showDialogbox() => showModal<String>(
         context: context,
         builder: (BuildContext contex) => CupertinoAlertDialog(
           title: const Text("Peringatan"),
@@ -92,7 +92,7 @@ class _HomeState extends State<Home> {
                 isDeviceConnected =
                     await InternetConnectionChecker().hasConnection;
                 if (!isDeviceConnected) {
-                  showDialogbox();
+                  // showDialogbox();
                   setState(() => isAlert = true);
                 }
               },

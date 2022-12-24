@@ -4,15 +4,16 @@ import 'package:app_presensi/app/models/user.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/app/services/image.dart';
 import 'package:app_presensi/app/services/validation.dart';
-import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +28,9 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  late StreamSubscription subscription;
+  var isDeviceConnected = false;
+  bool isAlert = false;
   final styleThemeData = StyleThemeData();
   TextEditingController nama = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -48,8 +52,8 @@ class _EditProfileState extends State<EditProfile> {
     try {
       CroppedFile? croppedImage = await ImageCropper().cropImage(
         sourcePath: imageFile.path,
-        maxWidth: 1080,
         maxHeight: 1080,
+        maxWidth: 1080,
         aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
         uiSettings: [
           AndroidUiSettings(
@@ -113,10 +117,37 @@ class _EditProfileState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
+    getConnectivity();
     loadProfile();
+    Future.delayed(
+        const Duration(seconds: 1),
+        () => setState(() {
+              waiting = false;
+            }));
+  }
+
+  getConnectivity() =>
+      subscription = Connectivity().onConnectivityChanged.listen(
+        (ConnectivityResult result) async {
+          isDeviceConnected = await InternetConnectionChecker().hasConnection;
+          if (!isDeviceConnected && !isAlert) {
+            waiting = true;
+            setState(() => isAlert = true);
+          } else if (isDeviceConnected && isAlert) {
+            waiting = false;
+            setState(() => isAlert = false);
+          }
+        },
+      );
+
+  @override
+  void dispose() {
+    subscription.cancel();
+    super.dispose();
   }
 
   bool isLoading = false;
+  bool waiting = true;
 
   File? foto;
 
@@ -161,16 +192,164 @@ class _EditProfileState extends State<EditProfile> {
               ),
               body: SafeArea(
                 child: SingleChildScrollView(
-                  child: isLoading
+                  child: waiting
                       ? Stack(
                           children: [
+                            Center(
+                              child: Container(
+                                width: 90.r,
+                                height: 90.r,
+                                decoration: BoxDecoration(
+                                  border: Border.all(width: 3),
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: GestureDetector(
+                                  child: Consumer<UserProvider>(
+                                      builder: (context, value, child) {
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(100),
+                                      child: Image(
+                                        image: AssetImage(
+                                            "assets/image/profil_default.png"),
+                                        width: 61,
+                                        height: 61,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                            ),
                             Container(
-                              height: 263,
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(
+                                left: 18,
+                                right: 209,
+                                top: 114,
+                              ),
+                              decoration: const BoxDecoration(),
                               child: SkeletonContainer.square(
-                                height: 263,
+                                height: 21,
                                 width: MediaQuery.of(context).size.width,
                               ),
-                            )
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(
+                                left: 18,
+                                right: 18,
+                                top: 157.5,
+                              ),
+                              decoration: const BoxDecoration(),
+                              child: SkeletonContainer.square(
+                                height: 20,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(
+                                left: 18,
+                                right: 276,
+                                top: 201,
+                              ),
+                              decoration: const BoxDecoration(),
+                              child: SkeletonContainer.square(
+                                height: 21,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(
+                                left: 18,
+                                right: 18,
+                                top: 244.5,
+                              ),
+                              decoration: const BoxDecoration(),
+                              child: SkeletonContainer.square(
+                                height: 20,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(
+                                left: 18,
+                                right: 248,
+                                top: 288,
+                              ),
+                              decoration: const BoxDecoration(),
+                              child: SkeletonContainer.square(
+                                height: 21,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(
+                                left: 18,
+                                right: 18,
+                                top: 331.5,
+                              ),
+                              decoration: const BoxDecoration(),
+                              child: SkeletonContainer.square(
+                                height: 20,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(
+                                left: 18,
+                                right: 225,
+                                top: 375,
+                              ),
+                              decoration: const BoxDecoration(),
+                              child: SkeletonContainer.square(
+                                height: 21,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(
+                                left: 18,
+                                right: 18,
+                                top: 418.5,
+                              ),
+                              decoration: const BoxDecoration(),
+                              child: SkeletonContainer.square(
+                                height: 20,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(
+                                left: 18,
+                                right: 285,
+                                top: 462,
+                              ),
+                              decoration: const BoxDecoration(),
+                              child: SkeletonContainer.square(
+                                height: 21,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              margin: const EdgeInsets.only(
+                                left: 18,
+                                right: 18,
+                                top: 500,
+                              ),
+                              decoration: const BoxDecoration(),
+                              child: SkeletonContainer.square(
+                                height: 20,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                            ),
                           ],
                         )
                       : Stack(
@@ -590,7 +769,9 @@ class _EditProfileState extends State<EditProfile> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(100),
               child: foto?.path == null
-                  ? modelUser.foto == "" || modelUser.foto == null
+                  ? modelUser.foto == "" ||
+                          modelUser.foto == null ||
+                          modelUser.foto == "null"
                       ? const Image(
                           image: AssetImage("assets/image/profil_default.png"),
                           fit: BoxFit.cover,
