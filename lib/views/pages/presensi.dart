@@ -1,12 +1,16 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
+import 'package:app_presensi/app/services/image.dart';
 import 'package:app_presensi/app/services/location.dart';
 import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
+import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:provider/provider.dart';
@@ -90,9 +94,46 @@ class _PresensiState extends State<DetailPresensi> {
     setState(() {});
   }
 
+  Future<File?> _cropImage({required File imageFile}) async {
+    try {
+      CroppedFile? croppedImage = await ImageCropper().cropImage(
+        sourcePath: imageFile.path,
+        maxHeight: 1080,
+        maxWidth: 1080,
+        aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+        uiSettings: [
+          AndroidUiSettings(
+              toolbarTitle: 'Sunting Foto',
+              toolbarColor: Colors.black,
+              toolbarWidgetColor: Colors.white,
+              backgroundColor: Colors.black,
+              statusBarColor: Colors.white,
+              dimmedLayerColor: Colors.black,
+              cropFrameColor: Colors.white,
+              cropGridColor: Colors.white,
+              activeControlsWidgetColor: Color.fromRGBO(104, 187, 97, 1),
+              showCropGrid: true,
+              lockAspectRatio: false),
+          IOSUiSettings(
+            title: 'Sunting Foto',
+          ),
+        ],
+      );
+      if (croppedImage != null) {
+        return File(croppedImage.path);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
   double? distance;
 
   bool isLoading = false, notHadir = false;
+
+  File? image;
 
   @override
   Widget build(BuildContext context) {
@@ -228,7 +269,7 @@ class _PresensiState extends State<DetailPresensi> {
                                 .where((element) =>
                                     element.idPresensi == args.toString())
                                 .first
-                                .namaMapel!,
+                                .guru!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 15,
@@ -306,59 +347,102 @@ class _PresensiState extends State<DetailPresensi> {
                                   border: Border.all(color: colorGreen),
                                   borderRadius: BorderRadius.circular(7),
                                 ),
-                                // child: InkWell(
-                                //   borderRadius: BorderRadius.circular(11),
-                                //   onTap: () {
-                                //     // user.pickImage();
-                                //   },
-                                //   child: user.source == null
-                                //       ? SizedBox(
-                                //           height: 200,
-                                //           width: double.infinity,
-                                //           child: Padding(
-                                //             padding: const EdgeInsets.only(
-                                //                 top: 20, bottom: 30),
-                                //             child: Column(
-                                //               mainAxisAlignment:
-                                //                   MainAxisAlignment.center,
-                                //               children: [
-                                //                 Image.asset(
-                                //                   "assets/image/imagePresensi.png",
-                                //                   width: 70,
-                                //                   height: 70,
-                                //                 ),
-                                //                 const Text(
-                                //                   "Ambil bukti foto",
-                                //                   style: TextStyle(
-                                //                     color: colorGreen,
-                                //                     fontSize: 18,
-                                //                     fontWeight: FontWeight.w600,
-                                //                   ),
-                                //                 ),
-                                //                 if (_chose!.data == "Sakit")
-                                //                   const Text(
-                                //                     "*bukti berbentuk surat dokter",
-                                //                     style: TextStyle(
-                                //                       fontSize: 12,
-                                //                       fontWeight:
-                                //                           FontWeight.w300,
-                                //                       color: colorGreen,
-                                //                     ),
-                                //                   )
-                                //               ],
-                                //             ),
-                                //           ),
-                                //         )
-                                //       : SizedBox(
-                                //           height: 200,
-                                //           width: double.infinity,
-                                //           // child: Image.file(
-                                //           //   user.source!,
-                                //           //   // scale: 5,
-                                //           //   fit: BoxFit.scaleDown,
-                                //           // ),
-                                //         ),
-                                // ),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(11),
+                                  onTap: () {
+                                    serviceCamera(
+                                      context,
+                                      type: "Bukti Foto",
+                                      kamera: () {
+                                        takePhoto().then(
+                                          (value) {
+                                            if (value != null) {
+                                              _cropImage(imageFile: value)
+                                                  .then((value) {
+                                                if (value != null) {
+                                                  setState(() {
+                                                    image = value;
+                                                  });
+                                                }
+                                              });
+                                            }
+                                          },
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      galeri: () {
+                                        pickImage().then(
+                                          (value) {
+                                            if (value != null) {
+                                              _cropImage(imageFile: value)
+                                                  .then((value) {
+                                                if (value != null) {
+                                                  setState(() {
+                                                    image = value;
+                                                  });
+                                                }
+                                              });
+                                            }
+                                          },
+                                        );
+                                        Navigator.pop(context);
+                                      },
+                                      hapus: () {
+                                        setState(() {
+                                          image = null;
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    );
+                                  },
+                                  child: image == null
+                                      ? SizedBox(
+                                          height: 200,
+                                          width: double.infinity,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 20, bottom: 30),
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Image.asset(
+                                                  "assets/image/imagePresensi.png",
+                                                  width: 70,
+                                                  height: 70,
+                                                ),
+                                                const Text(
+                                                  "Ambil bukti foto",
+                                                  style: TextStyle(
+                                                    color: colorGreen,
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                if (_chose!.data == "Sakit")
+                                                  const Text(
+                                                    "*bukti berbentuk surat dokter",
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w300,
+                                                      color: colorGreen,
+                                                    ),
+                                                  )
+                                              ],
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox(
+                                          height: 200,
+                                          width: double.infinity,
+                                          child: Image.file(
+                                            image!,
+                                            // scale: 5,
+                                            fit: BoxFit.scaleDown,
+                                          ),
+                                        ),
+                                ),
                               ),
                             )
                           : const SizedBox(

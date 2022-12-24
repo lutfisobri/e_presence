@@ -1,5 +1,5 @@
 class ModelPresensi {
-  String? namaMapel, idPresensi, mulaiPresensi, akhirPresensi, hari, jamKe, idKelas;
+  String? namaMapel, idPresensi, mulaiPresensi, akhirPresensi, hari, jamKe, idKelas, guru;
 
   ModelPresensi({
     this.namaMapel,
@@ -9,6 +9,7 @@ class ModelPresensi {
     this.hari,
     this.jamKe,
     this.idKelas,
+    this.guru,
   });
 
   factory ModelPresensi.formJson(Map<String, dynamic> json) {
@@ -20,6 +21,7 @@ class ModelPresensi {
       hari: json['hari'],
       jamKe: json['jamKe'],
       idKelas: json['idKelas'],
+      guru: json['guru'],
     );
   }
 
@@ -31,6 +33,7 @@ class ModelPresensi {
       'hari': hari,
       'jamKe': jamKe,
       'idKelas': idKelas,
+      'guru': guru,
     };
   }
 }

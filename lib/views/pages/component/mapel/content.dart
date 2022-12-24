@@ -41,11 +41,7 @@ class ContentMapel extends StatelessWidget {
             ),
             child:
                 Consumer<PelajaranProvider>(builder: (context, pelProv, child) {
-              return iconMapel(
-                pelProv,
-                i,
-                jenis: Pelajaran.mapel,
-              );
+                  return icons(nama: data[i].pelajaran!);
             }),
           ),
           const SizedBox(

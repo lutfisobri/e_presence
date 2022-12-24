@@ -545,6 +545,7 @@ class _EditProfileState extends State<EditProfile> {
                                   onTap: () {
                                     serviceCamera(
                                       context,
+                                      type: "Foto Profil",
                                       hapus: () {
                                         Navigator.pop(context);
                                         showDialog(
