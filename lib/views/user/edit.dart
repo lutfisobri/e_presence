@@ -350,27 +350,6 @@ class _EditProfileState extends State<EditProfile> {
                                 width: MediaQuery.of(context).size.width,
                               ),
                             ),
-                            // Container(
-                            //   margin: const EdgeInsets.only(
-                            //     left: 235,
-                            //     right: 18,
-                            //     top: 531.5,
-                            //     bottom: 60,
-                            //   ),
-                            //   child: Button(
-                            //     onPres: () {},
-                            //     shape: RoundedRectangleBorder(
-                            //       borderRadius: BorderRadius.circular(7.77),
-                            //     ),
-                            //     minimunSize: const Size(109, 46),
-                            //     textStyle: const TextStyle(
-                            //       fontSize: 16,
-                            //       fontWeight: FontWeight.w600,
-                            //       fontFamily: "Roboto",
-                            //     ),
-                            //     child: const Text("SIMPAN"),
-                            //   ),
-                            // ),
                           ],
                         )
                       : Stack(
