@@ -31,7 +31,7 @@ class _BerandaState extends State<Beranda> {
         idKelasAjaran: user.dataUser.idKelasAjaran ?? "", nis: user.dataUser.username);
     await loadPelajaran.allUjian(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
     bool isLogin = await user.checkAccount().then((value) => value);
-    if (isLogin) {
+    if (!isLogin) {
       if (!mounted) return;
       showDialog(
         context: context,

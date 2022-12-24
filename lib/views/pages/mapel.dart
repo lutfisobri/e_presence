@@ -87,31 +87,27 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
   //       ),
   //     );
 
-  getData() {
+  getData() async {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
     dataMapel.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
-    user.checkAccount().then((value) {
-      if (value) {
-        if (!mounted) return;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => WillPopScope(
-            onWillPop: () async => false,
-            child: DialogSession(
-              onPress: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-                Navigator.pushReplacementNamed(context, "/login");
-                user.isLogin = false;
-              },
-            ),
+    bool isLogin = await user.checkAccount().then((value) => value);
+    if (!isLogin) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: DialogSession(
+            onPress: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.pushReplacementNamed(context, "/login");
+            },
           ),
-        );
-      } else {
-        user.isLogin = false;
-      }
-    });
+        ),
+      );
+    }
     setState(() {
       data = dataMapel.listMapel
           .where((element) => element.hari!.toLowerCase() == hari)

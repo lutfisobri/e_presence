@@ -83,35 +83,34 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
-  loadProfile() {
+  loadProfile() async {
     var user = Provider.of<UserProvider>(context, listen: false);
-    user.checkAccount().then((value) {
-      if (!value) {
-        if (!mounted) return;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => WillPopScope(
-            onWillPop: () async => false,
-            child: DialogSession(
-              onPress: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-                Navigator.pushReplacementNamed(context, "/login");
-                user.isLogin = false;
-              },
-            ),
+    bool isLogin = await user.checkAccount().then((value) => value);
+    if (isLogin) {
+      setState(() {
+        nama.text = user.dataUser.nama;
+        emailController.text = user.dataUser.email ?? "";
+        nis.text = user.dataUser.username;
+        tglLahir.text = user.dataUser.tglLahir ?? "";
+        kelas.text = user.dataUser.kelas ?? "";
+      });
+    } else {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: DialogSession(
+            onPress: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.pushReplacementNamed(context, "/login");
+              user.isLogin = false;
+            },
           ),
-        );
-      } else {
-        setState(() {
-          nama.text = user.dataUser.nama;
-          emailController.text = user.dataUser.email ?? "";
-          nis.text = user.dataUser.username;
-          tglLahir.text = user.dataUser.tglLahir ?? "";
-          kelas.text = user.dataUser.kelas ?? "";
-        });
-      }
-    });
+        ),
+      );
+    }
   }
 
   @override

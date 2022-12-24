@@ -31,33 +31,28 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 
   loadProfile() async {
+    final user = Provider.of<UserProvider>(context, listen: false);
     String? deviceID = await PlatformDeviceId.getDeviceId;
     setState(() {
       deviceId = deviceID ?? "";
     });
-    user().checkAccount().then((value) {
+    bool isLogin = await user.checkAccount().then((value) => value);
+    if (!isLogin) {
       if (!mounted) return;
-      if (value == 401) {
-        if (!mounted) return;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => WillPopScope(
-            onWillPop: () async => false,
-            child: DialogSession(
-              onPress: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-                Navigator.pushReplacementNamed(context, "/login");
-              },
-            ),
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: DialogSession(
+            onPress: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.pushReplacementNamed(context, "/login");
+            },
           ),
-        );
-      } else if (value == 203) {
-        return;
-      } else {
-        user().isLogin = false;
-      }
-    });
+        ),
+      );
+    }
   }
 
   UserProvider user() {

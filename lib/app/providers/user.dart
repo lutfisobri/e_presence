@@ -46,11 +46,9 @@ class UserProvider with ChangeNotifier {
         "password": dataLogin['password'],
         "deviceId": dataUser.deviceId,
       }).then((value) {
-        isLogin = true;
-        notifyListeners();
-        return false;
+        return value;
       }).catchError((e) {
-        return true;
+        return false;
       });
       return user;
     } else {

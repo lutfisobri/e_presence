@@ -36,7 +36,7 @@ class _HomeState extends State<Home> {
         idKelasAjaran: user.dataUser.idKelasAjaran ?? "",
         nis: user.dataUser.username);
     bool isLogin = await user.checkAccount().then((value) => value);
-    if (isLogin) {
+    if (!isLogin) {
       if (!mounted) return;
       showDialog(
         context: context,
