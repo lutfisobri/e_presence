@@ -9,7 +9,7 @@ class User {
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['data'];
     } else if (response.statusCode == 403) {
-      newLogin(json);
+      return newLogin(json);
     } else {
       throw Exception("Failed to load data");
     }
@@ -20,6 +20,18 @@ class User {
         headers: Url.headers, body: json);
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception("Failed to load data");
+    }
+  }
+
+  static Future checkIsLogin(Map<String, dynamic> json) async {
+    final response = await http.post(Uri.parse("${Url.baseUrl}user/login"),
+        headers: Url.headers, body: json);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
     }
   }
 
