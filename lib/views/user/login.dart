@@ -208,37 +208,35 @@ class _LoginState extends State<Login> {
         return;
       } else {
         Timer(const Duration(milliseconds: 200), () async {
-          await userControlProvider
+          bool isLogin = await userControlProvider
               .login(
-            username: username.text,
-            password: password.text,
-            deviceId: deviceId,
-          )
-              .then((value) {
-            if (value) {
-              Navigator.pushReplacementNamed(context, "/home");
-              return;
-            } else {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => WillPopScope(
-                  onWillPop: () async => false,
-                  child: const CustomDialogLogin(),
-                ),
-              );
-              Timer(
-                const Duration(seconds: 2),
-                () {
-                  setState(() {
-                    // back = true;
-                  });
-                  Navigator.pop(context);
-                },
-              );
-              return;
-            }
-          });
+                username: username.text,
+                password: password.text,
+                deviceId: deviceId,
+              )
+              .then((value) => value);
+          if (isLogin) {
+            if (!mounted) return;
+            Navigator.pushReplacementNamed(context, "/home");
+          } else {
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => WillPopScope(
+                onWillPop: () async => false,
+                child: const CustomDialogLogin(),
+              ),
+            );
+            Timer(
+              const Duration(seconds: 2),
+              () {
+                setState(() {
+                  // back = true;
+                });
+                Navigator.pop(context);
+              },
+            );
+          }
           setState(() {
             isLoading = false;
           });

@@ -41,12 +41,11 @@ class UserProvider with ChangeNotifier {
   Future<bool> checkAccount() async {
     final dataLogin = await Storage.isLogin();
     if (dataLogin['username'] != null) {
-      final user = await User.login({
+      final user = await User.checkIsLogin({
         "username": dataLogin['username'],
         "password": dataLogin['password'],
         "deviceId": dataUser.deviceId,
       }).then((value) {
-        dataUser = ModelUser.formJson(value);
         isLogin = true;
         notifyListeners();
         return false;
