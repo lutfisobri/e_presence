@@ -7,6 +7,8 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/constant/tab_bar.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
+import 'package:app_presensi/views/pages/component/mapel/content.dart';
+import 'package:app_presensi/views/pages/skeleton.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -701,19 +703,23 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                               );
                             }
                           },
-                            itemCount: tabItems.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 19, right: 19),
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          separatorBuilder: (context, index) => Container(
-                            height: 12.6,
-                          ),
-                          itemCount: data.length,
-                          itemBuilder: (context, i) {
-                            return ContentMapel(data: data, i: i);
+                          itemCount: tabItems.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                                padding:
+                                    const EdgeInsets.only(left: 19, right: 19),
+                                child: ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  separatorBuilder: (context, index) =>
+                                      Container(
+                                    height: 12.6,
+                                  ),
+                                  itemCount: data.length,
+                                  itemBuilder: (context, i) {
+                                    return ContentMapel(data: data, i: i);
+                                  },
+                                ));
                           },
                         );
                       },
@@ -740,4 +746,3 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
     }
   }
 }
-
