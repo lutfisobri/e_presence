@@ -19,12 +19,4 @@ List<Map<String, dynamic>> days = [
     "id": 5,
     "day": "jumat",
   },
-  {
-    "id": 6,
-    "day": "sabtu",
-  },
-  {
-    "id": 7,
-    "day": "minggu",
-  }
 ];

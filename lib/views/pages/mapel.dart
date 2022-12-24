@@ -8,6 +8,7 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/constant/tab_bar.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
+import 'package:app_presensi/views/pages/skeleton.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +37,9 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
     getConnectivity();
     super.initState();
     getData();
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() => isLoading = false);
+    });
   }
 
   getConnectivity() =>
@@ -43,8 +47,11 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
         (ConnectivityResult result) async {
           isDeviceConnected = await InternetConnectionChecker().hasConnection;
           if (!isDeviceConnected && !isAlert) {
-            showDialogbox();
+            isLoading = true;
             setState(() => isAlert = true);
+          } else if (isDeviceConnected && isAlert) {
+            isLoading = false;
+            setState(() => isAlert = false);
           }
         },
       );
@@ -55,28 +62,30 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  showDialogbox() => showCupertinoDialog<String>(
-        context: context,
-        builder: (BuildContext contex) => CupertinoAlertDialog(
-          title: const Text("Peringatan"),
-          content: const Text("Tidak ada koneksi internet"),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context, 'cancel');
-                setState(() => isAlert = false);
-                isDeviceConnected =
-                    await InternetConnectionChecker().hasConnection;
-                if (!isDeviceConnected) {
-                  showDialogbox();
-                  setState(() => isAlert = true);
-                }
-              },
-              child: const Text("Tutup"),
-            ),
-          ],
-        ),
-      );
+  bool isLoading = true;
+
+  // showDialogbox() => showCupertinoDialog<String>(
+  //       context: context,
+  //       builder: (BuildContext contex) => CupertinoAlertDialog(
+  //         title: const Text("Peringatan"),
+  //         content: const Text("Tidak ada koneksi internet"),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             onPressed: () async {
+  //               Navigator.pop(context, 'cancel');
+  //               setState(() => isAlert = false);
+  //               isDeviceConnected =
+  //                   await InternetConnectionChecker().hasConnection;
+  //               if (!isDeviceConnected) {
+  //                 showDialogbox();
+  //                 setState(() => isAlert = true);
+  //               }
+  //             },
+  //             child: const Text("Tutup"),
+  //           ),
+  //         ],
+  //       ),
+  //     );
 
   getData() {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
@@ -117,171 +126,669 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(
-                left: 19,
-                right: 19,
-              ),
-              child: Text(
-                "Jadwal Mata Pelajaran",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: "Roboto",
+    return isLoading
+        ? Stack(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 19,
+                  right: 132,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 21,
+                  width: MediaQuery.of(context).size.width,
                 ),
               ),
-            ),
-            const Padding(
-              padding: EdgeInsets.only(
-                left: 20,
-                right: 20,
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 19,
+                  right: 19,
+                  top: 30,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 4,
+                  width: MediaQuery.of(context).size.width,
+                ),
               ),
-              child: Divider(
-                thickness: 1,
-                color: Colors.black,
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 15,
+                  right: 298,
+                  top: 46,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
               ),
-            ),
-            const SizedBox(
-              height: 11,
-            ),
-            CustomTabBar(
-              padding: const EdgeInsets.only(
-                left: 20,
-                right: 20,
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 116,
+                  right: 224,
+                  top: 46,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
               ),
-              tab: selectedTab,
-              onChange: (newSelected) {
-                setState(() {
-                  selectedTab = newSelected;
-                  hari = validator(selectedTab);
-                });
-                getData();
-                pageController.animateToPage(
-                  newSelected - 1,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.decelerate,
-                );
-              },
-              scrollController: scrollController,
-              count: days.length,
-              hari: days,
-            ),
-            Container(
-              height: 400,
-              constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height - 197,
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 182,
+                  right: 154,
+                  top: 46,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
               ),
-              child: Consumer<PelajaranProvider>(
-                builder: (context, pelProv, child) {
-                  return PageView.builder(
-                    controller: pageController,
-                    onPageChanged: (value) {
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 266,
+                  right: 76,
+                  top: 46,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 340,
+                  right: 1,
+                  top: 46,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+
+              //list
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 19,
+                  right: 19,
+                  top: 93,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 56.6,
+                  color: Color.fromRGBO(240, 240, 240, 1),
+                ),
+              ),
+
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 293.4,
+                  left: 31.6,
+                  top: 103.8,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 35,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 199,
+                  left: 107,
+                  top: 104,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 138,
+                  left: 107,
+                  top: 124,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+
+              //list
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 19,
+                  right: 19,
+                  top: 162.2,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 56.6,
+                  color: Color.fromRGBO(240, 240, 240, 1),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 293.4,
+                  left: 31.6,
+                  top: 174,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 35,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 199,
+                  left: 107,
+                  top: 174,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 138,
+                  left: 107,
+                  top: 193,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+
+              //list
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 19,
+                  right: 19,
+                  top: 231.41,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 56.6,
+                  color: Color.fromRGBO(240, 240, 240, 1),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 293.4,
+                  left: 31.6,
+                  top: 242,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 35,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 199,
+                  left: 107,
+                  top: 242,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 138,
+                  left: 107,
+                  top: 262,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+
+              //list
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 19,
+                  right: 19,
+                  top: 300.61,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 56.6,
+                  color: Color.fromRGBO(240, 240, 240, 1),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 293.4,
+                  left: 31.6,
+                  top: 312,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 35,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 199,
+                  left: 107,
+                  top: 312,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 138,
+                  left: 107,
+                  top: 331,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+
+              // list
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 19,
+                  right: 19,
+                  top: 369.81,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 56.6,
+                  color: Color.fromRGBO(240, 240, 240, 1),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 293.4,
+                  left: 31.6,
+                  top: 381,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 35,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 199,
+                  left: 107,
+                  top: 381,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 138,
+                  left: 107,
+                  top: 401,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+
+              // list
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 19,
+                  right: 19,
+                  top: 439.01,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 56.6,
+                  color: Color.fromRGBO(240, 240, 240, 1),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 293.4,
+                  left: 31.6,
+                  top: 451,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 35,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 199,
+                  left: 107,
+                  top: 451,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 138,
+                  left: 107,
+                  top: 470,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+
+              // list
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  left: 19,
+                  right: 19,
+                  top: 508.22,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 56.6,
+                  color: Color.fromRGBO(240, 240, 240, 1),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 293.4,
+                  left: 31.6,
+                  top: 519.02,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 35,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 199,
+                  left: 107,
+                  top: 519.02,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                margin: const EdgeInsets.only(
+                  right: 138,
+                  left: 107,
+                  top: 537.52,
+                ),
+                decoration: const BoxDecoration(),
+                child: SkeletonContainer.square(
+                  height: 15,
+                  width: MediaQuery.of(context).size.width,
+                ),
+              ),
+            ],
+          )
+        : Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(
+                      left: 19,
+                      right: 19,
+                    ),
+                    child: Text(
+                      "Jadwal Mata Pelajaran",
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: "Roboto",
+                      ),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                    ),
+                    child: Divider(
+                      thickness: 1,
+                      color: Colors.black,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 11,
+                  ),
+                  CustomTabBar(
+                    padding: const EdgeInsets.only(
+                      left: 20,
+                      right: 20,
+                    ),
+                    tab: selectedTab,
+                    onChange: (newSelected) {
                       setState(() {
-                        selectedTab = value + 1;
+                        selectedTab = newSelected;
                         hari = validator(selectedTab);
                       });
                       getData();
-                      if (selectedTab > 3) {
-                        scrollController.animateTo(
-                          100.00,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.decelerate,
-                        );
-                      } else if (selectedTab < 4) {
-                        scrollController.animateTo(
-                          0,
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.decelerate,
-                        );
-                      }
+                      pageController.animateToPage(
+                        newSelected - 1,
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.decelerate,
+                      );
                     },
-                    itemCount: tabItems.length,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 19, right: 19),
-                        child: ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          separatorBuilder: (context, index) => Container(
-                            height: 12.6,
-                          ),
-                          itemCount: data.length,
-                          itemBuilder: (context, i) {
-                            return Container(
-                              height: 56.6,
-                              width: double.infinity,
-                              padding: const EdgeInsets.only(
-                                  left: 12.6, right: 12.6),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0XFF909090)
-                                        .withOpacity(0.20),
-                                    offset: const Offset(0, 1),
-                                    blurRadius: 2,
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 35,
-                                    width: 35,
+                    scrollController: scrollController,
+                    count: days.length,
+                    hari: days,
+                  ),
+                  Container(
+                    height: 400,
+                    constraints: BoxConstraints(
+                      minHeight: MediaQuery.of(context).size.height - 197,
+                    ),
+                    child: Consumer<PelajaranProvider>(
+                      builder: (context, pelProv, child) {
+                        return PageView.builder(
+                          controller: pageController,
+                          onPageChanged: (value) {
+                            setState(() {
+                              selectedTab = value + 1;
+                              hari = validator(selectedTab);
+                            });
+                            getData();
+                            if (selectedTab > 3) {
+                              scrollController.animateTo(
+                                100.00,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate,
+                              );
+                            } else if (selectedTab < 4) {
+                              scrollController.animateTo(
+                                0,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.decelerate,
+                              );
+                            }
+                          },
+                          itemCount: tabItems.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 19, right: 19),
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                separatorBuilder: (context, index) => Container(
+                                  height: 12.6,
+                                ),
+                                itemCount: data.length,
+                                itemBuilder: (context, i) {
+                                  return Container(
+                                    height: 56.6,
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.only(
+                                        left: 12.6, right: 12.6),
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(3.15),
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0XFF909090)
+                                              .withOpacity(0.20),
+                                          offset: const Offset(0, 1),
+                                          blurRadius: 2,
+                                        ),
+                                      ],
                                     ),
-                                    child: iconMapel(pelProv, i,
-                                        jenis: Pelajaran.mapel),
-                                  ),
-                                  const SizedBox(
-                                    width: 12.6,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        data[i].pelajaran!,
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: "Roboto",
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          height: 35,
+                                          width: 35,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(3.15),
+                                          ),
+                                          child: iconMapel(pelProv, i,
+                                              jenis: Pelajaran.mapel),
                                         ),
-                                      ),
-                                      Text(
-                                        "Jam ${data[i].jamMulai} - ${data[i].jamSelesai} WIB",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: "Roboto",
+                                        const SizedBox(
+                                          width: 12.6,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              data[i].pelajaran!,
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: "Roboto",
+                                              ),
+                                            ),
+                                            Text(
+                                              "Jam ${data[i].jamMulai} - ${data[i].jamSelesai} WIB",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: "Roboto",
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
                             );
                           },
-                        ),
-                      );
-                    },
-                  );
-                },
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-      ],
-    );
+            ],
+          );
   }
 
   String validator(int i) {
@@ -294,12 +801,8 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
         return "rabu";
       case 4:
         return "kamis";
-      case 5:
-        return "jumat";
-      case 6:
-        return "sabtu";
       default:
-        return "minggu";
+        return "jumat";
     }
   }
 }
