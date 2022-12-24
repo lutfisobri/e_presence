@@ -20,6 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context);
+    user.checkAccount();
     Timer(
       const Duration(seconds: 3),
       () => user.isLogin ? Navigator.pushReplacementNamed(context, "/home") : Navigator.pushReplacementNamed(context, Login.routeName),

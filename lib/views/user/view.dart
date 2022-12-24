@@ -11,31 +11,25 @@ class ViewPhoto extends StatefulWidget {
 }
 
 class _ViewPhotoState extends State<ViewPhoto> {
-  loadProfile() {
+  loadProfile() async {
     final user = Provider.of<UserProvider>(context, listen: false);
-    user.checkAccount().then((value) {
-      if (value == 401) {
-        if (!mounted) return;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => WillPopScope(
-            onWillPop: () async => false,
-            child: DialogSession(
-              onPress: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-                Navigator.pushReplacementNamed(context, "/login");
-                user.isLogin = false;
-              },
-            ),
+    bool isLogin = await user.checkAccount().then((value) => value);
+    if (!isLogin) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: DialogSession(
+            onPress: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.pushReplacementNamed(context, "/login");
+            },
           ),
-        );
-      } else if (value == 203) {
-        return;
-      } else {
-        user.isLogin = false;
-      }
-    });
+        ),
+      );
+    }
   }
 
   @override
