@@ -91,8 +91,9 @@ class _EditProfileState extends State<EditProfile> {
         nama.text = user.dataUser.nama;
         emailController.text = user.dataUser.email ?? "";
         nis.text = user.dataUser.username;
-        tglLahir.text = user.dataUser.tglLahir ?? "";
+        tglLahir.text = user.dataUser.tglLahir ?? "2000-01-01";
         kelas.text = user.dataUser.kelas ?? "";
+        modelUser = user.dataUser;
       });
     } else {
       if (!mounted) return;
