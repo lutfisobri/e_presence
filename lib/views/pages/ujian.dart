@@ -81,7 +81,7 @@ class _JadwalPageState extends State<JadwalPage> {
   getData() {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
-    dataMapel.allUjian(idKelas: user.dataUser.idKelas ?? "");
+    dataMapel.allUjian(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
     user.checkAccount().then((value) {
       if (value == 401) {
         if (!mounted) return;

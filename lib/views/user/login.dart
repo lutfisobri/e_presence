@@ -5,7 +5,6 @@ import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
@@ -21,7 +20,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   late StreamSubscription subscription;
-  var isDeviceConnected = false;
+  var isDeviceConnected = true;
   bool isAlert = false;
 
   TextEditingController username = TextEditingController();
@@ -32,21 +31,24 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
+    if (!mounted) return;
     getConnectivity();
     super.initState();
     loadData();
   }
 
-  getConnectivity() =>
-      subscription = Connectivity().onConnectivityChanged.listen(
-        (ConnectivityResult result) async {
-          isDeviceConnected = await InternetConnectionChecker().hasConnection;
-          if (!isDeviceConnected && !isAlert) {
-            _showModalBottomSheet(context);
-            setState(() => isAlert = true);
-          }
-        },
-      );
+  getConnectivity() {
+    subscription = Connectivity().onConnectivityChanged.listen(
+      (ConnectivityResult result) async {
+        isDeviceConnected = await InternetConnectionChecker().hasConnection;
+        if (!mounted) return;
+        if (!isDeviceConnected && !isAlert) {
+          _showModalBottomSheet(context);
+          setState(() => isAlert = true);
+        }
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -170,17 +172,10 @@ class _LoginState extends State<Login> {
   }
 
   actionBtnLogin(
-    // BuildContext context,
-
     UserProvider userControlProvider,
   ) async {
-    isDeviceConnected = await InternetConnectionChecker().hasConnection;
     FocusManager.instance.primaryFocus?.unfocus();
-    if (!isDeviceConnected && !isAlert) {
-      _showModalBottomSheet(context);
-      setState(() => isAlert = true);
-      isLoading = false;
-    } else if (isDeviceConnected) {
+    if (isDeviceConnected) {
       if (username.text == "" || password.text == "") {
         Timer(
           const Duration(milliseconds: 700),
@@ -222,6 +217,7 @@ class _LoginState extends State<Login> {
               .then((value) {
             if (value) {
               Navigator.pushReplacementNamed(context, "/home");
+              return;
             } else {
               showDialog(
                 context: context,
@@ -240,6 +236,7 @@ class _LoginState extends State<Login> {
                   Navigator.pop(context);
                 },
               );
+              return;
             }
           });
           setState(() {
@@ -247,6 +244,12 @@ class _LoginState extends State<Login> {
           });
         });
       }
+    } else {
+      if (!mounted) return;
+      _showModalBottomSheet(context);
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -405,10 +408,11 @@ class _LoginState extends State<Login> {
                                     Expanded(
                                       child: Button(
                                         onPres: () async {
+                                          getConnectivity();
                                           setState(() {
                                             isLoading = true;
                                           });
-                                          actionBtnLogin(
+                                          await actionBtnLogin(
                                               // context,
                                               userControlProvider);
                                         },
