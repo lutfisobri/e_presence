@@ -19,38 +19,38 @@ class PelajaranProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  allUjian({required String idKelas}) async {
-    Iterable iterable = await ApiPelajaran.jadwalUjian(idKelas);
+  allUjian({required String idKelasAjaran}) async {
+    Iterable iterable = await ApiPelajaran.jadwalUjian(idKelasAjaran);
     listUjian = iterable.map((e) => ModelUjian.formJson(e)).toList();
     notifyListeners();
   }
 
-  allPresensi({required String idKelas, required String nis}) async {
-    Iterable iterable = await ApiPelajaran.jadwalPresensi(idKelas);
+  allPresensi({required String idKelasAjaran, required String nis}) async {
+    Iterable iterable = await ApiPelajaran.jadwalPresensi(idKelasAjaran);
     final int offset = await NTP.getNtpOffset(
       localTime: DateTime.now(),
       lookUpAddress: "0.id.pool.ntp.org",
     );
+
     DateTime internetTime = DateTime.now().add(Duration(milliseconds: offset));
     listPresensi = iterable
         .map((e) => ModelPresensi.formJson(e))
         .toList()
         .where((element) {
-          if (element.mulaiPresensi == null || element.akhirPresensi == null) {
-            return false;
-          }
       return internetTime.isAfter(DateTime.parse(element.mulaiPresensi!)) &&
           internetTime.isBefore((DateTime.parse(element.akhirPresensi!)));
     }).toList();
-    logPresensi(nis: nis);
-    listPresensi = iterable.map((e) => ModelPresensi.formJson(e)).toList();
+
+    await logPresensi(nis: nis);
+
     for (var i = 0; i < log.length; i++) {
       for (var j = 0; j < listPresensi.length; j++) {
-        if (log[i].id == listPresensi[j].idPresensi) {
+        if (log[i].idPresensi == listPresensi[j].idPresensi) {
           listPresensi.removeAt(j);
         }
       }
     }
+
     notifyListeners();
   }
 

@@ -8,8 +8,10 @@ class User {
         headers: Url.headers, body: json);
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['data'];
+    } else if (response.statusCode == 403) {
+      newLogin(json);
     } else {
-      User.newLogin(json);
+      throw Exception("Failed to load data");
     }
   }
 

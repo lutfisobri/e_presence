@@ -2,11 +2,9 @@ import 'dart:async';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
-import 'package:app_presensi/resources/widgets/shared/button_connection.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +20,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   late StreamSubscription subscription;
-  var isDeviceConnected = false;
+  var isDeviceConnected = true;
   bool isAlert = false;
 
   TextEditingController username = TextEditingController();
@@ -33,21 +31,24 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
+    if (!mounted) return;
     getConnectivity();
     super.initState();
     loadData();
   }
 
-  getConnectivity() =>
-      subscription = Connectivity().onConnectivityChanged.listen(
-        (ConnectivityResult result) async {
-          isDeviceConnected = await InternetConnectionChecker().hasConnection;
-          if (!isDeviceConnected && !isAlert) {
-            _showModalBottomSheet(context);
-            setState(() => isAlert = true);
-          }
-        },
-      );
+  getConnectivity() {
+    subscription = Connectivity().onConnectivityChanged.listen(
+      (ConnectivityResult result) async {
+        isDeviceConnected = await InternetConnectionChecker().hasConnection;
+        if (!mounted) return;
+        if (!isDeviceConnected && !isAlert) {
+          _showModalBottomSheet(context);
+          setState(() => isAlert = true);
+        }
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -177,82 +178,83 @@ class _LoginState extends State<Login> {
   }
 
   actionBtnLogin(
-    // BuildContext context,
-
     UserProvider userControlProvider,
   ) async {
-    // isDeviceConnected = await InternetConnectionChecker().hasConnection;
     FocusManager.instance.primaryFocus?.unfocus();
-    if (!isDeviceConnected) {
-      _showModalBottomSheet(context);
-      isLoading = false;
-      return;
-    }
-
-    if (username.text == "" || password.text == "") {
-      Timer(
-        const Duration(milliseconds: 700),
-        () => setState(() {
-          isLoading = false;
-        }),
-      );
-      Future.delayed(const Duration(milliseconds: 700));
-      Timer(
-        const Duration(milliseconds: 800),
-        () {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => WillPopScope(
-              onWillPop: () async {
-                return false;
-              },
-              child: const CustomDialogLogin(),
-            ),
-          );
-          Timer(
-            const Duration(seconds: 2),
-            () {
-              Navigator.pop(context, false);
-            },
-          );
-        },
-      );
-      return;
-    } else {
-      Timer(const Duration(milliseconds: 200), () async {
-        await userControlProvider
-            .login(
-          username: username.text,
-          password: password.text,
-          deviceId: deviceId,
-        )
-            .then((value) {
-          if (value) {
-            Navigator.pushReplacementNamed(context, "/home");
-          } else {
+    if (isDeviceConnected) {
+      if (username.text == "" || password.text == "") {
+        Timer(
+          const Duration(milliseconds: 700),
+          () => setState(() {
+            isLoading = false;
+          }),
+        );
+        Future.delayed(const Duration(milliseconds: 700));
+        Timer(
+          const Duration(milliseconds: 800),
+          () {
             showDialog(
               context: context,
               barrierDismissible: false,
               builder: (context) => WillPopScope(
-                onWillPop: () async => false,
+                onWillPop: () async {
+                  return false;
+                },
                 child: const CustomDialogLogin(),
               ),
             );
             Timer(
               const Duration(seconds: 2),
               () {
-                setState(() {
-                  // back = true;
-                });
-                Navigator.pop(context);
+                Navigator.pop(context, false);
               },
             );
-          }
+          },
+        );
+        return;
+      } else {
+        Timer(const Duration(milliseconds: 200), () async {
+          await userControlProvider
+              .login(
+            username: username.text,
+            password: password.text,
+            deviceId: deviceId,
+          )
+              .then((value) {
+            if (value) {
+              Navigator.pushReplacementNamed(context, "/home");
+              return;
+            } else {
+              showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) => WillPopScope(
+                  onWillPop: () async => false,
+                  child: const CustomDialogLogin(),
+                ),
+              );
+              Timer(
+                const Duration(seconds: 2),
+                () {
+                  setState(() {
+                    // back = true;
+                  });
+                  Navigator.pop(context);
+                },
+              );
+              return;
+            }
+          });
+          setState(() {
+            isLoading = false;
+          });
         });
-        setState(() {
-          isLoading = false;
-        });
+      }
+    } else {
+      if (!mounted) return;
+      _showModalBottomSheet(context);
+      setState(() {
+        isLoading = false;
       });
     }
   }
@@ -412,10 +414,11 @@ class _LoginState extends State<Login> {
                                     Expanded(
                                       child: Button(
                                         onPres: () async {
+                                          getConnectivity();
                                           setState(() {
                                             isLoading = true;
                                           });
-                                          actionBtnLogin(
+                                          await actionBtnLogin(
                                               // context,
                                               userControlProvider);
                                         },

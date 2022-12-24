@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:app_presensi/app/models/mapel.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
@@ -8,6 +7,7 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/constant/tab_bar.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
+import 'package:app_presensi/views/pages/component/mapel/content.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -83,7 +83,7 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
     final user = Provider.of<UserProvider>(context, listen: false);
     dataMapel.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
     user.checkAccount().then((value) {
-      if (value == 401) {
+      if (value) {
         if (!mounted) return;
         showDialog(
           context: context,
@@ -99,8 +99,6 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
             ),
           ),
         );
-      } else if (value == 203) {
-        return;
       } else {
         user.isLogin = false;
       }
@@ -213,63 +211,7 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                           ),
                           itemCount: data.length,
                           itemBuilder: (context, i) {
-                            return Container(
-                              height: 56.6,
-                              width: double.infinity,
-                              padding: const EdgeInsets.only(
-                                  left: 12.6, right: 12.6),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(6),
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: const Color(0XFF909090)
-                                        .withOpacity(0.20),
-                                    offset: const Offset(0, 1),
-                                    blurRadius: 2,
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    height: 35,
-                                    width: 35,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(3.15),
-                                    ),
-                                    child: iconMapel(pelProv, i,
-                                        jenis: Pelajaran.mapel),
-                                  ),
-                                  const SizedBox(
-                                    width: 12.6,
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        data[i].pelajaran!,
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: "Roboto",
-                                        ),
-                                      ),
-                                      Text(
-                                        "Jam ${data[i].jamMulai} - ${data[i].jamSelesai} WIB",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: "Roboto",
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
+                            return ContentMapel(data: data, i: i);
                           },
                         ),
                       );
@@ -303,3 +245,4 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
     }
   }
 }
+

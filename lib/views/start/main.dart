@@ -9,6 +9,7 @@ import 'package:app_presensi/views/pages/account.dart';
 import 'package:app_presensi/views/pages/home.dart';
 import 'package:app_presensi/views/pages/mapel.dart';
 import 'package:app_presensi/views/pages/ujian.dart';
+import 'package:app_presensi/views/start/component/top_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -27,29 +28,25 @@ class _BerandaState extends State<Beranda> {
     final user = Provider.of<UserProvider>(context, listen: false);
     await loadPelajaran.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
     await loadPelajaran.allPresensi(
-        idKelas: user.dataUser.idKelas ?? "", nis: user.dataUser.username);
-    await loadPelajaran.allUjian(idKelas: user.dataUser.idKelas ?? "");
-    await user.checkAccount().then((value) {
-      if (value) {
-        if (!mounted) return;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => WillPopScope(
-            onWillPop: () async => false,
-            child: DialogSession(
-              onPress: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-                Navigator.pushReplacementNamed(context, "/login");
-                user.isLogin = false;
-              },
-            ),
+        idKelasAjaran: user.dataUser.idKelasAjaran ?? "", nis: user.dataUser.username);
+    await loadPelajaran.allUjian(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
+    bool isLogin = await user.checkAccount().then((value) => value);
+    if (isLogin) {
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: DialogSession(
+            onPress: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.pushReplacementNamed(context, "/login");
+            },
           ),
-        );
-      } else {
-        user.isLogin = false;
-      }
-    });
+        ),
+      );
+    }
   }
 
   checkEmail() async {
@@ -140,7 +137,7 @@ class _BerandaState extends State<Beranda> {
                                   right: 13.62,
                                   top: 35,
                                 ),
-                                child: topBar(),
+                                child: TopBarMain(),
                               )
                             : Container(),
                         RefreshIndicator(
@@ -194,62 +191,6 @@ class _BerandaState extends State<Beranda> {
             },
           ),
       ],
-    );
-  }
-
-  Consumer<UserProvider> topBar() {
-    String greeting() {
-      var hour = DateTime.now().hour;
-      if (hour > 4 && hour < 10) {
-        return 'Pagi';
-      }
-      if (hour > 10 && hour < 14) {
-        return 'Siang';
-      }
-      if (hour > 14 && hour < 18) {
-        return 'Sore';
-      }
-      return 'Malam';
-    }
-
-    return Consumer<UserProvider>(
-      builder: (context, value, child) {
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 320,
-                  child: Text(
-                    "Selamat ${greeting()}, ${value.dataUser.nama}",
-                    overflow: TextOverflow.visible,
-                    maxLines: 1,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-                Text(
-                  value.dataUser.kelas == ""
-                      ? "Loading"
-                      : "Kelas ${value.dataUser.kelas}",
-                  style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w400),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            )
-          ],
-        );
-      },
     );
   }
 

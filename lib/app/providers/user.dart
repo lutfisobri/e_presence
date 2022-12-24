@@ -49,9 +49,9 @@ class UserProvider with ChangeNotifier {
         dataUser = ModelUser.formJson(value);
         isLogin = true;
         notifyListeners();
-        return true;
-      }).catchError((e) {
         return false;
+      }).catchError((e) {
+        return true;
       });
       return user;
     } else {
