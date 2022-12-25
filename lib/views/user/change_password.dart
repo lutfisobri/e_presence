@@ -5,6 +5,7 @@ import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
 class ForgetChangePassword extends StatefulWidget {
@@ -15,6 +16,39 @@ class ForgetChangePassword extends StatefulWidget {
 }
 
 class _ForgetChangePasswordState extends State<ForgetChangePassword> {
+  late StreamSubscription<InternetConnectionStatus> listener;
+  bool isOnline = false;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            break;
+        }
+      },
+    );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    if (isOnline) {
+    }
+  }
+
   Map<String, dynamic> dataUser = {};
   TextEditingController password = TextEditingController();
   TextEditingController confPassword = TextEditingController();
@@ -30,6 +64,8 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
   @override
   void initState() {
     super.initState();
+    init();
+    hasConnect();
   }
 
   @override
