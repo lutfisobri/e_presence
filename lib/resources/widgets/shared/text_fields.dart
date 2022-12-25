@@ -37,6 +37,7 @@ class WtextField extends StatefulWidget {
     this.errorBorder,
     this.autovalidateMode,
     this.autofillHints,
+    this.onEditingComplete,
   });
 
   final bool obscure;
@@ -58,6 +59,7 @@ class WtextField extends StatefulWidget {
   final TextAlign textalign;
   final AutovalidateMode? autovalidateMode;
   final Iterable<String>? autofillHints;
+  final Function()? onEditingComplete;
 
   @override
   State<WtextField> createState() => _WtextFieldState();
@@ -82,6 +84,7 @@ class _WtextFieldState extends State<WtextField> {
         validator: widget.validator,
         onChanged: widget.onChanged,
         autofillHints: widget.autofillHints,
+        onEditingComplete: widget.onEditingComplete,
         decoration: InputDecoration(
           errorStyle: widget.errorStyle,
           errorBorder: widget.errorBorder,

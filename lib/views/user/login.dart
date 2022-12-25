@@ -19,22 +19,21 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  
   late StreamSubscription<InternetConnectionStatus> listener;
-  bool isOnline = true;
+  bool isOnline = false;
 
   void hasConnect() async {
     listener = InternetConnectionChecker().onStatusChange.listen(
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
-          if (!mounted) return;
+            if (!mounted) return;
             setState(() {
               isOnline = true;
             });
             break;
           case InternetConnectionStatus.disconnected:
-          if (!mounted) return;
+            if (!mounted) return;
             setState(() {
               isOnline = false;
             });
@@ -42,6 +41,18 @@ class _LoginState extends State<Login> {
         }
       },
     );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    if (isOnline) {
+    } else {
+      _noInternet();
+    }
   }
 
   TextEditingController username = TextEditingController();
@@ -54,6 +65,7 @@ class _LoginState extends State<Login> {
   void initState() {
     super.initState();
     if (!mounted) return;
+    init();
     hasConnect();
     loadData();
   }
@@ -90,7 +102,6 @@ class _LoginState extends State<Login> {
   actionBtnLogin(
     UserProvider userControlProvider,
   ) async {
-    hasConnect();
     FocusManager.instance.primaryFocus?.unfocus();
     if (isOnline) {
       if (username.text == "" || password.text == "") {

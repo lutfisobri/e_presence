@@ -13,6 +13,7 @@ import 'package:app_presensi/views/pages/component/presensi/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:provider/provider.dart';
@@ -33,6 +34,42 @@ class ListModelPresensi {
 }
 
 class _PresensiState extends State<DetailPresensi> {
+  late StreamSubscription<InternetConnectionStatus> listener;
+  bool isOnline = false;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+          checkAccount();
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            break;
+        }
+      },
+    );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    if (isOnline) {
+      _chose = items[0];
+      checkAccount();
+    } else {}
+  }
+
   ListModelPresensi? _chose;
 
   List<ListModelPresensi> items = [
@@ -44,9 +81,9 @@ class _PresensiState extends State<DetailPresensi> {
   @override
   void initState() {
     super.initState();
-    _chose = items[0];
     location();
-    checkAccount();
+    init();
+    hasConnect();
   }
 
   checkAccount() async {

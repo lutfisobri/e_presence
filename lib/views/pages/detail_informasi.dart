@@ -14,6 +14,7 @@ class DetailInformasi extends StatefulWidget {
 }
 
 class _DetailInformasiState extends State<DetailInformasi> {
+  
   late StreamSubscription<InternetConnectionStatus> listener;
   bool isOnline = false;
 

@@ -6,6 +6,7 @@ import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
 class LupaPassword extends StatefulWidget {
@@ -17,6 +18,45 @@ class LupaPassword extends StatefulWidget {
 }
 
 class _LupaPasswordState extends State<LupaPassword> {
+  late StreamSubscription<InternetConnectionStatus> listener;
+  bool isOnline = false;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            break;
+        }
+      },
+    );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    if (isOnline) {}
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    init();
+    hasConnect();
+  }
+
   TextEditingController username = TextEditingController();
   FocusNode focusNode = FocusNode();
   Map<String, dynamic> dataUser = {};
