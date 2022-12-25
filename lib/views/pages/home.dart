@@ -5,7 +5,7 @@ import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/views/pages/component/home/absensi.dart';
 import 'package:app_presensi/views/pages/component/home/informasi_akademik.dart';
-import 'package:app_presensi/views/pages/component/home/noconnection.dart';
+// import 'package:app_presensi/views/pages/component/home/noconnection.dart';
 import 'package:app_presensi/views/pages/component/home/null.dart';
 import 'package:app_presensi/views/pages/component/home/skeleton.dart';
 import 'package:flutter/cupertino.dart';
@@ -207,7 +207,7 @@ class _HomeState extends State<Home> {
                         right: 1,
                       ),
                       child: Image.asset(
-                        "assets/image/noInternet.png",
+                        "assets/image/NoInternet.png",
                         fit: BoxFit.cover,
                       ),
                     ),

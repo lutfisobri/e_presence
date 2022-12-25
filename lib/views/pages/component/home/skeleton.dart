@@ -1,5 +1,6 @@
 import 'package:app_presensi/resources/utils/skeleton.dart';
 import 'package:flutter/material.dart';
+//skeletonhome
 
 class SkeletonHome extends StatelessWidget {
   const SkeletonHome({super.key});
