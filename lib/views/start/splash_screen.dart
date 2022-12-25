@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/views/user/login.dart';
 import 'package:flutter/material.dart';
+import 'package:platform_device_id/platform_device_id.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -18,13 +19,33 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    autoLogin();
+  }
+
+  void autoLogin() async {
     final user = Provider.of<UserProvider>(context);
-    user.checkAccount();
-    Timer(
-      const Duration(seconds: 3),
-      () => user.isLogin ? Navigator.pushReplacementNamed(context, "/home") : Navigator.pushReplacementNamed(context, Login.routeName),
-    );
+    String? deviceId = await PlatformDeviceId.getDeviceId;
+    bool isLogin = await user.autoLogin(deviceId!);
+    if (isLogin) {
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, "/home");
+    } else {
+      if (!mounted) return;
+      Navigator.pushReplacementNamed(context, Login.routeName);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final user = context.read<UserProvider>();
+    Timer(const Duration(seconds: 3), () {
+      if (!mounted) return;
+      user.isLogin
+          ? Navigator.pushReplacementNamed(context, "/home")
+          : Navigator.pushReplacementNamed(context, "/login");
+    });
     return Scaffold(
       body: Stack(
         children: [

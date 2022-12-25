@@ -137,23 +137,26 @@ class _LupaPasswordState extends State<LupaPassword> {
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          WtextField(
-                            controller: username,
-                            focusNode: focusNode,
-                            label: const Text(
-                              "Masukkan Nama Pengguna Anda",
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0XFF838383),
+                          AutofillGroup(
+                            child: WtextField(
+                              controller: username,
+                              autofillHints: const [AutofillHints.username],
+                              focusNode: focusNode,
+                              label: const Text(
+                                "Masukkan Nama Pengguna Anda",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0XFF838383),
+                                ),
                               ),
+                              contenH: 15,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(7.r),
+                              ),
+                              enableBorder: const OutlineInputBorder(),
+                              primaryColor: const Color(0XFF0B0B0B),
                             ),
-                            contenH: 15,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(7.r),
-                            ),
-                            enableBorder: const OutlineInputBorder(),
-                            primaryColor: const Color(0XFF0B0B0B),
                           ),
                           const SizedBox(
                             height: 10,

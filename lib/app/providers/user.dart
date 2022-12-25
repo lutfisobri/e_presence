@@ -56,6 +56,27 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> autoLogin(String deviceId) async {
+    final dataLogin = await Storage.isLogin();
+    if (dataLogin['username'] != null) {
+      final user = await User.autoLogin({
+        "username": dataLogin['username'],
+        "password": dataLogin['password'],
+        "deviceId": deviceId,
+      }).then((value) {
+        dataUser = ModelUser.formJson(value);
+        isLogin = true;
+        notifyListeners();
+        return true;
+      }).catchError((e) {
+        return false;
+      });
+      return user;
+    } else {
+      return false;
+    }
+  }
+
   Future<bool> logout() async {
     final dataLogin = await Storage.isLogin();
     if (dataLogin['username'] != null) {

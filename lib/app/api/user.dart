@@ -35,6 +35,16 @@ class User {
     }
   }
 
+  static Future autoLogin(Map<String, dynamic> json) async {
+    final response = await http.post(Uri.parse("${Url.baseUrl}user/login"),
+        headers: Url.headers, body: json);
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['data'];
+    } else {
+      throw Exception("Failed to load data");
+    }
+  }
+
   static Future logout(String username) async {
     final response = await http.post(
       Uri.parse("${Url.baseUrl}user/logout"),

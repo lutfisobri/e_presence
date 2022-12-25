@@ -198,7 +198,7 @@ class _BerandaState extends State<Beranda> {
                                   top: 24,
                                 ),
                                 decoration: const BoxDecoration(
-                                  color: Color(0XFFFAFAFA),
+                                  color: Colors.white,
                                   borderRadius: BorderRadius.only(
                                     topLeft: Radius.circular(20),
                                     topRight: Radius.circular(20),
@@ -296,6 +296,7 @@ class _BerandaState extends State<Beranda> {
       ],
       showSelectedLabels: false,
       currentIndex: index,
+      backgroundColor: Colors.white,
       onTap: (value) {
         setState(() {
           index = value;
