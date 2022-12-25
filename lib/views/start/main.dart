@@ -31,8 +31,11 @@ class _BerandaState extends State<Beranda> {
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
+            if (!mounted) return;
             loadData();
+            if (!mounted) return;
             checkEmail();
+            if (!mounted) return;
             setState(() {
               isOnline = true;
             });
@@ -61,6 +64,8 @@ class _BerandaState extends State<Beranda> {
   }
 
   Future<void> loadData() async {
+    if (!mounted) return;
+    if (!isOnline) return;
     final loadPelajaran =
         Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
@@ -81,6 +86,7 @@ class _BerandaState extends State<Beranda> {
           onWillPop: () async => false,
           child: DialogSession(
             onPress: () {
+              if (!mounted) return;
               Navigator.popUntil(context, (route) => route.isFirst);
               Navigator.pushReplacementNamed(context, "/login");
             },

@@ -29,7 +29,7 @@ class User {
     final response = await http.post(Uri.parse("${Url.baseUrl}user/login"),
         headers: Url.headers, body: json);
     if (response.statusCode == 200) {
-      return true;
+      return jsonDecode(response.body)['data'];
     } else {
       return false;
     }

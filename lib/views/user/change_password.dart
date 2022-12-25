@@ -46,6 +46,7 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
       isOnline = check;
     });
     if (isOnline) {
+      loadData();
     }
   }
 
@@ -174,7 +175,9 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
   }
 
   btnUbah() {
-    loadData();
+    if (!isOnline) {
+      return;
+    }
     FocusManager.instance.primaryFocus?.unfocus();
     if (!_key.currentState!.validate()) {
       return;
