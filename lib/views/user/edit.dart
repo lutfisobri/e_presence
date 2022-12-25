@@ -400,14 +400,19 @@ class _EditProfileState extends State<EditProfile> {
                                       color: Color(0XFF858585),
                                     ),
                                   ),
-                                  WtextField(
-                                    controller: emailController,
-                                    contenH: 0,
-                                    primaryColor: Colors.black,
-                                    style: const TextStyle(
-                                      // color: Colors.white,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
+                                  AutofillGroup(
+                                    child: WtextField(
+                                      controller: emailController,
+                                      autofillHints: const [
+                                        AutofillHints.email
+                                      ],
+                                      contenH: 0,
+                                      primaryColor: Colors.black,
+                                      style: const TextStyle(
+                                        // color: Colors.white,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(

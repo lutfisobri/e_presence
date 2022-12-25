@@ -230,121 +230,129 @@ class _LoginState extends State<Login> {
                           ),
                           child: Container(
                             padding: const EdgeInsets.all(20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                WtextField(
-                                  controller: username,
-                                  hintText: "Nama Pengguna",
-                                  primaryColor: colorGreen,
-                                  hintStyle: const TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0XFF9F9F9F),
+                            child: AutofillGroup(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  WtextField(
+                                    controller: username,
+                                    autofillHints: const [
+                                      AutofillHints.username
+                                    ],
+                                    hintText: "Nama Pengguna",
+                                    primaryColor: colorGreen,
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0XFF9F9F9F),
+                                    ),
+                                    prefixIcon: const Icon(
+                                      Icons.account_box,
+                                      size: 20,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(7),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    contenV: 17,
+                                    fillColor: const Color(0xFFEFEFEF),
+                                    filled: true,
+                                    style: const TextStyle(
+                                      color: Color(0XFF9F9F9F),
+                                    ),
                                   ),
-                                  prefixIcon: const Icon(
-                                    Icons.account_box,
-                                    size: 20,
+                                  const SizedBox(
+                                    height: 15,
                                   ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(7),
-                                    borderSide: BorderSide.none,
+                                  WtextField(
+                                    controller: password,
+                                    hintText: "Kata sandi",
+                                    autofillHints: const [
+                                      AutofillHints.password
+                                    ],
+                                    primaryColor: colorGreen,
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0XFF9F9F9F),
+                                    ),
+                                    obscure: true,
+                                    sufixIcon1: const Icon(
+                                      Icons.visibility_off,
+                                      size: 19,
+                                    ),
+                                    sufixIcon2: const Icon(
+                                      Icons.visibility,
+                                      size: 19,
+                                    ),
+                                    contenV: 17,
+                                    prefixIcon: const Icon(
+                                      Icons.key,
+                                      size: 19,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(7),
+                                      borderSide: BorderSide.none,
+                                    ),
+                                    fillColor: const Color(0xFFEFEFEF),
+                                    filled: true,
+                                    focusColor: Colors.black,
+                                    style: const TextStyle(
+                                      color: Color(0XFF9F9F9F),
+                                    ),
                                   ),
-                                  contenV: 17,
-                                  fillColor: const Color(0xFFEFEFEF),
-                                  filled: true,
-                                  style: const TextStyle(
-                                    color: Color(0XFF9F9F9F),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                                WtextField(
-                                  controller: password,
-                                  hintText: "Kata sandi",
-                                  primaryColor: colorGreen,
-                                  hintStyle: const TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0XFF9F9F9F),
-                                  ),
-                                  obscure: true,
-                                  sufixIcon1: const Icon(
-                                    Icons.visibility_off,
-                                    size: 19,
-                                  ),
-                                  sufixIcon2: const Icon(
-                                    Icons.visibility,
-                                    size: 19,
-                                  ),
-                                  contenV: 17,
-                                  prefixIcon: const Icon(
-                                    Icons.key,
-                                    size: 19,
-                                  ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(7),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  fillColor: const Color(0xFFEFEFEF),
-                                  filled: true,
-                                  focusColor: Colors.black,
-                                  style: const TextStyle(
-                                    color: Color(0XFF9F9F9F),
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.pushNamed(
-                                            context, "/lupaPassword");
-                                      },
-                                      child: const Opacity(
-                                        opacity: 0.5,
-                                        child: Text(
-                                          "Lupa Kata Sandi",
-                                          style: TextStyle(
-                                            color: Colors.black,
-                                            letterSpacing: 0.2,
-                                            decoration:
-                                                TextDecoration.underline,
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, "/lupaPassword");
+                                        },
+                                        child: const Opacity(
+                                          opacity: 0.5,
+                                          child: Text(
+                                            "Lupa Kata Sandi",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              letterSpacing: 0.2,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                const SizedBox(
-                                  height: 6,
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Button(
-                                        onPres: () async {
-                                          setState(() {
-                                            isLoading = true;
-                                          });
-                                          await actionBtnLogin(
-                                              // context,
-                                              userControlProvider);
-                                        },
-                                        minimunSize: const Size(248, 41),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(7),
+                                      )
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 6,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Button(
+                                          onPres: () async {
+                                            setState(() {
+                                              isLoading = true;
+                                            });
+                                            await actionBtnLogin(
+                                                // context,
+                                                userControlProvider);
+                                          },
+                                          minimunSize: const Size(248, 41),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                          ),
+                                          textStyle: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                          child: const Text("MASUK"),
                                         ),
-                                        textStyle: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                        child: const Text("MASUK"),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),

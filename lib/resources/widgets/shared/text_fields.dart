@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class WtextField extends StatefulWidget {
   const WtextField({
@@ -38,6 +36,7 @@ class WtextField extends StatefulWidget {
     this.errorStyle,
     this.errorBorder,
     this.autovalidateMode,
+    this.autofillHints,
   });
 
   final bool obscure;
@@ -58,6 +57,7 @@ class WtextField extends StatefulWidget {
   final void Function(String)? onChanged;
   final TextAlign textalign;
   final AutovalidateMode? autovalidateMode;
+  final Iterable<String>? autofillHints;
 
   @override
   State<WtextField> createState() => _WtextFieldState();
@@ -81,6 +81,7 @@ class _WtextFieldState extends State<WtextField> {
         initialValue: widget.initialValue,
         validator: widget.validator,
         onChanged: widget.onChanged,
+        autofillHints: widget.autofillHints,
         decoration: InputDecoration(
           errorStyle: widget.errorStyle,
           errorBorder: widget.errorBorder,
