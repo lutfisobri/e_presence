@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'package:animations/animations.dart';
-import 'package:app_presensi/app/providers/informasi.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/views/pages/component/home/absensi.dart';
 import 'package:app_presensi/views/pages/component/home/informasi_akademik.dart';
 import 'package:app_presensi/views/pages/component/home/null.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -24,14 +22,46 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late StreamSubscription subscription;
-  var isDeviceConnected = false;
-  bool isAlert = false;
+  late StreamSubscription<InternetConnectionStatus> listener;
+  bool isOnline = false;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            showDialogbox();
+            break;
+        }
+      },
+    );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    if (isOnline) {
+      loadPresensi();
+    } else {
+      showDialogbox();
+    }
+  }
 
   loadPresensi() async {
     final loadPresen = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
-    // loadPresen.loadPresensi(user.dataUser.idKelas);
     loadPresen.allPresensi(
         idKelasAjaran: user.dataUser.idKelasAjaran ?? "",
         nis: user.dataUser.username);
@@ -56,52 +86,36 @@ class _HomeState extends State<Home> {
 
   @override
   void initState() {
-    getConnectivity();
     super.initState();
-    loadPresensi();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      Provider.of<InformasiProvider>(context, listen: false).getData();
-    });
+    hasConnect();
+    init();
   }
 
-  getConnectivity() =>
-      subscription = Connectivity().onConnectivityChanged.listen(
-        (ConnectivityResult result) async {
-          isDeviceConnected = await InternetConnectionChecker().hasConnection;
-          if (!isDeviceConnected && !isAlert) {
-            showDialogbox();
-            setState(() => isAlert = true);
-          }
-        },
-      );
   @override
   void dispose() {
-    subscription.cancel();
+    listener.cancel();
     super.dispose();
   }
 
-  showDialogbox() => showModal<String>(
-        context: context,
-        builder: (BuildContext contex) => CupertinoAlertDialog(
-          title: const Text("Peringatan"),
-          content: const Text("Tidak ada koneksi internet"),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(context, 'cancel');
-                setState(() => isAlert = false);
-                isDeviceConnected =
-                    await InternetConnectionChecker().hasConnection;
-                if (!isDeviceConnected) {
-                  // showDialogbox();
-                  setState(() => isAlert = true);
-                }
-              },
-              child: const Text("Tutup"),
-            ),
-          ],
-        ),
-      );
+  showDialogbox() {
+    showModal<String>(
+      context: context,
+      builder: (BuildContext contex) => CupertinoAlertDialog(
+        title: const Text("Peringatan"),
+        content: const Text("Tidak ada koneksi internet"),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context, 'cancel');
+              if (!mounted) return;
+              if (!isOnline) showDialogbox();
+            },
+            child: const Text("Tutup"),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

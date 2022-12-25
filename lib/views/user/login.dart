@@ -4,7 +4,7 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:app_presensi/views/user/component/login/is_online.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
@@ -19,9 +19,30 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  late StreamSubscription subscription;
-  var isDeviceConnected = true;
-  bool isAlert = false;
+  
+  late StreamSubscription<InternetConnectionStatus> listener;
+  bool isOnline = true;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+          if (!mounted) return;
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+          if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            break;
+        }
+      },
+    );
+  }
 
   TextEditingController username = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -31,32 +52,19 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    if (!mounted) return;
-    getConnectivity();
     super.initState();
+    if (!mounted) return;
+    hasConnect();
     loadData();
-  }
-
-  getConnectivity() {
-    subscription = Connectivity().onConnectivityChanged.listen(
-      (ConnectivityResult result) async {
-        isDeviceConnected = await InternetConnectionChecker().hasConnection;
-        if (!mounted) return;
-        if (!isDeviceConnected && !isAlert) {
-          _showModalBottomSheet(context);
-          setState(() => isAlert = true);
-        }
-      },
-    );
   }
 
   @override
   void dispose() {
-    subscription.cancel();
+    listener.cancel();
     super.dispose();
   }
 
-  void _showModalBottomSheet(BuildContext context) {
+  void _noInternet() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -64,99 +72,7 @@ class _LoginState extends State<Login> {
           borderRadius: BorderRadius.vertical(
         top: Radius.circular(20),
       )),
-      builder: (context) => DraggableScrollableSheet(
-          initialChildSize: 0.6,
-          maxChildSize: 0.9,
-          minChildSize: 0.6,
-          expand: false,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: -15,
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  Column(children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 11),
-                      alignment: AlignmentDirectional.topCenter,
-                      clipBehavior: Clip.none,
-                      width: 60,
-                      height: 3,
-                      color: Color.fromRGBO(208, 211, 216, 1),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 28),
-                      child: Image.asset(
-                        'assets/image/no_internet1.png',
-                        width: 240,
-                        height: 234.86,
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 10),
-                      child: Text(
-                        'Tidak Ada Koneksi Internet',
-                        style: TextStyle(
-                          color: Color.fromRGBO(114, 182, 108, 1),
-                          fontSize: 18,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 6),
-                      child: Text(
-                        'Mohon Periksa Kembali Koneksi\nInternet Anda.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color.fromRGBO(100, 97, 97, 1),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(left: 19, right: 19),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Button(
-                              onPres: () async {
-                                Navigator.pop(context);
-                                setState(() => isAlert = false);
-                              },
-                              minimunSize: const Size(248, 41),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              textStyle: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              child: const Text("COBA LAGI"),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ])
-                ],
-              ),
-            );
-          }),
+      builder: (context) => NoInternet(),
     );
   }
 
@@ -174,8 +90,9 @@ class _LoginState extends State<Login> {
   actionBtnLogin(
     UserProvider userControlProvider,
   ) async {
+    hasConnect();
     FocusManager.instance.primaryFocus?.unfocus();
-    if (isDeviceConnected) {
+    if (isOnline) {
       if (username.text == "" || password.text == "") {
         Timer(
           const Duration(milliseconds: 700),
@@ -217,6 +134,7 @@ class _LoginState extends State<Login> {
               .then((value) => value);
           if (isLogin) {
             if (!mounted) return;
+            listener.cancel();
             Navigator.pushReplacementNamed(context, "/home");
           } else {
             showDialog(
@@ -243,8 +161,7 @@ class _LoginState extends State<Login> {
         });
       }
     } else {
-      if (!mounted) return;
-      _showModalBottomSheet(context);
+      _noInternet();
       setState(() {
         isLoading = false;
       });
@@ -406,7 +323,6 @@ class _LoginState extends State<Login> {
                                     Expanded(
                                       child: Button(
                                         onPres: () async {
-                                          getConnectivity();
                                           setState(() {
                                             isLoading = true;
                                           });

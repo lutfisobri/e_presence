@@ -9,13 +9,13 @@ class TopBarMain extends StatelessWidget {
 
   String greeting() {
       var hour = DateTime.now().hour;
-      if (hour > 4 && hour < 10) {
+      if (hour >= 4 && hour < 10) {
         return 'Pagi';
       }
-      if (hour > 10 && hour < 14) {
+      if (hour >= 10 && hour < 14) {
         return 'Siang';
       }
-      if (hour > 14 && hour < 18) {
+      if (hour >= 14 && hour < 18) {
         return 'Sore';
       }
       return 'Malam';

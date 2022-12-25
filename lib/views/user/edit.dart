@@ -17,7 +17,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../pages/skeleton.dart';
+import '../../resources/utils/skeleton.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});

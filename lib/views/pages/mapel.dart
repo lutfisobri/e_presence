@@ -9,9 +9,6 @@ import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:app_presensi/views/pages/component/mapel/content.dart';
 import 'package:app_presensi/views/pages/component/mapel/skeleton.dart';
-import 'package:app_presensi/views/pages/skeleton.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
@@ -24,106 +21,97 @@ class Mapel extends StatefulWidget {
 }
 
 class _MapelState extends State<Mapel> with TickerProviderStateMixin {
-  late StreamSubscription subscription;
-  var isDeviceConnected = false;
-  bool isAlert = false;
+  
+  late StreamSubscription<InternetConnectionStatus> listener;
+  bool isOnline = false;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            getData();
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            break;
+        }
+      },
+    );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    getData();
+  }
+
   StyleThemeData styleThemeData = StyleThemeData();
   ScrollController scrollController = ScrollController();
   PageController pageController = PageController();
   int selectedTab = 1;
   String hari = "senin";
   List<ModelMapel> data = [];
+
   @override
   void initState() {
-    getConnectivity();
     super.initState();
-    getData();
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() => isLoading = false);
-    });
+    hasConnect();
+    init();
   }
-
-  getConnectivity() =>
-      subscription = Connectivity().onConnectivityChanged.listen(
-        (ConnectivityResult result) async {
-          isDeviceConnected = await InternetConnectionChecker().hasConnection;
-          if (!isDeviceConnected && !isAlert) {
-            isLoading = true;
-            setState(() => isAlert = true);
-          } else if (isDeviceConnected && isAlert) {
-            isLoading = false;
-            setState(() => isAlert = false);
-          }
-        },
-      );
 
   @override
   void dispose() {
-    subscription.cancel();
+    listener.cancel();
     super.dispose();
   }
 
-  bool isLoading = true;
-
-  // showDialogbox() => showCupertinoDialog<String>(
-  //       context: context,
-  //       builder: (BuildContext contex) => CupertinoAlertDialog(
-  //         title: const Text("Peringatan"),
-  //         content: const Text("Tidak ada koneksi internet"),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             onPressed: () async {
-  //               Navigator.pop(context, 'cancel');
-  //               setState(() => isAlert = false);
-  //               isDeviceConnected =
-  //                   await InternetConnectionChecker().hasConnection;
-  //               if (!isDeviceConnected) {
-  //                 showDialogbox();
-  //                 setState(() => isAlert = true);
-  //               }
-  //             },
-  //             child: const Text("Tutup"),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-
   getData() async {
-    final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
-    final user = Provider.of<UserProvider>(context, listen: false);
-    dataMapel.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
-    bool isLogin = await user.checkAccount().then((value) => value);
-    if (!isLogin) {
-      if (!mounted) return;
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => WillPopScope(
-          onWillPop: () async => false,
-          child: DialogSession(
-            onPress: () {
-              Navigator.popUntil(context, (route) => route.isFirst);
-              Navigator.pushReplacementNamed(context, "/login");
-            },
+    if (isOnline) {
+      final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
+      final user = Provider.of<UserProvider>(context, listen: false);
+      dataMapel.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
+      bool isLogin = await user.checkAccount().then((value) => value);
+      if (!isLogin) {
+        if (!mounted) return;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: DialogSession(
+              onPress: () {
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacementNamed(context, "/login");
+              },
+            ),
           ),
-        ),
-      );
+        );
+      }
+      setState(() {
+        data = dataMapel.listMapel
+            .where((element) => element.hari!.toLowerCase() == hari)
+            .toList();
+        data.sort(
+          (a, b) => a.jamMulai!.compareTo(b.jamSelesai!),
+        );
+      });
     }
-    setState(() {
-      data = dataMapel.listMapel
-          .where((element) => element.hari!.toLowerCase() == hari)
-          .toList();
-      data.sort(
-        (a, b) => a.jamMulai!.compareTo(b.jamSelesai!),
-      );
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
-        ? SekeletonMapel()
-        : Stack(
+    return (isOnline)
+        ? Stack(
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,7 +220,8 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                 ],
               ),
             ],
-          );
+          )
+        : SekeletonMapel();
   }
 
   String validator(int i) {
