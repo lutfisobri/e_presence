@@ -42,7 +42,9 @@ class _PresensiState extends State<DetailPresensi> {
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
+          if (!mounted) return;
           checkAccount();
+          if (!mounted) return;
             setState(() {
               isOnline = true;
             });
@@ -511,6 +513,12 @@ class _PresensiState extends State<DetailPresensi> {
     setState(() {
       isLoading = true;
     });
+    if (!isOnline) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
     final pelProv = Provider.of<PelajaranProvider>(context, listen: false);
     final userProv = Provider.of<UserProvider>(context, listen: false);
     final presensi = Provider.of<PresensiProvider>(context, listen: false);

@@ -6,6 +6,7 @@ import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:provider/provider.dart';
 
@@ -18,6 +19,41 @@ class ChangePassword extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePassword> {
+  late StreamSubscription<InternetConnectionStatus> listener;
+  bool isOnline = false;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            break;
+        }
+      },
+    );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    if (isOnline) {
+      loadProfile();
+    }
+  }
+
   final TextEditingController pwLama = TextEditingController();
   final TextEditingController pwBaru = TextEditingController();
   final TextEditingController confpwBaru = TextEditingController();
@@ -27,7 +63,8 @@ class _ChangePasswordState extends State<ChangePassword> {
   @override
   void initState() {
     super.initState();
-    loadProfile();
+    hasConnect();
+    init();
   }
 
   loadProfile() async {
@@ -289,6 +326,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                     children: [
                       Button(
                         onPres: () {
+                          if (!isOnline) {
+                            return;
+                          }
                           validationPW();
                           // connectionError(context);
                         },

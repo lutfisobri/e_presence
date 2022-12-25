@@ -207,7 +207,7 @@ class _HomeState extends State<Home> {
                         right: 1,
                       ),
                       child: Image.asset(
-                        "assets/image/NoInternet.png",
+                        "assets/image/noInternet.png",
                         fit: BoxFit.cover,
                       ),
                     ),

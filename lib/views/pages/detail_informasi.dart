@@ -23,6 +23,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
+          if (!mounted) return;
             setState(() {
               isOnline = true;
             });
