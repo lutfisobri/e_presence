@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'package:app_presensi/app/providers/informasi.dart';
-import 'package:app_presensi/views/pages/skeleton.dart';
+import 'package:app_presensi/views/pages/component/informasi/skeleton.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
 class DetailInformasi extends StatefulWidget {
@@ -13,20 +14,49 @@ class DetailInformasi extends StatefulWidget {
 }
 
 class _DetailInformasiState extends State<DetailInformasi> {
+  late StreamSubscription<InternetConnectionStatus> listener;
+  bool isOnline = false;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            break;
+        }
+      },
+    );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    if (isOnline) {
+    } else {}
+  }
+
   @override
   void initState() {
     super.initState();
+    hasConnect();
+    init();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<InformasiProvider>(context, listen: false).getData();
-      Future.delayed(
-          const Duration(seconds: 1),
-          () => setState(() {
-                isLoading = false;
-              }));
     });
   }
 
-  bool isLoading = true;
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments.toString();
@@ -42,68 +72,8 @@ class _DetailInformasiState extends State<DetailInformasi> {
             centerTitle: false,
           ),
           body: SingleChildScrollView(
-            child: isLoading
-                ? Column(
-                    children: [
-                      Container(
-                        height: 263,
-                        child: SkeletonContainer.square(
-                          height: 263,
-                          width: MediaQuery.of(context).size.width,
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.only(
-                            left: 19, right: 230, top: 19),
-                        decoration: const BoxDecoration(),
-                        child: SkeletonContainer.square(
-                          height: 25,
-                          width: MediaQuery.of(context).size.width,
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin:
-                            const EdgeInsets.only(left: 19, right: 19, top: 10),
-                        decoration: const BoxDecoration(),
-                        child: SkeletonContainer.square(
-                          height: 20,
-                          width: MediaQuery.of(context).size.width,
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin:
-                            const EdgeInsets.only(left: 19, right: 19, top: 10),
-                        decoration: const BoxDecoration(),
-                        child: SkeletonContainer.square(
-                          height: 20,
-                          width: MediaQuery.of(context).size.width,
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.only(
-                            left: 242, right: 19, top: 67),
-                        decoration: const BoxDecoration(),
-                        child: SkeletonContainer.square(
-                          height: 18,
-                          width: MediaQuery.of(context).size.width,
-                        ),
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        margin: const EdgeInsets.only(
-                            left: 242, right: 19, top: 10),
-                        decoration: const BoxDecoration(),
-                        child: SkeletonContainer.square(
-                          height: 18,
-                          width: MediaQuery.of(context).size.width,
-                        ),
-                      ),
-                    ],
-                  )
+            child: isOnline
+                ? SkeletonInformasi()
                 : Column(
                     children: [
                       Container(

@@ -1,4 +1,4 @@
-import 'package:app_presensi/views/pages/skeleton.dart';
+import 'package:app_presensi/resources/utils/skeleton.dart';
 import 'package:flutter/material.dart';
 
 class SekeletonMapel extends StatelessWidget {

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 bool emailValidation(String email) {
   final bool emailValid = RegExp(
           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -15,9 +13,4 @@ int passwordIsSame(String password, String newPassword, String confNewPw) {
   if (password == newPassword || password == confNewPw) return 4;
   if (password == "" || newPassword == "" || confNewPw == "") return 5;
   return 0;
-}
-
-int generateOTP() {
-  var random = Random().nextInt(8999) + 1000;
-  return random;
 }

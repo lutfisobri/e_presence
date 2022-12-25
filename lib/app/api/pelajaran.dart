@@ -51,11 +51,20 @@ class ApiPelajaran {
     }
   }
 
-  static Future presensi(Object data) async {
-    final response = await http.post(
-        Uri.parse("${Url.baseUrl}pelajaran/presensi.php"),
-        headers: Url.headers,
-        body: data);
+  static Future presensi(Map<String, dynamic> data) async {
+    var request = http.MultipartRequest('POST', Uri.parse("${Url.baseUrl}absensi/presensi"));
+    if (data['bukti'] != null) {
+      request.files
+          .add(await http.MultipartFile.fromPath('bukti', data['bukti']));
+    }
+    request.fields.addAll({
+      'idPresensi': data['idPresensi'],
+      'nis': data['nis'],
+      'timestamp': data['timestamp'],
+      'koordinat': data['koordinat'],
+      'kehadiran': data['kehadiran'],
+    });
+    var response = await request.send();
     if (response.statusCode == 200) {
       return true;
     } else {

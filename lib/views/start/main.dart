@@ -11,6 +11,7 @@ import 'package:app_presensi/views/pages/mapel.dart';
 import 'package:app_presensi/views/pages/ujian.dart';
 import 'package:app_presensi/views/start/component/top_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
 class Beranda extends StatefulWidget {
@@ -22,14 +23,54 @@ class Beranda extends StatefulWidget {
 }
 
 class _BerandaState extends State<Beranda> {
+  late StreamSubscription<InternetConnectionStatus> listener;
+  bool isOnline = false;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            loadData();
+            checkEmail();
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            break;
+        }
+      },
+    );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    if (isOnline) {
+      loadData();
+      checkEmail();
+    }
+  }
+
   Future<void> loadData() async {
     final loadPelajaran =
         Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
-    await loadPelajaran.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
+    await loadPelajaran.allMapel(
+        idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
     await loadPelajaran.allPresensi(
-        idKelasAjaran: user.dataUser.idKelasAjaran ?? "", nis: user.dataUser.username);
-    await loadPelajaran.allUjian(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
+        idKelasAjaran: user.dataUser.idKelasAjaran ?? "",
+        nis: user.dataUser.username);
+    await loadPelajaran.allUjian(
+        idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
     bool isLogin = await user.checkAccount().then((value) => value);
     if (!isLogin) {
       if (!mounted) return;
@@ -51,7 +92,9 @@ class _BerandaState extends State<Beranda> {
 
   checkEmail() async {
     final user = Provider.of<UserProvider>(context, listen: false);
-    if (user.dataUser.email == "" || user.dataUser.email == null || user.dataUser.email == "null") {
+    if (user.dataUser.email == "" ||
+        user.dataUser.email == null ||
+        user.dataUser.email == "null") {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
           context: context,
@@ -104,8 +147,9 @@ class _BerandaState extends State<Beranda> {
   @override
   void initState() {
     super.initState();
-    loadData();
-    checkEmail();
+    if (!mounted) return;
+    hasConnect();
+    init();
   }
 
   bool isEnable = true;

@@ -1,13 +1,12 @@
 import 'dart:async';
-
 import 'package:app_presensi/app/models/ujian.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
+import 'package:app_presensi/resources/utils/days.dart';
 import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/constant/tab_bar.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -21,9 +20,43 @@ class JadwalPage extends StatefulWidget {
 }
 
 class _JadwalPageState extends State<JadwalPage> {
-  late StreamSubscription subscription;
-  var isDeviceConnected = false;
-  bool isAlert = false;
+  late StreamSubscription<InternetConnectionStatus> listener;
+  bool isOnline = false;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            showDialogbox();
+            break;
+        }
+      },
+    );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    if (isOnline) {
+      getData();
+    } else {
+      showDialogbox();
+    }
+  }
+
   StyleThemeData styleThemeData = StyleThemeData();
   ScrollController scrollController = ScrollController();
   PageController pageController = PageController();
@@ -33,25 +66,14 @@ class _JadwalPageState extends State<JadwalPage> {
 
   @override
   void initState() {
-    getConnectivity();
     super.initState();
-    getData();
+    hasConnect();
+    init();
   }
-
-  getConnectivity() =>
-      subscription = Connectivity().onConnectivityChanged.listen(
-        (ConnectivityResult result) async {
-          isDeviceConnected = await InternetConnectionChecker().hasConnection;
-          if (!isDeviceConnected && !isAlert) {
-            showDialogbox();
-            setState(() => isAlert = true);
-          }
-        },
-      );
 
   @override
   void dispose() {
-    subscription.cancel();
+    listener.cancel();
     super.dispose();
   }
 
@@ -64,13 +86,7 @@ class _JadwalPageState extends State<JadwalPage> {
             TextButton(
               onPressed: () async {
                 Navigator.pop(context, 'cancel');
-                setState(() => isAlert = false);
-                isDeviceConnected =
-                    await InternetConnectionChecker().hasConnection;
-                if (!isDeviceConnected) {
-                  showDialogbox();
-                  setState(() => isAlert = true);
-                }
+                if (!isOnline) showDialogbox();
               },
               child: const Text("Tutup"),
             ),
@@ -160,8 +176,8 @@ class _JadwalPageState extends State<JadwalPage> {
                   curve: Curves.decelerate,
                 );
               },
-              count: 7,
-              hari: [],
+              count: days.length,
+              hari: days,
             ),
             Container(
               height: 400,
@@ -228,11 +244,8 @@ class _JadwalPageState extends State<JadwalPage> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(3.15),
                                   ),
-                                  child: iconMapel(
-                                    pelProv,
-                                    i,
-                                    jenis: Pelajaran.ujian,
-                                  ),
+                                  child: iconMapel(pelProv, i,
+                                      jenis: Pelajaran.ujian),
                                 ),
                                 const SizedBox(
                                   width: 12.6,

@@ -54,7 +54,7 @@ class PelajaranProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  findPresensi({required String id}) {
+  ModelPresensi findPresensi({required String id}) {
     return listPresensi.firstWhere((element) => element.idPresensi == id);
   }
 

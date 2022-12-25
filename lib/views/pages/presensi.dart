@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:app_presensi/app/providers/pelajaran.dart';
+import 'package:app_presensi/app/providers/presensi.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/app/services/image.dart';
 import 'package:app_presensi/app/services/location.dart';
@@ -8,6 +9,7 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
+import 'package:app_presensi/views/pages/component/presensi/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -90,6 +92,8 @@ class _PresensiState extends State<DetailPresensi> {
         position.latitude,
         position.longitude,
       );
+      lat = position.latitude;
+      long = position.longitude;
     });
     setState(() {});
   }
@@ -129,16 +133,15 @@ class _PresensiState extends State<DetailPresensi> {
     }
   }
 
-  double? distance;
+  double? distance, lat, long;
 
-  bool isLoading = false, notHadir = false;
+  bool isLoading = false, isPresent = false;
 
   File? image;
 
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments;
-    int index = int.parse(args.toString()) - 1;
     return WillPopScope(
       onWillPop: () async {
         subscription.cancel();
@@ -173,10 +176,8 @@ class _PresensiState extends State<DetailPresensi> {
                             ),
                           ),
                           Text(
-                            pelProv.listPresensi
-                                .where((element) =>
-                                    element.idPresensi == args.toString())
-                                .first
+                            pelProv
+                                .findPresensi(id: args.toString())
                                 .namaMapel!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
@@ -203,10 +204,8 @@ class _PresensiState extends State<DetailPresensi> {
                           Text(
                             DateFormat("dd MMMM y - hh.mm", "id_ID").format(
                               DateTime.parse(
-                                pelProv.listPresensi
-                                    .where((element) =>
-                                        element.idPresensi == args.toString())
-                                    .first
+                                pelProv
+                                    .findPresensi(id: args.toString())
                                     .mulaiPresensi!,
                               ),
                             ),
@@ -235,10 +234,8 @@ class _PresensiState extends State<DetailPresensi> {
                           Text(
                             DateFormat("dd MMMM y - hh.mm", "id_ID").format(
                               DateTime.parse(
-                                pelProv.listPresensi
-                                    .where((element) =>
-                                        element.idPresensi == args.toString())
-                                    .first
+                                pelProv
+                                    .findPresensi(id: args.toString())
                                     .akhirPresensi!,
                               ),
                             ),
@@ -265,11 +262,7 @@ class _PresensiState extends State<DetailPresensi> {
                             ),
                           ),
                           Text(
-                            pelProv.listPresensi
-                                .where((element) =>
-                                    element.idPresensi == args.toString())
-                                .first
-                                .guru!,
+                            pelProv.findPresensi(id: args.toString()).guru!,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 15,
@@ -316,11 +309,11 @@ class _PresensiState extends State<DetailPresensi> {
                           onChanged: (value) {
                             if (value!.data != "Hadir") {
                               setState(() {
-                                notHadir = true;
+                                isPresent = true;
                               });
                             } else {
                               setState(() {
-                                notHadir = false;
+                                isPresent = false;
                               });
                             }
                             setState(() {
@@ -338,7 +331,7 @@ class _PresensiState extends State<DetailPresensi> {
                           ),
                         ),
                       ),
-                      (notHadir)
+                      (isPresent)
                           ? Consumer<UserProvider>(
                               builder: (context, user, child) => Container(
                                 margin:
@@ -452,25 +445,7 @@ class _PresensiState extends State<DetailPresensi> {
                         width: double.infinity,
                         child: Button(
                           onPres: () {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            var date = validationTime(
-                              DateTime.parse(
-                                pelProv.listPresensi[index].mulaiPresensi!,
-                              ),
-                              DateTime.parse(
-                                pelProv.listPresensi[index].akhirPresensi!,
-                              ),
-                            );
-                            Timer(
-                              const Duration(seconds: 2),
-                              () {
-                                setState(() {
-                                  isLoading = false;
-                                });
-                              },
-                            );
+                            action(args.toString());
                           },
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(7),
@@ -489,48 +464,123 @@ class _PresensiState extends State<DetailPresensi> {
               ),
             ),
           ),
-          if (isLoading)
-            Container(
-              alignment: Alignment.center,
-              color: Colors.white.withOpacity(0.3),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "assets/loading/pensil.gif",
-                    width: 100,
-                    height: 100,
-                  ),
-                  const SizedBox(
-                    height: 2.63,
-                  ),
-                  const Text(
-                    "Tunggu Proses",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 14,
-                      decoration: TextDecoration.none,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: "Poppins",
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          if (isLoading) PresensiLoading(),
         ],
       ),
     );
   }
 
-  Future<DateTime> validationTime(DateTime jamAwal, DateTime jamAkhir) async {
+  void action(String args) async {
+    setState(() {
+      isLoading = true;
+    });
+    final pelProv = Provider.of<PelajaranProvider>(context, listen: false);
+    final userProv = Provider.of<UserProvider>(context, listen: false);
+    final presensi = Provider.of<PresensiProvider>(context, listen: false);
+    validation();
+    var date = await validationTime(
+      DateTime.parse(pelProv.findPresensi(id: args).mulaiPresensi!),
+      DateTime.parse(pelProv.findPresensi(id: args).akhirPresensi!),
+    );
+    if (!mounted) return;
+    if (!date) {
+      Navigator.pop(context);
+      return;
+    }
+    final idPresensi = pelProv.findPresensi(id: args).idPresensi;
+    final nis = userProv.dataUser.username;
+    final time = DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now());
+    final koordinat = "${lat!}, ${long!}";
+    if (isPresent) {
+      if (image == null) {
+        setState(() {
+          isLoading = false;
+        });
+        return;
+      }
+      if (_chose!.data == "Sakit") {
+        bool status = await presensi.presensiSakit(
+          idPresensi: idPresensi!,
+          nis: nis,
+          time: time,
+          koordinat: koordinat,
+          bukti: image!.path,
+        );
+        if (status) {
+          setState(() {
+            isLoading = false;
+          });
+          if (!mounted) return;
+          Navigator.pop(context);
+          return;
+        }
+      }
+      if (_chose!.data == "Izin") {
+        bool status = await presensi.presensiIzin(
+          idPresensi: idPresensi!,
+          nis: nis,
+          time: time,
+          koordinat: koordinat,
+          bukti: image!.path,
+        );
+        if (status) {
+          setState(() {
+            isLoading = false;
+          });
+          if (!mounted) return;
+          Navigator.pop(context);
+          return;
+        }
+      }
+    }
+    if (!isPresent) {
+      bool status = await presensi.presensiHadir(
+        idPresensi: idPresensi!,
+        nis: nis,
+        time: time,
+        koordinat: koordinat,
+      );
+      if (status) {
+        setState(() {
+          isLoading = false;
+        });
+        if (!mounted) return;
+        Navigator.pop(context);
+        return;
+      }
+    }
+    Timer(
+      const Duration(seconds: 2),
+      () {
+        setState(() {
+          isLoading = false;
+        });
+      },
+    );
+  }
+
+  void checkImage() {
+    if (image == null) {
+      return;
+    }
+  }
+
+  void validation() async {
+    final user = Provider.of<UserProvider>(context, listen: false);
+    final pelProv = Provider.of<PelajaranProvider>(context, listen: false);
+    pelProv.allPresensi(
+        idKelasAjaran: user.dataUser.idKelasAjaran!,
+        nis: user.dataUser.username);
+  }
+
+  Future<bool> validationTime(DateTime jamAwal, DateTime jamAkhir) async {
     final int offset = await NTP.getNtpOffset(
       localTime: DateTime.now(),
       lookUpAddress: "0.id.pool.ntp.org",
     );
-    // DateTime internetTime =
-    return DateTime.now().add(Duration(milliseconds: offset));
-    // print(internetTime.isAfter(jamAkhir));
-    // if (internetTime.isBefore(jamAwal)) return false;
-    // if (internetTime.isAfter(jamAkhir)) return false;
+    DateTime internetTime = DateTime.now().add(Duration(milliseconds: offset));
+    if (internetTime.isBefore(jamAwal)) return false;
+    if (internetTime.isAfter(jamAkhir)) return false;
+    return true;
   }
 }
