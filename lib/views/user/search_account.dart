@@ -9,6 +9,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
+import 'component/login/is_online.dart';
+
 class LupaPassword extends StatefulWidget {
   const LupaPassword({super.key});
   static const routeName = "/lupaPassword";
@@ -47,7 +49,10 @@ class _LupaPasswordState extends State<LupaPassword> {
     setState(() {
       isOnline = check;
     });
-    if (isOnline) {}
+    if (isOnline) {
+    } else {
+      _noInternet();
+    }
   }
 
   @override
@@ -55,6 +60,18 @@ class _LupaPasswordState extends State<LupaPassword> {
     super.initState();
     init();
     hasConnect();
+  }
+
+  void _noInternet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      )),
+      builder: (context) => NoInternet(),
+    );
   }
 
   TextEditingController username = TextEditingController();
@@ -266,40 +283,8 @@ class _LupaPasswordState extends State<LupaPassword> {
       isLoading = true;
     });
     bool emailisValid = emailValidation(dataUser['email']);
-    if (!emailisValid) {
-      setState(() {
-        isLoading = false;
-      });
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => WillPopScope(
-          onWillPop: () async => false,
-          child: const CustomDialog(
-              title: "Terjadi Kesalahan",
-              subtitle: "Periksa kembali E-mail Anda",
-              image: "assets/icons/gagal.png"),
-        ),
-      );
-      Timer(
-        const Duration(seconds: 2),
-        () {
-          Navigator.pop(context);
-        },
-      );
-      return;
-    }
-    user.sendMail(dataUser['nis'], dataUser['email']).then((value) {
-      if (value) {
-        setState(() {
-          isLoading = false;
-        });
-        Navigator.pushReplacementNamed(
-          context,
-          "/verificationOTP",
-          arguments: dataUser,
-        );
-      } else {
+    if (isOnline) {
+      if (!emailisValid) {
         setState(() {
           isLoading = false;
         });
@@ -320,8 +305,47 @@ class _LupaPasswordState extends State<LupaPassword> {
             Navigator.pop(context);
           },
         );
+        return;
       }
-    });
+      user.sendMail(dataUser['nis'], dataUser['email']).then((value) {
+        if (value) {
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pushReplacementNamed(
+            context,
+            "/verificationOTP",
+            arguments: dataUser,
+          );
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => WillPopScope(
+              onWillPop: () async => false,
+              child: const CustomDialog(
+                  title: "Terjadi Kesalahan",
+                  subtitle: "Periksa kembali E-mail Anda",
+                  image: "assets/icons/gagal.png"),
+            ),
+          );
+          Timer(
+            const Duration(seconds: 2),
+            () {
+              Navigator.pop(context);
+            },
+          );
+        }
+      });
+    } else {
+      _noInternet();
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   void btnSearch(UserProvider user) {
@@ -330,40 +354,13 @@ class _LupaPasswordState extends State<LupaPassword> {
     });
 
     FocusManager.instance.primaryFocus?.unfocus();
-    if (username.text == "" || username.text.isEmpty) {
-      Timer(
-        Duration.zero,
-        () {
-          setState(() {
-            isLoading = false;
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => WillPopScope(
-                onWillPop: () async => false,
-                child: const CustomDialog(
-                  title: "Username Tidak Ditemukan",
-                  subtitle: "Masukkan Kembali Username Anda",
-                  image: "assets/icons/gagal.png",
-                ),
-              ),
-            );
-            Timer(
-              Duration(seconds: 2),
-              () => Navigator.pop(context),
-            );
-          });
-        },
-      );
-      return;
-    }
-    user.searchAccount(username.text).then((value) {
-      print(value);
-      if (value['nis'] == "") {
+    if (isOnline) {
+      if (username.text == "" || username.text.isEmpty) {
         Timer(
-          const Duration(milliseconds: 300),
+          Duration.zero,
           () {
             setState(() {
+              isLoading = false;
               showDialog(
                 context: context,
                 barrierDismissible: false,
@@ -376,55 +373,91 @@ class _LupaPasswordState extends State<LupaPassword> {
                   ),
                 ),
               );
-              isLoading = false;
-            });
-            Timer(
-              Duration(seconds: 2),
-              () => Navigator.pop(context),
-            );
-          },
-        );
-        return;
-      }
-      if (value['email'] == null || value['email'] == "") {
-        Timer(
-          const Duration(milliseconds: 500),
-          () {
-            setState(() {
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => WillPopScope(
-                  onWillPop: () async => false,
-                  child: const CustomDialog(
-                    title: "Terjadi Kesalahan",
-                    subtitle: "Usernmae Tidak Memiliki E-mail",
-                    image: "assets/icons/gagal.png",
-                  ),
-                ),
+              Timer(
+                Duration(seconds: 2),
+                () => Navigator.pop(context),
               );
-              isLoading = false;
             });
-            Timer(
-              const Duration(seconds: 2),
-              () => Navigator.pop(context),
-            );
           },
         );
         return;
-      } else {
-        Timer(
-          const Duration(milliseconds: 500),
-          () {
-            setState(() {
-              isAccount = true;
-              isLoading = false;
-              username.text = value['email'].toString();
-              dataUser = value;
-            });
-          },
-        );
       }
-    });
+      user.searchAccount(username.text).then(
+        (value) {
+          print(value);
+          if (value['nis'] == "") {
+            Timer(
+              const Duration(milliseconds: 300),
+              () {
+                setState(() {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => WillPopScope(
+                      onWillPop: () async => false,
+                      child: const CustomDialog(
+                        title: "Username Tidak Ditemukan",
+                        subtitle: "Masukkan Kembali Username Anda",
+                        image: "assets/icons/gagal.png",
+                      ),
+                    ),
+                  );
+                  isLoading = false;
+                });
+                Timer(
+                  Duration(seconds: 2),
+                  () => Navigator.pop(context),
+                );
+              },
+            );
+            return;
+          }
+          if (value['email'] == null || value['email'] == "") {
+            Timer(
+              const Duration(milliseconds: 500),
+              () {
+                setState(() {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => WillPopScope(
+                      onWillPop: () async => false,
+                      child: const CustomDialog(
+                        title: "Terjadi Kesalahan",
+                        subtitle: "Usernmae Tidak Memiliki E-mail",
+                        image: "assets/icons/gagal.png",
+                      ),
+                    ),
+                  );
+                  isLoading = false;
+                });
+                Timer(
+                  const Duration(seconds: 2),
+                  () => Navigator.pop(context),
+                );
+              },
+            );
+            return;
+          } else {
+            Timer(
+              const Duration(milliseconds: 500),
+              () {
+                setState(() {
+                  isAccount = true;
+                  isLoading = false;
+                  username.text = value['email'].toString();
+                  dataUser = value;
+                });
+              },
+            );
+          }
+        },
+      );
+    } else {
+      _noInternet();
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 }

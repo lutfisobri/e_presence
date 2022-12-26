@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
 
+import 'component/login/is_online.dart';
+
 class ForgetChangePassword extends StatefulWidget {
   const ForgetChangePassword({super.key});
 
@@ -47,7 +49,21 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
     });
     if (isOnline) {
       loadData();
+    } else {
+      _noInternet();
     }
+  }
+
+  void _noInternet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      )),
+      builder: (context) => NoInternet(),
+    );
   }
 
   Map<String, dynamic> dataUser = {};
@@ -175,81 +191,12 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
   }
 
   btnUbah() {
-    if (!isOnline) {
-      return;
-    }
-    FocusManager.instance.primaryFocus?.unfocus();
-    if (!_key.currentState!.validate()) {
-      return;
-    }
-    if (password.text != confPassword.text) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => WillPopScope(
-          onWillPop: () async => false,
-          child: const CustomDialog(
-            title: "Gagal Tersimpan",
-            subtitle: "Periksa kembali Kata Sandi Anda",
-            image: "assets/icons/gagal.png",
-          ),
-        ),
-      );
-      Timer(
-        const Duration(seconds: 2),
-        () => Navigator.pop(context),
-      );
-      return;
-    }
-    if (confPassword.text.length < 8) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => WillPopScope(
-          onWillPop: () async => false,
-          child: const CustomDialog(
-            title: "Gagal Tersimpan",
-            subtitle: "Periksa kembali Kata Sandi Anda",
-            image: "assets/icons/gagal.png",
-          ),
-        ),
-      );
-      Timer(
-        const Duration(seconds: 2),
-        () => Navigator.pop(context),
-      );
-      return;
-    }
-    print(dataUser);
-    final usr = Provider.of<UserProvider>(context, listen: false);
-    usr
-        .forgotChangePassword(
-      username: dataUser['nis'],
-      password: password.text,
-    )
-        .then((value) {
-      if (value) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => WillPopScope(
-            onWillPop: () async => false,
-            child: const CustomDialog(
-              title: "Berhasil",
-              subtitle: "Woah,  Kata Sandi anda berhasil diubah",
-              image: "assets/icons/sukses.png",
-            ),
-          ),
-        );
-        Timer(
-          const Duration(seconds: 2),
-          () => Navigator.pop(context),
-        );
-        Timer(
-          const Duration(seconds: 2),
-          () => Navigator.pop(context),
-        );
-      } else {
+    if (isOnline) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      if (!_key.currentState!.validate()) {
+        return;
+      }
+      if (password.text != confPassword.text) {
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -266,7 +213,77 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
           const Duration(seconds: 2),
           () => Navigator.pop(context),
         );
+        return;
       }
-    });
+      if (confPassword.text.length < 8) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: const CustomDialog(
+              title: "Gagal Tersimpan",
+              subtitle: "Periksa kembali Kata Sandi Anda",
+              image: "assets/icons/gagal.png",
+            ),
+          ),
+        );
+        Timer(
+          const Duration(seconds: 2),
+          () => Navigator.pop(context),
+        );
+        return;
+      }
+      print(dataUser);
+      final usr = Provider.of<UserProvider>(context, listen: false);
+      usr
+          .forgotChangePassword(
+        username: dataUser['nis'],
+        password: password.text,
+      )
+          .then((value) {
+        if (value) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => WillPopScope(
+              onWillPop: () async => false,
+              child: const CustomDialog(
+                title: "Berhasil",
+                subtitle: "Woah,  Kata Sandi anda berhasil diubah",
+                image: "assets/icons/sukses.png",
+              ),
+            ),
+          );
+          Timer(
+            const Duration(seconds: 2),
+            () => Navigator.pop(context),
+          );
+          Timer(
+            const Duration(seconds: 2),
+            () => Navigator.pop(context),
+          );
+        } else {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => WillPopScope(
+              onWillPop: () async => false,
+              child: const CustomDialog(
+                title: "Gagal Tersimpan",
+                subtitle: "Periksa kembali Kata Sandi Anda",
+                image: "assets/icons/gagal.png",
+              ),
+            ),
+          );
+          Timer(
+            const Duration(seconds: 2),
+            () => Navigator.pop(context),
+          );
+        }
+      });
+    } else {
+      _noInternet();
+    }
   }
 }

@@ -5,7 +5,10 @@ import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:provider/provider.dart';
+
+import 'component/login/is_online.dart';
 
 class VerificationOTP extends StatefulWidget {
   const VerificationOTP({super.key});
@@ -19,10 +22,12 @@ class _VerificationOTPState extends State<VerificationOTP> {
   TextEditingController otp2 = TextEditingController();
   TextEditingController otp3 = TextEditingController();
   TextEditingController otp4 = TextEditingController();
+  late StreamSubscription<InternetConnectionStatus> listener;
   @override
   void initState() {
     super.initState();
     timeSendBack();
+    hasConnect();
   }
 
   @override
@@ -63,6 +68,51 @@ class _VerificationOTPState extends State<VerificationOTP> {
 
   Map<String, dynamic> dataUser = {};
   bool isLoading = false;
+  bool isOnline = false;
+
+  void hasConnect() async {
+    listener = InternetConnectionChecker().onStatusChange.listen(
+      (InternetConnectionStatus status) {
+        switch (status) {
+          case InternetConnectionStatus.connected:
+            setState(() {
+              isOnline = true;
+            });
+            break;
+          case InternetConnectionStatus.disconnected:
+            if (!mounted) return;
+            setState(() {
+              isOnline = false;
+            });
+            break;
+        }
+      },
+    );
+  }
+
+  void init() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
+    if (isOnline) {
+    } else {
+      _noInternet();
+    }
+  }
+
+  void _noInternet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+        top: Radius.circular(20),
+      )),
+      builder: (context) => NoInternet(),
+    );
+  }
 
   loadData() {
     final args = ModalRoute.of(context)!.settings.arguments;
@@ -96,67 +146,74 @@ class _VerificationOTPState extends State<VerificationOTP> {
 
   verification(String otp) async {
     print(dataUser);
-    if (otp.isEmpty) {
-      dialog();
-      setState(() {
-        isLoading = false;
-      });
-      Timer(
-        Duration(seconds: 2),
-        () => Navigator.pop(context),
-      );
-      return;
-    }
-    final userProv = Provider.of<UserProvider>(context, listen: false);
-    await userProv.verificationOTP(otp, dataUser['nis']).then((value) {
-      print(value);
-      if (value == 200) {
-        setState(() {
-          isLoading = false;
-        });
-        Navigator.pushReplacementNamed(context, "/forgotChangePassword",
-            arguments: dataUser);
-      } else if (value == 401) {
+    if (isOnline) {
+      if (otp.isEmpty) {
         dialog();
         setState(() {
           isLoading = false;
         });
         Timer(
-          const Duration(seconds: 2),
-          () {
-            Navigator.pop(context);
-          },
-        );
-        return;
-      } else if (value == 410) {
-        dialog();
-        setState(() {
-          isLoading = false;
-        });
-        Timer(
-          const Duration(seconds: 2),
-          () {
-            Navigator.pop(context);
-          },
-        );
-        return;
-      } else {
-        dialog();
-        setState(() {
-          isLoading = false;
-        });
-        Timer(
-          const Duration(seconds: 2),
-          () {
-            Navigator.pop(context);
-          },
+          Duration(seconds: 2),
+          () => Navigator.pop(context),
         );
         return;
       }
-    });
-    setState(() {
-      isLoading = false;
-    });
+      final userProv = Provider.of<UserProvider>(context, listen: false);
+      await userProv.verificationOTP(otp, dataUser['nis']).then((value) {
+        print(value);
+        if (value == 200) {
+          setState(() {
+            isLoading = false;
+          });
+          Navigator.pushReplacementNamed(context, "/forgotChangePassword",
+              arguments: dataUser);
+        } else if (value == 401) {
+          dialog();
+          setState(() {
+            isLoading = false;
+          });
+          Timer(
+            const Duration(seconds: 2),
+            () {
+              Navigator.pop(context);
+            },
+          );
+          return;
+        } else if (value == 410) {
+          dialog();
+          setState(() {
+            isLoading = false;
+          });
+          Timer(
+            const Duration(seconds: 2),
+            () {
+              Navigator.pop(context);
+            },
+          );
+          return;
+        } else {
+          dialog();
+          setState(() {
+            isLoading = false;
+          });
+          Timer(
+            const Duration(seconds: 2),
+            () {
+              Navigator.pop(context);
+            },
+          );
+          return;
+        }
+      });
+      setState(() {
+        isLoading = false;
+      });
+    } else {
+      _noInternet();
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
