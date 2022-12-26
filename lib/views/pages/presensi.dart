@@ -10,6 +10,7 @@ import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/views/pages/component/presensi/loading.dart';
+import 'package:app_presensi/views/pages/component/presensi/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -42,17 +43,19 @@ class _PresensiState extends State<DetailPresensi> {
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
-          if (!mounted) return;
-          checkAccount();
-          if (!mounted) return;
+            if (!mounted) return;
+            checkAccount();
+            if (!mounted) return;
             setState(() {
               isOnline = true;
+              isSkeleton = false;
             });
             break;
           case InternetConnectionStatus.disconnected:
             if (!mounted) return;
             setState(() {
               isOnline = false;
+              isSkeleton = true;
             });
             break;
         }
@@ -69,6 +72,7 @@ class _PresensiState extends State<DetailPresensi> {
     if (isOnline) {
       _chose = items[0];
       checkAccount();
+      isSkeleton = true;
     } else {}
   }
 
@@ -86,6 +90,12 @@ class _PresensiState extends State<DetailPresensi> {
     location();
     init();
     hasConnect();
+    Future.delayed(const Duration(seconds: 1), () {
+      if (!mounted) return;
+      setState(() {
+        isSkeleton = false;
+      });
+    });
   }
 
   checkAccount() async {
@@ -174,7 +184,7 @@ class _PresensiState extends State<DetailPresensi> {
 
   double? distance, lat, long;
 
-  bool isLoading = false, isPresent = false;
+  bool isLoading = false, isPresent = false, isSkeleton = true;
 
   File? image;
 
@@ -197,310 +207,330 @@ class _PresensiState extends State<DetailPresensi> {
               centerTitle: false,
             ),
             body: SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.only(left: 16, right: 16),
-                child: Consumer<PelajaranProvider>(
-                    builder: (context, pelProv, child) {
-                  return Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Mata Pelajaran",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
+              child: isSkeleton
+                  ? SkeletonPresensi()
+                  : Container(
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      child: Consumer<PelajaranProvider>(
+                          builder: (context, pelProv, child) {
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "Mata Pelajaran",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  pelProv
+                                      .findPresensi(id: args.toString())
+                                      .namaMapel!,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            pelProv
-                                .findPresensi(id: args.toString())
-                                .namaMapel!,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
+                            const SizedBox(
+                              height: 20,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Mulai",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            DateFormat("dd MMMM y - hh.mm", "id_ID").format(
-                              DateTime.parse(
-                                pelProv
-                                    .findPresensi(id: args.toString())
-                                    .mulaiPresensi!,
-                              ),
-                            ),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Selesai",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            DateFormat("dd MMMM y - hh.mm", "id_ID").format(
-                              DateTime.parse(
-                                pelProv
-                                    .findPresensi(id: args.toString())
-                                    .akhirPresensi!,
-                              ),
-                            ),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            "Pengampu",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            pelProv.findPresensi(id: args.toString()).guru!,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      DecoratedBox(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: colorGreen,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                        child: DropdownButton(
-                          value: _chose,
-                          items: items.map<DropdownMenuItem<ListModelPresensi>>(
-                            (e) {
-                              return DropdownMenuItem(
-                                value: e,
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.only(left: 20),
-                                      child: Text(
-                                        e.data,
-                                        style: const TextStyle(
-                                          color: colorGreen,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "Mulai",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  DateFormat("dd MMMM y - hh.mm", "id_ID")
+                                      .format(
+                                    DateTime.parse(
+                                      pelProv
+                                          .findPresensi(id: args.toString())
+                                          .mulaiPresensi!,
                                     ),
-                                  ],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                              );
-                            },
-                          ).toList(),
-                          onChanged: (value) {
-                            if (value!.data != "Hadir") {
-                              setState(() {
-                                isPresent = true;
-                              });
-                            } else {
-                              setState(() {
-                                isPresent = false;
-                              });
-                            }
-                            setState(() {
-                              _chose = value;
-                            });
-                          },
-                          underline: Container(),
-                          isExpanded: true,
-                          icon: Container(
-                            padding: const EdgeInsets.only(right: 20),
-                            child: const Icon(
-                              Icons.arrow_drop_down,
-                              color: colorGreen,
+                              ],
                             ),
-                          ),
-                        ),
-                      ),
-                      (isPresent)
-                          ? Consumer<UserProvider>(
-                              builder: (context, user, child) => Container(
-                                margin:
-                                    const EdgeInsets.only(top: 17, bottom: 13),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: colorGreen),
-                                  borderRadius: BorderRadius.circular(7),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "Selesai",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(11),
-                                  onTap: () {
-                                    serviceCamera(
-                                      context,
-                                      type: "Bukti Foto",
-                                      kamera: () {
-                                        takePhoto().then(
-                                          (value) {
-                                            if (value != null) {
-                                              _cropImage(imageFile: value)
-                                                  .then((value) {
-                                                if (value != null) {
-                                                  setState(() {
-                                                    image = value;
-                                                  });
-                                                }
-                                              });
-                                            }
-                                          },
-                                        );
-                                        Navigator.pop(context);
-                                      },
-                                      galeri: () {
-                                        pickImage().then(
-                                          (value) {
-                                            if (value != null) {
-                                              _cropImage(imageFile: value)
-                                                  .then((value) {
-                                                if (value != null) {
-                                                  setState(() {
-                                                    image = value;
-                                                  });
-                                                }
-                                              });
-                                            }
-                                          },
-                                        );
-                                        Navigator.pop(context);
-                                      },
-                                      hapus: () {
-                                        setState(() {
-                                          image = null;
-                                        });
-                                        Navigator.pop(context);
-                                      },
-                                    );
-                                  },
-                                  child: image == null
-                                      ? SizedBox(
-                                          height: 200,
-                                          width: double.infinity,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 20, bottom: 30),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Image.asset(
-                                                  "assets/image/imagePresensi.png",
-                                                  width: 70,
-                                                  height: 70,
-                                                ),
-                                                const Text(
-                                                  "Ambil bukti foto",
-                                                  style: TextStyle(
-                                                    color: colorGreen,
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                                if (_chose!.data == "Sakit")
-                                                  const Text(
-                                                    "*bukti berbentuk surat dokter",
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w300,
-                                                      color: colorGreen,
-                                                    ),
-                                                  )
-                                              ],
+                                Text(
+                                  DateFormat("dd MMMM y - hh.mm", "id_ID")
+                                      .format(
+                                    DateTime.parse(
+                                      pelProv
+                                          .findPresensi(id: args.toString())
+                                          .akhirPresensi!,
+                                    ),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "Pengampu",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  pelProv
+                                      .findPresensi(id: args.toString())
+                                      .guru!,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            DecoratedBox(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: colorGreen,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              child: DropdownButton(
+                                value: _chose,
+                                items: items
+                                    .map<DropdownMenuItem<ListModelPresensi>>(
+                                  (e) {
+                                    return DropdownMenuItem(
+                                      value: e,
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            padding:
+                                                const EdgeInsets.only(left: 20),
+                                            child: Text(
+                                              e.data,
+                                              style: const TextStyle(
+                                                color: colorGreen,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                             ),
                                           ),
-                                        )
-                                      : SizedBox(
-                                          height: 200,
-                                          width: double.infinity,
-                                          child: Image.file(
-                                            image!,
-                                            // scale: 5,
-                                            fit: BoxFit.scaleDown,
-                                          ),
-                                        ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ).toList(),
+                                onChanged: (value) {
+                                  if (value!.data != "Hadir") {
+                                    setState(() {
+                                      isPresent = true;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      isPresent = false;
+                                    });
+                                  }
+                                  setState(() {
+                                    _chose = value;
+                                  });
+                                },
+                                underline: Container(),
+                                isExpanded: true,
+                                icon: Container(
+                                  padding: const EdgeInsets.only(right: 20),
+                                  child: const Icon(
+                                    Icons.arrow_drop_down,
+                                    color: colorGreen,
+                                  ),
                                 ),
                               ),
-                            )
-                          : const SizedBox(
-                              height: 17,
                             ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Button(
-                          onPres: () {
-                            action(args.toString());
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                          textStyle: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: "Roboto",
-                          ),
-                          child: const Text("SIMPAN"),
-                        ),
-                      ),
-                    ],
-                  );
-                }),
-              ),
+                            (isPresent)
+                                ? Consumer<UserProvider>(
+                                    builder: (context, user, child) =>
+                                        Container(
+                                      margin: const EdgeInsets.only(
+                                          top: 17, bottom: 13),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: colorGreen),
+                                        borderRadius: BorderRadius.circular(7),
+                                      ),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(11),
+                                        onTap: () {
+                                          serviceCamera(
+                                            context,
+                                            type: "Bukti Foto",
+                                            kamera: () {
+                                              takePhoto().then(
+                                                (value) {
+                                                  if (value != null) {
+                                                    _cropImage(imageFile: value)
+                                                        .then((value) {
+                                                      if (value != null) {
+                                                        setState(() {
+                                                          image = value;
+                                                        });
+                                                      }
+                                                    });
+                                                  }
+                                                },
+                                              );
+                                              Navigator.pop(context);
+                                            },
+                                            galeri: () {
+                                              pickImage().then(
+                                                (value) {
+                                                  if (value != null) {
+                                                    _cropImage(imageFile: value)
+                                                        .then((value) {
+                                                      if (value != null) {
+                                                        setState(() {
+                                                          image = value;
+                                                        });
+                                                      }
+                                                    });
+                                                  }
+                                                },
+                                              );
+                                              Navigator.pop(context);
+                                            },
+                                            hapus: () {
+                                              setState(() {
+                                                image = null;
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          );
+                                        },
+                                        child: image == null
+                                            ? SizedBox(
+                                                height: 200,
+                                                width: double.infinity,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          top: 20, bottom: 30),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Image.asset(
+                                                        "assets/image/imagePresensi.png",
+                                                        width: 70,
+                                                        height: 70,
+                                                      ),
+                                                      const Text(
+                                                        "Ambil bukti foto",
+                                                        style: TextStyle(
+                                                          color: colorGreen,
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                      if (_chose!.data ==
+                                                          "Sakit")
+                                                        const Text(
+                                                          "*bukti berbentuk surat dokter",
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w300,
+                                                            color: colorGreen,
+                                                          ),
+                                                        )
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            : SizedBox(
+                                                height: 200,
+                                                width: double.infinity,
+                                                child: Image.file(
+                                                  image!,
+                                                  // scale: 5,
+                                                  fit: BoxFit.scaleDown,
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox(
+                                    height: 17,
+                                  ),
+                            SizedBox(
+                              width: double.infinity,
+                              child: Button(
+                                onPres: () {
+                                  action(args.toString());
+                                  if (!isOnline) {
+                                    isSkeleton = true;
+                                    isLoading = false;
+                                  } else if (isOnline) {
+                                    isSkeleton = false;
+                                    isLoading = true;
+                                  }
+                                },
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(7),
+                                ),
+                                textStyle: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: "Roboto",
+                                ),
+                                child: const Text("SIMPAN"),
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                    ),
             ),
           ),
           if (isLoading) PresensiLoading(),
