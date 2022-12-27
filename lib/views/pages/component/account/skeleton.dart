@@ -3,6 +3,8 @@ import 'package:app_presensi/resources/utils/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../resources/widgets/shared/notification.dart';
+
 class LoadingAccount extends StatelessWidget {
   const LoadingAccount({
     Key? key,
@@ -165,6 +167,8 @@ class LoadingAccount extends StatelessWidget {
                               fontFamily: "Roboto",
                             ),
                           ),
+                          onTap: () =>
+                              Navigator.pushNamed(context, "/ubahPassword"),
                         ),
                         const Divider(),
                         Consumer<UserProvider>(
@@ -184,6 +188,41 @@ class LoadingAccount extends StatelessWidget {
                                   fontFamily: "Roboto",
                                 ),
                               ),
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (context) => WillPopScope(
+                                    onWillPop: () async => false,
+                                    child: DialogButton(
+                                      title: "Keluar Dari E-Presensi",
+                                      subtitle: "Apakah Anda ingin keluar?",
+                                      btnLeft: "TIDAK",
+                                      btnRight: "IYA",
+                                      onPresLeft: () {
+                                        Navigator.pop(context);
+                                      },
+                                      onPresRight: () async {
+                                        final snackBar = SnackBar(
+                                          content: const Text(
+                                            'Terjadi kesalahan, silahkan coba lagi!',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontFamily: "Roboto",
+                                            ),
+                                          ),
+                                          behavior: SnackBarBehavior.floating,
+                                          backgroundColor:
+                                              Color.fromRGBO(104, 187, 97, 1),
+                                        );
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(snackBar);
+                                      },
+                                    ),
+                                  ),
+                                );
+                              },
                             );
                           },
                         ),
