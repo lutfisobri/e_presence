@@ -514,6 +514,41 @@ class _PresensiState extends State<DetailPresensi> {
                                   } else if (isOnline) {
                                     isSkeleton = false;
                                     isLoading = true;
+                                    // if (image != null &&
+                                    //     _chose!.data != "Sakit") {
+                                    // showDialog(
+                                    //   context: context,
+                                    //   barrierDismissible: false,
+                                    //   builder: (context) => WillPopScope(
+                                    //     onWillPop: () async => false,
+                                    //     child: CustomDialogPresensi(
+                                    //       onTapbtn: () {
+                                    //         Navigator.pop(context);
+                                    //       },
+                                    //       childbtn: const Text(
+                                    //         "KEMBALI",
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // );
+                                    // } else if (image != null &&
+                                    //     _chose!.data == "Izin") {
+                                    //   showDialog(
+                                    //     context: context,
+                                    //     barrierDismissible: false,
+                                    //     builder: (context) => WillPopScope(
+                                    //       onWillPop: () async => false,
+                                    //       child: CustomDialogPresensi(
+                                    //         onTapbtn: () {
+                                    //           Navigator.pop(context);
+                                    //         },
+                                    //         childbtn: const Text(
+                                    //           "KEMBALI",
+                                    //         ),
+                                    //       ),
+                                    //     ),
+                                    //   );
+                                    // }
                                   }
                                 },
                                 shape: RoundedRectangleBorder(
@@ -570,41 +605,57 @@ class _PresensiState extends State<DetailPresensi> {
       if (image == null) {
         setState(() {
           isLoading = false;
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => WillPopScope(
+              onWillPop: () async => false,
+              child: CustomDialogPresensi(
+                onTapbtn: () {
+                  Navigator.pop(context);
+                },
+                childbtn: const Text(
+                  "KEMBALI",
+                ),
+              ),
+            ),
+          );
         });
         return;
-      }
-      if (_chose!.data == "Sakit") {
-        bool status = await presensi.presensiSakit(
-          idPresensi: idPresensi!,
-          nis: nis,
-          time: time,
-          koordinat: koordinat,
-          bukti: image!.path,
-        );
-        if (status) {
-          setState(() {
-            isLoading = false;
-          });
-          if (!mounted) return;
-          Navigator.pop(context);
-          return;
+      } else {
+        if (_chose!.data == "Sakit") {
+          bool status = await presensi.presensiSakit(
+            idPresensi: idPresensi!,
+            nis: nis,
+            time: time,
+            koordinat: koordinat,
+            bukti: image!.path,
+          );
+          if (status) {
+            setState(() {
+              isLoading = false;
+            });
+            if (!mounted) return;
+            Navigator.pop(context);
+            return;
+          }
         }
-      }
-      if (_chose!.data == "Izin") {
-        bool status = await presensi.presensiIzin(
-          idPresensi: idPresensi!,
-          nis: nis,
-          time: time,
-          koordinat: koordinat,
-          bukti: image!.path,
-        );
-        if (status) {
-          setState(() {
-            isLoading = false;
-          });
-          if (!mounted) return;
-          Navigator.pop(context);
-          return;
+        if (_chose!.data == "Izin") {
+          bool status = await presensi.presensiIzin(
+            idPresensi: idPresensi!,
+            nis: nis,
+            time: time,
+            koordinat: koordinat,
+            bukti: image!.path,
+          );
+          if (status) {
+            setState(() {
+              isLoading = false;
+            });
+            if (!mounted) return;
+            Navigator.pop(context);
+            return;
+          }
         }
       }
     }

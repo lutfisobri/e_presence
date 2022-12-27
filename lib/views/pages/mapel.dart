@@ -21,7 +21,6 @@ class Mapel extends StatefulWidget {
 }
 
 class _MapelState extends State<Mapel> with TickerProviderStateMixin {
-  
   late StreamSubscription<InternetConnectionStatus> listener;
   bool isOnline = false;
 
