@@ -327,11 +327,19 @@ class _ChangePasswordState extends State<ChangePassword> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Button(
-                              onPres: () {
-                                if (!isOnline) {
+                              onPres: () async {
+                                bool check = await InternetConnectionChecker()
+                                    .hasConnection;
+                                if (!mounted) return;
+                                setState(() {
+                                  isOnline = check;
+                                });
+                                if (isOnline) {
+                                  validationPW();
+                                } else if (!isOnline) {
+                                  SkeletonUpadatePassword();
                                   return;
                                 }
-                                validationPW();
                                 // connectionError(context);
                               },
                               shape: RoundedRectangleBorder(
