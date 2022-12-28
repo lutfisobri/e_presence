@@ -507,20 +507,7 @@ class _PresensiState extends State<DetailPresensi> {
                               width: double.infinity,
                               child: Button(
                                 onPres: () async {
-                                  bool check = await InternetConnectionChecker()
-                                      .hasConnection;
-                                  if (!mounted) return;
-                                  setState(() {
-                                    isOnline = check;
-                                  });
-                                  if (isOnline) {
-                                    isSkeleton = false;
-                                    isLoading = true;
-                                    action(args.toString());
-                                  } else if (!isOnline) {
-                                    isSkeleton = true;
-                                    isLoading = false;
-                                  }
+                                  action(args.toString());
                                 },
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(7),
@@ -549,8 +536,14 @@ class _PresensiState extends State<DetailPresensi> {
     setState(() {
       isLoading = true;
     });
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
     if (!isOnline) {
       setState(() {
+        isSkeleton = true;
         isLoading = false;
       });
       return;
