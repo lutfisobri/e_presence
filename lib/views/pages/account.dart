@@ -211,8 +211,17 @@ class _AkunPageState extends State<AkunPage> {
                               right: 1.5,
                               top: 25,
                               child: InkWell(
-                                onTap: () {
-                                  Navigator.pushNamed(context, "/editProfile");
+                                onTap: () async {
+                                  bool check = await InternetConnectionChecker()
+                                      .hasConnection;
+                                  if (!mounted) return;
+                                  setState(() {
+                                    isOnline = check;
+                                  });
+                                  if (isOnline) {
+                                    Navigator.pushNamed(
+                                        context, "/editProfile");
+                                  } else {}
                                 },
                                 child: Image.asset(
                                   "assets/icons/edit_profile.png",
@@ -309,8 +318,20 @@ class _AkunPageState extends State<AkunPage> {
                                                 "Apakah Anda ingin keluar?",
                                             btnLeft: "TIDAK",
                                             btnRight: "IYA",
-                                            onPresLeft: () {
-                                              Navigator.pop(context);
+                                            onPresLeft: () async {
+                                              bool check =
+                                                  await InternetConnectionChecker()
+                                                      .hasConnection;
+                                              if (!mounted) return;
+                                              setState(() {
+                                                isOnline = check;
+                                              });
+                                              if (isOnline) {
+                                                Navigator.pop(context);
+                                              } else {
+                                                Navigator.pop(context);
+                                                isOnline = false;
+                                              }
                                             },
                                             onPresRight: () async {
                                               await value

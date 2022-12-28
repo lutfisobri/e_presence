@@ -146,6 +146,11 @@ class _VerificationOTPState extends State<VerificationOTP> {
 
   verification(String otp) async {
     print(dataUser);
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
     if (isOnline) {
       if (otp.isEmpty) {
         dialog();

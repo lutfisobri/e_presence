@@ -190,7 +190,12 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
     );
   }
 
-  btnUbah() {
+  btnUbah() async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
     if (isOnline) {
       FocusManager.instance.primaryFocus?.unfocus();
       if (!_key.currentState!.validate()) {

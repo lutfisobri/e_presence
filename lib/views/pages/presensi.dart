@@ -506,50 +506,8 @@ class _PresensiState extends State<DetailPresensi> {
                             SizedBox(
                               width: double.infinity,
                               child: Button(
-                                onPres: () {
+                                onPres: () async {
                                   action(args.toString());
-                                  if (!isOnline) {
-                                    isSkeleton = true;
-                                    isLoading = false;
-                                  } else if (isOnline) {
-                                    isSkeleton = false;
-                                    isLoading = true;
-                                    // if (image != null &&
-                                    //     _chose!.data != "Sakit") {
-                                    // showDialog(
-                                    //   context: context,
-                                    //   barrierDismissible: false,
-                                    //   builder: (context) => WillPopScope(
-                                    //     onWillPop: () async => false,
-                                    //     child: CustomDialogPresensi(
-                                    //       onTapbtn: () {
-                                    //         Navigator.pop(context);
-                                    //       },
-                                    //       childbtn: const Text(
-                                    //         "KEMBALI",
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // );
-                                    // } else if (image != null &&
-                                    //     _chose!.data == "Izin") {
-                                    //   showDialog(
-                                    //     context: context,
-                                    //     barrierDismissible: false,
-                                    //     builder: (context) => WillPopScope(
-                                    //       onWillPop: () async => false,
-                                    //       child: CustomDialogPresensi(
-                                    //         onTapbtn: () {
-                                    //           Navigator.pop(context);
-                                    //         },
-                                    //         childbtn: const Text(
-                                    //           "KEMBALI",
-                                    //         ),
-                                    //       ),
-                                    //     ),
-                                    //   );
-                                    // }
-                                  }
                                 },
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(7),
@@ -578,8 +536,14 @@ class _PresensiState extends State<DetailPresensi> {
     setState(() {
       isLoading = true;
     });
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
     if (!isOnline) {
       setState(() {
+        isSkeleton = true;
         isLoading = false;
       });
       return;
@@ -613,6 +577,7 @@ class _PresensiState extends State<DetailPresensi> {
               child: CustomDialogPresensi(
                 onTapbtn: () {
                   Navigator.pop(context);
+                  isLoading = false;
                 },
                 childbtn: const Text(
                   "KEMBALI",
@@ -621,8 +586,9 @@ class _PresensiState extends State<DetailPresensi> {
             ),
           );
         });
+        isLoading = false;
         return;
-      } else {
+      } else if (image != null) {
         if (_chose!.data == "Sakit") {
           bool status = await presensi.presensiSakit(
             idPresensi: idPresensi!,

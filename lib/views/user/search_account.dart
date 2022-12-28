@@ -278,7 +278,12 @@ class _LupaPasswordState extends State<LupaPassword> {
     );
   }
 
-  btnConfirm(UserProvider user) {
+  btnConfirm(UserProvider user) async {
+    bool check = await InternetConnectionChecker().hasConnection;
+    if (!mounted) return;
+    setState(() {
+      isOnline = check;
+    });
     setState(() {
       isLoading = true;
     });
