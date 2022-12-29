@@ -237,7 +237,8 @@ class SkeletonHome extends StatelessWidget {
         Container(
           width: MediaQuery.of(context).size.width,
           margin: const EdgeInsets.only(
-            right: 360,
+            left: 19,
+            right: 135,
             top: 308,
           ),
           decoration: const BoxDecoration(
@@ -262,8 +263,9 @@ class SkeletonHome extends StatelessWidget {
         Container(
           width: MediaQuery.of(context).size.width,
           margin: const EdgeInsets.only(
-            right: 372,
+            right: 145.6,
             top: 316.65,
+            left: 28.6,
           ),
           decoration: const BoxDecoration(),
           child: SkeletonContainer.square(
@@ -274,62 +276,9 @@ class SkeletonHome extends StatelessWidget {
         Container(
           width: MediaQuery.of(context).size.width,
           margin: const EdgeInsets.only(
-            right: 382,
+            right: 145.6,
             top: 416,
-          ),
-          decoration: const BoxDecoration(),
-          child: SkeletonContainer.square(
-            height: 18,
-            width: MediaQuery.of(context).size.width,
-          ),
-        ),
-
-        //container
-        Container(
-          width: MediaQuery.of(context).size.width,
-          margin: const EdgeInsets.only(
-            left: 56,
-            right: 98,
-            top: 308,
-          ),
-          decoration: const BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                color: Color.fromRGBO(0, 0, 0, 0.20),
-                offset: Offset(0, 1),
-                blurRadius: 2,
-              ),
-            ],
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(6),
-              bottomLeft: Radius.circular(6),
-            ),
-          ),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: 173,
-            color: Color.fromRGBO(255, 255, 255, 1),
-          ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          margin: const EdgeInsets.only(
-            right: 107.6,
-            top: 316.65,
-            left: 68.6,
-          ),
-          decoration: const BoxDecoration(),
-          child: SkeletonContainer.square(
-            height: 94,
-            width: MediaQuery.of(context).size.width,
-          ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          margin: const EdgeInsets.only(
-            right: 130,
-            top: 416,
-            left: 68.6,
+            left: 28.6,
           ),
           decoration: const BoxDecoration(),
           child: SkeletonContainer.square(
@@ -342,7 +291,7 @@ class SkeletonHome extends StatelessWidget {
           margin: const EdgeInsets.only(
             right: 250,
             top: 437,
-            left: 68.6,
+            left: 28.6,
           ),
           decoration: const BoxDecoration(),
           child: SkeletonContainer.square(
@@ -355,7 +304,7 @@ class SkeletonHome extends StatelessWidget {
         Container(
           width: MediaQuery.of(context).size.width,
           margin: const EdgeInsets.only(
-            left: 316,
+            left: 240,
             top: 308,
           ),
           decoration: const BoxDecoration(
@@ -381,7 +330,7 @@ class SkeletonHome extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           margin: const EdgeInsets.only(
             top: 316.65,
-            left: 328.6,
+            left: 250.6,
           ),
           decoration: const BoxDecoration(),
           child: SkeletonContainer.square(
@@ -393,7 +342,7 @@ class SkeletonHome extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           margin: const EdgeInsets.only(
             top: 416,
-            left: 328.6,
+            left: 250.6,
           ),
           decoration: const BoxDecoration(),
           child: SkeletonContainer.square(
@@ -405,7 +354,7 @@ class SkeletonHome extends StatelessWidget {
           width: MediaQuery.of(context).size.width,
           margin: const EdgeInsets.only(
             top: 437,
-            left: 328.6,
+            left: 250.6,
           ),
           decoration: const BoxDecoration(),
           child: SkeletonContainer.square(
