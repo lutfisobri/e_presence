@@ -559,17 +559,6 @@ class _PresensiState extends State<DetailPresensi> {
     }
 
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      setState(() {
-        isLoading = false;
-      });
-      dialog();
-      Timer(
-        Duration(seconds: 2),
-        () => Navigator.pop(context),
-      );
-      return;
-    }
 
     final pelProv = Provider.of<PelajaranProvider>(context, listen: false);
     final userProv = Provider.of<UserProvider>(context, listen: false);
@@ -588,90 +577,104 @@ class _PresensiState extends State<DetailPresensi> {
     final nis = userProv.dataUser.username;
     final time = DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now());
     final koordinat = "${lat!}, ${long!}";
-    if (isPresent) {
-      if (image == null) {
-        setState(() {
-          isLoading = false;
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => WillPopScope(
-              onWillPop: () async => false,
-              child: CustomDialogPresensi(
-                onTapbtn: () {
-                  Navigator.pop(context);
-                  isLoading = false;
-                },
-                childbtn: const Text(
-                  "KEMBALI",
+
+    if (!serviceEnabled) {
+      setState(() {
+        isLoading = false;
+      });
+      dialog();
+      Timer(
+        Duration(seconds: 2),
+        () => Navigator.pop(context),
+      );
+      return;
+    } else {
+      if (isPresent) {
+        if (image == null) {
+          setState(() {
+            isLoading = false;
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => WillPopScope(
+                onWillPop: () async => false,
+                child: CustomDialogPresensi(
+                  onTapbtn: () {
+                    Navigator.pop(context);
+                    isLoading = false;
+                  },
+                  childbtn: const Text(
+                    "KEMBALI",
+                  ),
                 ),
               ),
-            ),
-          );
-        });
-        isLoading = false;
-        return;
-      } else if (image != null) {
-        if (_chose!.data == "Sakit") {
-          bool status = await presensi.presensiSakit(
-            idPresensi: idPresensi!,
-            nis: nis,
-            time: time,
-            koordinat: koordinat,
-            bukti: image!.path,
-          );
-          if (status) {
-            setState(() {
-              isLoading = false;
-            });
-            if (!mounted) return;
-            Navigator.pop(context);
-            return;
+            );
+          });
+          isLoading = false;
+          return;
+        } else if (image != null) {
+          if (_chose!.data == "Sakit") {
+            bool status = await presensi.presensiSakit(
+              idPresensi: idPresensi!,
+              nis: nis,
+              time: time,
+              koordinat: koordinat,
+              bukti: image!.path,
+            );
+            if (status) {
+              setState(() {
+                isLoading = false;
+              });
+              if (!mounted) return;
+              Navigator.pop(context);
+              return;
+            }
           }
-        }
-        if (_chose!.data == "Izin") {
-          bool status = await presensi.presensiIzin(
-            idPresensi: idPresensi!,
-            nis: nis,
-            time: time,
-            koordinat: koordinat,
-            bukti: image!.path,
-          );
-          if (status) {
-            setState(() {
-              isLoading = false;
-            });
-            if (!mounted) return;
-            Navigator.pop(context);
-            return;
+          if (_chose!.data == "Izin") {
+            bool status = await presensi.presensiIzin(
+              idPresensi: idPresensi!,
+              nis: nis,
+              time: time,
+              koordinat: koordinat,
+              bukti: image!.path,
+            );
+            if (status) {
+              setState(() {
+                isLoading = false;
+              });
+              if (!mounted) return;
+              Navigator.pop(context);
+              return;
+            }
           }
         }
       }
-    }
-    if (!isPresent) {
-      bool status = await presensi.presensiHadir(
-        idPresensi: idPresensi!,
-        nis: nis,
-        time: time,
-        koordinat: koordinat,
+      if (!isPresent) {
+        bool status = await presensi.presensiHadir(
+          idPresensi: idPresensi!,
+          nis: nis,
+          time: time,
+          koordinat: koordinat,
+        );
+        if (status) {
+          setState(() {
+            isLoading = false;
+          });
+          if (!mounted) return;
+          Navigator.pop(context);
+          return;
+        }
+      }
+      Timer(
+        const Duration(seconds: 2),
+        () {
+          setState(() {
+            isLoading = false;
+          });
+        },
       );
-      if (status) {
-        setState(() {
-          isLoading = false;
-        });
-        if (!mounted) return;
-        Navigator.pop(context);
-        return;
-      }
+      return;
     }
-    Timer(
-      const Duration(seconds: 2),
-      () {
-        setState(() {
-          isLoading = false;
-        });
-      },
-    );
   }
 
   void checkImage() {
