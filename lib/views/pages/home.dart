@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:animations/animations.dart';
+import 'package:app_presensi/app/providers/informasi.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
@@ -59,6 +60,8 @@ class _HomeState extends State<Home> {
       isOnline = check;
     });
     if (isOnline) {
+      final informasi = Provider.of<InformasiProvider>(context, listen: false);
+      informasi.getData();
       loadPresensi();
     } else {
       isLoading = true;
