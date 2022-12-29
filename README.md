@@ -1,16 +1,33 @@
-# app_presensi
 
-A new Flutter project.
+# E-Presence SMAN PLUS SUKOWONO
 
-## Getting Started
+## Website
 
-This project is a starting point for a Flutter application.
+To register students to have an account that will be used later
+to make attendance. This website can only be accessed by the admin
+to control the application.
 
-A few resources to get you started if this is your first Flutter project:
+## Mobile 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+For mobile use by students to make attendance. Where is attendance
+it uses get location and includes proof with selfie. Dimobile exists
+schedule updates every day on the homepage. There is also an overall schedule
+for one week. There is also a profile of the student himself.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Target Users
+* Admin and students of SMAN PLUS SUKOWONO
+
+
+## Features
+
+- set class schedule
+- set exam schedule
+- attendance record
+- academic information
+
+
+## Used By
+
+This application is used by institutions:
+
+- SMAN PLUS SUKOWONO
