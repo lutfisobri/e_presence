@@ -8,6 +8,7 @@ import 'package:app_presensi/resources/widgets/constant/tab_bar.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:app_presensi/views/pages/component/mapel/content.dart';
+import 'package:app_presensi/views/pages/component/mapel/null.dart';
 import 'package:app_presensi/views/pages/component/mapel/skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -97,12 +98,18 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
         );
       }
       setState(() {
-        data = dataMapel.listMapel
-            .where((element) => element.hari!.toLowerCase() == hari)
-            .toList();
-        data.sort(
-          (a, b) => a.jamMulai!.compareTo(b.jamSelesai!),
-        );
+        data.clear();
+        data = dataMapel.listMapel.where((element) {
+          if (element.hari != null) {
+            return element.hari!.toLowerCase() == hari;
+          }
+          return false;
+        }).toList();
+        if (data.isNotEmpty) {
+          data.sort(
+            (a, b) => a.jamMulai!.compareTo(b.jamSelesai!),
+          );
+        }
       });
     }
   }
@@ -196,21 +203,24 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                           },
                           itemCount: tabItems.length,
                           itemBuilder: (context, index) {
+                            if (data.isEmpty) {
+                              return NullMatapelajaran();
+                            }
                             return Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 19, right: 19),
-                                child: ListView.separated(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  separatorBuilder: (context, index) =>
-                                      Container(
-                                    height: 12.6,
-                                  ),
-                                  itemCount: data.length,
-                                  itemBuilder: (context, i) {
-                                    return ContentMapel(data: data, i: i);
-                                  },
-                                ));
+                              padding:
+                                  const EdgeInsets.only(left: 19, right: 19),
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                separatorBuilder: (context, index) => Container(
+                                  height: 12.6,
+                                ),
+                                itemCount: data.length,
+                                itemBuilder: (context, i) {
+                                  return ContentMapel(data: data, i: i);
+                                },
+                              ),
+                            );
                           },
                         );
                       },
