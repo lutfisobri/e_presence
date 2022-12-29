@@ -18,8 +18,7 @@ class InformasiAkademik extends StatelessWidget {
             width: 14,
           ),
           scrollDirection: Axis.horizontal,
-          itemCount:
-              informasi.informasi.length > 4 ? 4 : informasi.informasi.length,
+          itemCount: informasi.informasi.length,
           shrinkWrap: true,
           padding:
               const EdgeInsets.only(left: 19, right: 19, top: 8, bottom: 8),

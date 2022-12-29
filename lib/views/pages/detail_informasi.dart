@@ -14,7 +14,6 @@ class DetailInformasi extends StatefulWidget {
 }
 
 class _DetailInformasiState extends State<DetailInformasi> {
-  
   late StreamSubscription<InternetConnectionStatus> listener;
   bool isOnline = false;
 
@@ -23,7 +22,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
-          if (!mounted) return;
+            if (!mounted) return;
             setState(() {
               isOnline = true;
             });
@@ -45,8 +44,6 @@ class _DetailInformasiState extends State<DetailInformasi> {
     setState(() {
       isOnline = check;
     });
-    if (isOnline) {
-    } else {}
   }
 
   @override
@@ -74,7 +71,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
             centerTitle: false,
           ),
           body: SingleChildScrollView(
-            child: isOnline
+            child: !isOnline
                 ? SkeletonInformasi()
                 : Column(
                     children: [
@@ -83,7 +80,9 @@ class _DetailInformasiState extends State<DetailInformasi> {
                         child: Consumer<InformasiProvider>(
                             builder: (context, value, child) {
                           return Center(
-                            child: value.find(args).image == null
+                            child: value.find(args).image == null ||
+                                    value.find(args).image == "" ||
+                                    value.find(args).image == "null"
                                 ? Image(
                                     image: AssetImage(
                                         'assets/image/icondefaultinformasi.png'),

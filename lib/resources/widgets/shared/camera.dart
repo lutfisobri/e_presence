@@ -22,6 +22,9 @@ Future<dynamic> serviceCamera(
                 type,
                 style: const TextStyle(
                   fontSize: 17,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: "Roboto",
+                  color: Color.fromRGBO(100, 97, 97, 1),
                 ),
               ),
             ),
