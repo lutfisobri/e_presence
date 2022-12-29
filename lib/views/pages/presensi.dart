@@ -119,16 +119,25 @@ class _PresensiState extends State<DetailPresensi> {
     }
   }
 
+  dialog() {
+    showDialog(
+      context: context,
+      builder: (context) => const CustomDialog(
+          title: "LOKASI",
+          subtitle: "Mohon Aktifkan Lokasi",
+          image: "assets/icons/gagal.png"),
+    );
+  }
+
   location() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return showDialog(
-        context: context,
-        builder: (context) => const CustomDialog(
-            title: "LOKASI",
-            subtitle: "Mohon aktifkan lokasi",
-            image: "assets/icons/gagal.png"),
+      dialog();
+      Timer(
+        Duration(seconds: 2),
+        () => Navigator.pop(context),
       );
+      return;
     }
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {}
@@ -548,6 +557,20 @@ class _PresensiState extends State<DetailPresensi> {
       });
       return;
     }
+
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      setState(() {
+        isLoading = false;
+      });
+      dialog();
+      Timer(
+        Duration(seconds: 2),
+        () => Navigator.pop(context),
+      );
+      return;
+    }
+
     final pelProv = Provider.of<PelajaranProvider>(context, listen: false);
     final userProv = Provider.of<UserProvider>(context, listen: false);
     final presensi = Provider.of<PresensiProvider>(context, listen: false);
