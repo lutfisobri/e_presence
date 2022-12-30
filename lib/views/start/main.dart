@@ -115,7 +115,7 @@ class _BerandaState extends State<Beranda> {
                 onPres: () {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     Navigator.pop(context);
-                    Navigator.pushNamed(context, "/editProfile");
+                    Navigator.pushNamed(context, "/EditProfileStart");
                   });
                 },
                 minimunSize: const Size(double.infinity, 36.88),

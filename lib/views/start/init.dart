@@ -2,6 +2,7 @@ import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:app_presensi/views/pages/detail_informasi.dart';
 import 'package:app_presensi/views/pages/presensi.dart';
+import 'package:app_presensi/views/start/EditProfil.dart';
 import 'package:app_presensi/views/start/main.dart';
 import 'package:app_presensi/views/start/splash_screen.dart';
 import 'package:app_presensi/views/user/change_password.dart';
@@ -56,6 +57,7 @@ class _MainState extends State<Main> {
             "/viewPhoto": (context) => const ViewPhoto(),
             "/verificationOTP": (context) => const VerificationOTP(),
             "/forgotChangePassword": (context) => const ForgetChangePassword(),
+            "/EditProfileStart": (context) => const EditProfileStart(),
           },
           debugShowCheckedModeBanner: false,
           home: const SplashScreen(),

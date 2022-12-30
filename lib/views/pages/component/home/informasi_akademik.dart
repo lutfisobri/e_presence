@@ -82,7 +82,7 @@ class InformasiAkademik extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
-                              color: Color(0XFF193D28),
+                              color: Color.fromRGBO(0, 0, 0, 1),
                               overflow: TextOverflow.visible,
                               fontFamily: "Roboto",
                             ),
@@ -92,7 +92,7 @@ class InformasiAkademik extends StatelessWidget {
                             style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: Color(0XFF193D28),
+                              color: Color.fromRGBO(0, 0, 0, 1),
                               fontFamily: "Roboto",
                             ),
                           ),

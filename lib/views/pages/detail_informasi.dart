@@ -102,7 +102,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                           return Text(
                             value.find(args).judul ?? "",
                             style: TextStyle(
-                              color: Color.fromRGBO(25, 61, 40, 1),
+                              color: Color.fromRGBO(0, 0, 0, 1),
                               fontSize: 16,
                               fontFamily: 'Roboto',
                               fontWeight: FontWeight.w700,
@@ -120,7 +120,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                           return Text(
                             value.find(args).desc ?? "",
                             style: TextStyle(
-                              color: Color.fromRGBO(25, 61, 40, 1),
+                              color: Color.fromRGBO(0, 0, 0, 1),
                               fontSize: 14,
                               fontFamily: 'Roboto',
                               fontWeight: FontWeight.w500,
@@ -138,7 +138,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                           return Text(
                             value.find(args).createdAt ?? "",
                             style: TextStyle(
-                              color: Color.fromRGBO(25, 61, 40, 1),
+                              color: Color.fromRGBO(0, 0, 0, 1),
                               fontSize: 13,
                               fontFamily: 'Roboto',
                               fontWeight: FontWeight.w600,
