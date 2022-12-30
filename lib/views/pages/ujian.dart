@@ -7,6 +7,7 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/constant/tab_bar.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
+import 'package:app_presensi/views/pages/component/ujian/null.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -224,17 +225,7 @@ class _JadwalPageState extends State<JadwalPage> {
                           itemBuilder: (context, index) {
                             print(data);
                             if (data.isEmpty) {
-                              Center(
-                                child: Text(
-                                  "Tidak ada jadwal ujian",
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w400,
-                                    fontFamily: "Roboto",
-                                  ),
-                                ),
-                              );
+                              NullJadwalUjian();
                             }
                             return Padding(
                               padding:
