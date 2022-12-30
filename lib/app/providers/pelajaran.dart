@@ -3,7 +3,6 @@ import 'package:app_presensi/app/models/log_presensi.dart';
 import 'package:app_presensi/app/models/mapel.dart';
 import 'package:app_presensi/app/models/presensi.dart';
 import 'package:app_presensi/app/models/ujian.dart';
-import 'package:app_presensi/resources/utils/static.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:ntp/ntp.dart';
 
@@ -55,6 +54,7 @@ class PelajaranProvider with ChangeNotifier {
   }
 
   ModelPresensi findPresensi({required String id}) {
+    if (listPresensi.isEmpty) return ModelPresensi();
     return listPresensi.firstWhere((element) => element.idPresensi == id);
   }
 
