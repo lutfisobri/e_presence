@@ -177,51 +177,47 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                     constraints: BoxConstraints(
                       minHeight: MediaQuery.of(context).size.height - 197,
                     ),
-                    child: Consumer<PelajaranProvider>(
-                      builder: (context, pelProv, child) {
-                        return PageView.builder(
-                          controller: pageController,
-                          onPageChanged: (value) {
-                            setState(() {
-                              selectedTab = value + 1;
-                              hari = validator(selectedTab);
-                            });
-                            getData();
-                            if (selectedTab > 3) {
-                              scrollController.animateTo(
-                                100.00,
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate,
+                    child: PageView.builder(
+                      controller: pageController,
+                      onPageChanged: (value) {
+                        setState(() {
+                          selectedTab = value + 1;
+                          hari = validator(selectedTab);
+                        });
+                        getData();
+                        if (selectedTab >= 3) {
+                          scrollController.animateTo(
+                            100.00,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.decelerate,
+                          );
+                        } else if (selectedTab < 4) {
+                          scrollController.animateTo(
+                            0,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Curves.decelerate,
+                          );
+                        }
+                      },
+                      itemCount: tabItems.length,
+                      itemBuilder: (context, index) {
+                        if (data.isEmpty) {
+                          return const NullMatapelajaran();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 19, right: 19),
+                          child: ListView.builder(
+                            clipBehavior: Clip.none,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.only(top: 12.6),
+                            itemCount: data.length,
+                            itemBuilder: (context, i) {
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 12.6),
+                                child: ContentMapel(data: data, i: i),
                               );
-                            } else if (selectedTab < 4) {
-                              scrollController.animateTo(
-                                0,
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.decelerate,
-                              );
-                            }
-                          },
-                          itemCount: tabItems.length,
-                          itemBuilder: (context, index) {
-                            if (data.isEmpty) {
-                              return NullMatapelajaran();
-                            }
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 19, right: 19),
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                separatorBuilder: (context, index) => Container(
-                                  height: 12.6,
-                                ),
-                                itemCount: data.length,
-                                itemBuilder: (context, i) {
-                                  return ContentMapel(data: data, i: i);
-                                },
-                              ),
-                            );
-                          },
+                            },
+                          ),
                         );
                       },
                     ),
@@ -230,7 +226,7 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
               ),
             ],
           )
-        : SekeletonMapel();
+        : const SekeletonMapel();
   }
 
   String validator(int i) {
