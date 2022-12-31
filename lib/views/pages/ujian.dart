@@ -224,9 +224,8 @@ class _JadwalPageState extends State<JadwalPage> {
                           },
                           itemCount: tabItems.length,
                           itemBuilder: (context, index) {
-                            print(data);
                             if (data.isEmpty) {
-                              NullJadwalUjian();
+                              return NullJadwalUjian();
                             }
                             return Padding(
                               padding:

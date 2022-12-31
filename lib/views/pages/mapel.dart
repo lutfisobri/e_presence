@@ -97,6 +97,7 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
           ),
         );
       }
+      if (!mounted) return;
       setState(() {
         data.clear();
         data = dataMapel.listMapel.where((element) {
