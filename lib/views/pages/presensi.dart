@@ -9,7 +9,6 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
-import 'package:app_presensi/resources/widgets/shared/notifications/dialog_with_button.dart';
 import 'package:app_presensi/resources/widgets/shared/notifications/diluar_area.dart';
 import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/views/pages/component/presensi/is_present.dart';
@@ -20,7 +19,6 @@ import 'package:app_presensi/views/pages/component/presensi/pengampu.dart';
 import 'package:app_presensi/views/pages/component/presensi/selesai_presensi.dart';
 import 'package:app_presensi/views/pages/component/presensi/skeleton.dart';
 import 'package:app_presensi/views/pages/component/presensi/utils.dart';
-import 'package:app_presensi/views/user/component/notifications/login.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -466,6 +464,7 @@ class _PresensiState extends State<DetailPresensi> {
         var value = await takePhoto();
         if (value != null) {
           UtilsPresensi.cropImage(imageFile: value).then((value) {
+            Navigator.pop(context);
             if (value != null) {
               setState(() {
                 image = value;
@@ -473,8 +472,6 @@ class _PresensiState extends State<DetailPresensi> {
             }
           });
         }
-        if (!mounted) return;
-        Navigator.pop(context);
       },
       galeri: () async {
         if (!isOnline) {
@@ -487,6 +484,7 @@ class _PresensiState extends State<DetailPresensi> {
         var value = await pickImage();
         if (value != null) {
           UtilsPresensi.cropImage(imageFile: value).then((value) {
+            Navigator.pop(context);
             if (value != null) {
               setState(() {
                 image = value;
@@ -494,8 +492,6 @@ class _PresensiState extends State<DetailPresensi> {
             }
           });
         }
-        if (!mounted) return;
-        Navigator.pop(context);
       },
       hapus: () {
         setState(() {

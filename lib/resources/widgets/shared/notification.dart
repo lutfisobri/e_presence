@@ -207,7 +207,6 @@ class CustomDialogPresensi extends StatelessWidget {
   }
 }
 
-
 class DialogEmail extends StatelessWidget {
   const DialogEmail({
     super.key,
@@ -316,8 +315,6 @@ class DialogEmail extends StatelessWidget {
   }
 }
 
-
-
 class DialogPasswordIsSame extends StatelessWidget {
   const DialogPasswordIsSame({
     super.key,
@@ -375,7 +372,7 @@ class DialogPasswordIsSame extends StatelessWidget {
                       children: [
                         Row(
                           children: const [
-                             Text(
+                            Text(
                               "Gagal Tersimpan",
                               style: TextStyle(
                                 fontSize: 20,
@@ -462,20 +459,10 @@ class DialogEmailIsSame extends StatelessWidget {
               ),
               Row(
                 children: [
-                  Stack(
-                    children: [
-                      Positioned(
-                        left: 48,
-                        top: 59.8,
-                        width: 80,
-                        height: 99.69,
-                        child: Image.asset(
-                          "assets/icons/RobotEmail.png",
-                          width: 80,
-                          height: 84.16,
-                        ),
-                      ),
-                    ],
+                  Image.asset(
+                    "assets/icons/RobotEmail.png",
+                    width: 74,
+                    height: 74,
                   ),
                   SizedBox(
                     width: 10,
@@ -500,12 +487,13 @@ class DialogEmailIsSame extends StatelessWidget {
                           height: 1.89,
                         ),
                         SizedBox(
-                          width: MediaQuery.of(context).size.width / 2,
+                          width: MediaQuery.of(context).size.width / 3,
                           child: Text(
                             "Mohon maaf e-mail anda\ntelah digunakan",
                             textAlign: TextAlign.start,
                             style: TextStyle(
                               color: Color(0XFFD3DAE0),
+                              // overflow: TextOverflow.ellipsis,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),

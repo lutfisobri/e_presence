@@ -73,6 +73,8 @@ class User {
     var response = await request.send();
     if (response.statusCode == 200) {
       return jsonDecode(await response.stream.bytesToString())['data'];
+    } else if (response.statusCode == 409) {
+      return 409;
     } else {
       throw Exception("Failed to load data");
     }

@@ -98,7 +98,7 @@ class UserProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateProfile(
+  Future<int> updateProfile(
       String email, String? photo, String tglLahir) async {
     final user = await User.update({
       "username": dataUser.username,
@@ -106,13 +106,15 @@ class UserProvider with ChangeNotifier {
       "foto": photo,
       "tanggal_lahir": tglLahir,
     }).then((value) {
+      if (value == 409) {
+        return 1;
+      }
       dataUser = ModelUser.formJson(value);
       isLogin = true;
       notifyListeners();
-      return true;
+      return 0;
     }).catchError((e) {
-      print(e);
-      return false;
+      return 2;
     });
     return user;
   }

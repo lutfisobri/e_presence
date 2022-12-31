@@ -153,13 +153,14 @@ class _EditProfileState extends State<EditProfile> {
     final usr = Provider.of<UserProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
-        if (usr.isLogin) Navigator.pop(context);
         // usr.loadProfile();
-        if (usr.dataUser.email == null) {
+        if (usr.dataUser.email == null || usr.dataUser.email == "null") {
           return false;
         }
 
-        if (usr.dataUser.email == "" && emailController.text != "") {
+        if (usr.dataUser.email == "" ||
+            emailController.text != "" ||
+            usr.dataUser.email == "null") {
           return false;
         }
 
@@ -575,7 +576,7 @@ class _EditProfileState extends State<EditProfile> {
       tglLahir.text,
     )
         .then((value) {
-      if (value) {
+      if (value == 0) {
         setState(() {
           isLoading = false;
         });
@@ -593,14 +594,33 @@ class _EditProfileState extends State<EditProfile> {
         );
         loadProfile();
         Timer(
-          const Duration(milliseconds: 1800),
+          const Duration(milliseconds: 2000),
           () => Navigator.pop(context),
         );
         Timer(
-          const Duration(seconds: 3),
+          const Duration(seconds: 2),
           () => Navigator.pop(context),
         );
+      } else if (value == 1) {
+        setState(() {
+          isLoading = false;
+        });
+        return showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: DialogEmailIsSame(
+              onPress: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
+        );
       } else {
+        setState(() {
+          isLoading = false;
+        });
         showDialog(
           context: context,
           barrierDismissible: false,
@@ -617,10 +637,6 @@ class _EditProfileState extends State<EditProfile> {
           const Duration(seconds: 2),
           () => Navigator.pop(context),
         );
-        setState(() {
-          isLoading = false;
-        });
-        return;
       }
     });
   }
