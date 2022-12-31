@@ -104,10 +104,10 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
         data.sort(
           (a, b) => a.jamMulai!.compareTo(b.jamSelesai!),
         );
-        setState(() {
-          isOnline = true;
-        });
       }
+      setState(() {
+        isOnline = true;
+      });
     });
   }
 
