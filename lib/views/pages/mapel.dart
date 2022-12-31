@@ -5,7 +5,7 @@ import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/utils/days.dart';
 import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/constant/tab_bar.dart';
-import 'package:app_presensi/resources/widgets/shared/notification.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:app_presensi/views/pages/component/mapel/content.dart';
 import 'package:app_presensi/views/pages/component/mapel/null.dart';
@@ -206,18 +206,7 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                         }
                         return Padding(
                           padding: const EdgeInsets.only(left: 19, right: 19),
-                          child: ListView.builder(
-                            clipBehavior: Clip.none,
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: const EdgeInsets.only(top: 12.6),
-                            itemCount: data.length,
-                            itemBuilder: (context, i) {
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 12.6),
-                                child: ContentMapel(data: data, i: i),
-                              );
-                            },
-                          ),
+                          child: ContentMapel(hari: hari, tickerProvider: this),
                         );
                       },
                     ),

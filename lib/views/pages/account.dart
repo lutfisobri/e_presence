@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:app_presensi/app/providers/informasi.dart';
 import 'package:app_presensi/app/providers/user.dart';
-import 'package:app_presensi/resources/widgets/shared/notification.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/dialog_with_button.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:app_presensi/views/pages/component/account/skeleton.dart';
 import 'package:flutter/material.dart';

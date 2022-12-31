@@ -4,6 +4,7 @@ import 'package:app_presensi/app/providers/informasi.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/views/pages/component/home/absensi.dart';
 import 'package:app_presensi/views/pages/component/home/informasi_akademik.dart';
 // import 'package:app_presensi/views/pages/component/home/noconnection.dart';

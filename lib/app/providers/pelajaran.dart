@@ -12,9 +12,41 @@ class PelajaranProvider with ChangeNotifier {
   List<ModelUjian> listUjian = [];
   List<LogPresensi> log = [];
 
+  List<ModelMapel> mapelSenin = [],
+      mapelSelasa = [],
+      mapelRabu = [],
+      mapelKamis = [],
+      mapelJumat = [];
+
+  List<ModelUjian> ujianSenin = [],
+      ujianSelasa = [],
+      ujianRabu = [],
+      ujianKamis = [],
+      ujianJumat = [];
+
   allMapel({required String idKelasAjaran}) async {
     Iterable iterable = await ApiPelajaran.jadwalMapel(idKelasAjaran);
     listMapel = iterable.map((e) => ModelMapel.formJson(e)).toList();
+    notifyListeners();
+    distributinMapel();
+  }
+
+  distributinMapel() {
+    mapelSenin = listMapel
+        .where((element) => element.hari?.toLowerCase() == "senin")
+        .toList();
+    mapelSelasa = listMapel
+        .where((element) => element.hari?.toLowerCase() == "selasa")
+        .toList();
+    mapelRabu = listMapel
+        .where((element) => element.hari?.toLowerCase() == "rabu")
+        .toList();
+    mapelKamis = listMapel
+        .where((element) => element.hari?.toLowerCase() == "kamis")
+        .toList();
+    mapelJumat = listMapel
+        .where((element) => element.hari?.toLowerCase() == "jumat")
+        .toList();
     notifyListeners();
   }
 
@@ -24,7 +56,27 @@ class PelajaranProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  distributionUjian() {
+    ujianSenin = listUjian
+        .where((element) => element.hari?.toLowerCase() == "senin")
+        .toList();
+    ujianSelasa = listUjian
+        .where((element) => element.hari?.toLowerCase() == "selasa")
+        .toList();
+    ujianRabu = listUjian
+        .where((element) => element.hari?.toLowerCase() == "rabu")
+        .toList();
+    ujianKamis = listUjian
+        .where((element) => element.hari?.toLowerCase() == "kamis")
+        .toList();
+    ujianJumat = listUjian
+        .where((element) => element.hari?.toLowerCase() == "jumat")
+        .toList();
+    notifyListeners();
+  }
+
   allPresensi({required String idKelasAjaran, required String nis}) async {
+    await logPresensi(nis: nis);
     Iterable iterable = await ApiPelajaran.jadwalPresensi(idKelasAjaran);
     final int offset = await NTP.getNtpOffset(
       localTime: DateTime.now(),
@@ -39,9 +91,6 @@ class PelajaranProvider with ChangeNotifier {
       return internetTime.isAfter(DateTime.parse(element.mulaiPresensi!)) &&
           internetTime.isBefore((DateTime.parse(element.akhirPresensi!)));
     }).toList();
-
-    await logPresensi(nis: nis);
-
     for (var i = 0; i < log.length; i++) {
       for (var j = 0; j < listPresensi.length; j++) {
         if (log[i].idPresensi == listPresensi[j].idPresensi) {
@@ -54,8 +103,10 @@ class PelajaranProvider with ChangeNotifier {
   }
 
   ModelPresensi findPresensi({required String id}) {
-    if (listPresensi.isEmpty) return ModelPresensi();
-    return listPresensi.firstWhere((element) => element.idPresensi == id);
+    var presensi =
+        listPresensi.firstWhere((element) => element.idPresensi == id);
+    if (presensi.idPresensi == null) return ModelPresensi();
+    return presensi;
   }
 
   submitPresensi(Map<String, dynamic> json) async {
