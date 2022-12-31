@@ -1076,3 +1076,115 @@ class DialogPasswordIsSame extends StatelessWidget {
     );
   }
 }
+
+class DialogEmailIsSame extends StatelessWidget {
+  const DialogEmailIsSame({
+    super.key,
+    required this.onPress,
+  });
+  final void Function() onPress;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      child: Container(
+        color: Colors.transparent,
+        child: Container(
+          height: 171,
+          decoration: BoxDecoration(
+              color: Colors.white, borderRadius: BorderRadius.circular(14)),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  Stack(
+                    children: [
+                      Positioned(
+                        left: 48,
+                        top: 59.8,
+                        width: 80,
+                        height: 99.69,
+                        child: Image.asset(
+                          "assets/icons/RobotEmail.png",
+                          width: 80,
+                          height: 84.16,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "Gagal Tersimpan",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 1.89,
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 2,
+                          child: Text(
+                            "Mohon maaf e-mail anda\ntelah digunakan",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              color: Color(0XFFD3DAE0),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 19),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Button(
+                        onPres: onPress,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(7.77),
+                        ),
+                        textStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: "Roboto",
+                          letterSpacing: 0.85,
+                        ),
+                        child: Text("MASUKKAN ULANG"),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
