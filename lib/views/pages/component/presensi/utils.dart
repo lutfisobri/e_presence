@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
@@ -19,6 +18,7 @@ class UtilsPresensi {
     DateTime internetTime = DateTime.now().add(Duration(milliseconds: offset));
     if (internetTime.isBefore(jamAwal)) return false;
     if (internetTime.isAfter(jamAkhir)) return false;
+    if (internetTime.isAtSameMomentAs(jamAwal)) return false;
     return true;
   }
 
