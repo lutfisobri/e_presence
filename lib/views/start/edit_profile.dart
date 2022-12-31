@@ -32,6 +32,7 @@ class _EditProfileState extends State<EditProfileStart> {
   late StreamSubscription subscription;
   var isDeviceConnected = false;
   bool isAlert = false;
+  bool waiting = true;
   final styleThemeData = StyleThemeData();
   TextEditingController nama = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -95,6 +96,7 @@ class _EditProfileState extends State<EditProfileStart> {
         tglLahir.text = user.dataUser.tglLahir ?? "2000-01-01";
         kelas.text = user.dataUser.kelas ?? "";
         modelUser = user.dataUser;
+        waiting = false;
       });
     } else {
       if (!mounted) return;
@@ -143,7 +145,6 @@ class _EditProfileState extends State<EditProfileStart> {
   }
 
   bool isLoading = false;
-  bool waiting = false;
 
   File? foto;
 
