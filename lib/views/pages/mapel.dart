@@ -24,16 +24,12 @@ class Mapel extends StatefulWidget {
 class _MapelState extends State<Mapel> with TickerProviderStateMixin {
   late StreamSubscription<InternetConnectionStatus> listener;
   bool isOnline = false;
-
   void hasConnect() async {
     listener = InternetConnectionChecker().onStatusChange.listen(
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
             getData();
-            setState(() {
-              isOnline = true;
-            });
             break;
           case InternetConnectionStatus.disconnected:
             if (!mounted) return;
@@ -49,10 +45,9 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
   void init() async {
     bool check = await InternetConnectionChecker().hasConnection;
     if (!mounted) return;
-    setState(() {
-      isOnline = check;
-    });
-    getData();
+    if (check) {
+      getData();
+    }
   }
 
   StyleThemeData styleThemeData = StyleThemeData();
@@ -76,43 +71,44 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
   }
 
   getData() async {
-    if (isOnline) {
-      final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
-      final user = Provider.of<UserProvider>(context, listen: false);
-      dataMapel.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
-      bool isLogin = await user.checkAccount().then((value) => value);
-      if (!isLogin) {
-        if (!mounted) return;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => WillPopScope(
-            onWillPop: () async => false,
-            child: DialogSession(
-              onPress: () {
-                Navigator.popUntil(context, (route) => route.isFirst);
-                Navigator.pushReplacementNamed(context, "/login");
-              },
-            ),
-          ),
-        );
-      }
+    final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
+    final user = Provider.of<UserProvider>(context, listen: false);
+    dataMapel.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
+    bool isLogin = await user.checkAccount().then((value) => value);
+    if (!isLogin) {
       if (!mounted) return;
-      setState(() {
-        data.clear();
-        data = dataMapel.listMapel.where((element) {
-          if (element.hari != null) {
-            return element.hari!.toLowerCase() == hari;
-          }
-          return false;
-        }).toList();
-        if (data.isNotEmpty) {
-          data.sort(
-            (a, b) => a.jamMulai!.compareTo(b.jamSelesai!),
-          );
-        }
-      });
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: DialogSession(
+            onPress: () {
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.pushReplacementNamed(context, "/login");
+            },
+          ),
+        ),
+      );
     }
+    if (!mounted) return;
+    setState(() {
+      data.clear();
+      data = dataMapel.listMapel.where((element) {
+        if (element.hari != null) {
+          return element.hari!.toLowerCase() == hari;
+        }
+        return false;
+      }).toList();
+      if (data.isNotEmpty) {
+        data.sort(
+          (a, b) => a.jamMulai!.compareTo(b.jamSelesai!),
+        );
+        setState(() {
+          isOnline = true;
+        });
+      }
+    });
   }
 
   @override

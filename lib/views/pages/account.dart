@@ -25,9 +25,7 @@ class _AkunPageState extends State<AkunPage> {
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
-            setState(() {
-              isOnline = true;
-            });
+            loadProfile();
             break;
           case InternetConnectionStatus.disconnected:
             if (!mounted) return;
@@ -43,10 +41,7 @@ class _AkunPageState extends State<AkunPage> {
   void init() async {
     bool check = await InternetConnectionChecker().hasConnection;
     if (!mounted) return;
-    setState(() {
-      isOnline = check;
-    });
-    if (isOnline) {
+    if (check) {
       loadProfile();
     } else {}
   }
@@ -75,6 +70,9 @@ class _AkunPageState extends State<AkunPage> {
   loadProfile() async {
     final user = Provider.of<UserProvider>(context, listen: false);
     bool isLogin = await user.checkAccount().then((value) => value);
+    setState(() {
+      isOnline = true;
+    });
     if (!isLogin) {
       if (!mounted) return;
       showDialog(

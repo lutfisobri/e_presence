@@ -26,24 +26,21 @@ class JadwalPage extends StatefulWidget {
 class _JadwalPageState extends State<JadwalPage> {
   late StreamSubscription<InternetConnectionStatus> listener;
   bool isOnline = false;
-  bool isLoading = true;
   void hasConnect() async {
     listener = InternetConnectionChecker().onStatusChange.listen(
       (InternetConnectionStatus status) {
         switch (status) {
           case InternetConnectionStatus.connected:
-            setState(() {
-              isOnline = true;
-              // isLoading = false;
-            });
+            getData();
+            // setState(() {
+            //   isOnline = true;
+            // });
             break;
           case InternetConnectionStatus.disconnected:
             if (!mounted) return;
             setState(() {
               isOnline = false;
-              // isLoading = true;
             });
-
             break;
         }
       },
@@ -53,14 +50,9 @@ class _JadwalPageState extends State<JadwalPage> {
   void init() async {
     bool check = await InternetConnectionChecker().hasConnection;
     if (!mounted) return;
-    setState(() {
-      isOnline = check;
-    });
-    if (isOnline) {
+    if (check) {
       getData();
-    } else {
-      // isLoading = true;
-    }
+    } else {}
   }
 
   StyleThemeData styleThemeData = StyleThemeData();
@@ -75,12 +67,6 @@ class _JadwalPageState extends State<JadwalPage> {
     super.initState();
     hasConnect();
     init();
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return;
-      setState(() {
-        isLoading = false;
-      });
-    });
   }
 
   @override
@@ -88,23 +74,6 @@ class _JadwalPageState extends State<JadwalPage> {
     listener.cancel();
     super.dispose();
   }
-
-  // showDialogbox() => showCupertinoDialog<String>(
-  //       context: context,
-  //       builder: (BuildContext contex) => CupertinoAlertDialog(
-  //         title: const Text("Peringatan"),
-  //         content: const Text("Tidak ada koneksi internet"),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             onPressed: () async {
-  //               Navigator.pop(context, 'cancel');
-  //               if (!isOnline) showDialogbox();
-  //             },
-  //             child: const Text("Tutup"),
-  //           ),
-  //         ],
-  //       ),
-  //     );
 
   getData() async {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
@@ -135,6 +104,7 @@ class _JadwalPageState extends State<JadwalPage> {
       data.sort(
         (a, b) => a.jamAwal!.compareTo(b.jamAwal!),
       );
+      isOnline = true;
     });
   }
 
