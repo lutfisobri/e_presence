@@ -9,6 +9,7 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/dialog_with_button.dart';
 import 'package:app_presensi/resources/widgets/shared/notifications/diluar_area.dart';
 import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/views/pages/component/presensi/is_present.dart';
@@ -19,6 +20,7 @@ import 'package:app_presensi/views/pages/component/presensi/pengampu.dart';
 import 'package:app_presensi/views/pages/component/presensi/selesai_presensi.dart';
 import 'package:app_presensi/views/pages/component/presensi/skeleton.dart';
 import 'package:app_presensi/views/pages/component/presensi/utils.dart';
+import 'package:app_presensi/views/user/component/notifications/login.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
@@ -356,7 +358,26 @@ class _PresensiState extends State<DetailPresensi> {
     );
     if (!mounted) return;
     if (!date) {
-      Navigator.pop(context);
+      showDialog(
+        context: context,
+        builder: (context) {
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: const CustomDialog(
+              title: "Waktu Telah Habis",
+              subtitle: "Silahkan Presensi Di Lain Waktu",
+              image: "",
+            ),
+          );
+        },
+      );
+      Timer(
+        const Duration(seconds: 2),
+        () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        },
+      );
       return;
     }
     final idPresensi = pelProv.findPresensi(id: args).idPresensi;
@@ -445,52 +466,46 @@ class _PresensiState extends State<DetailPresensi> {
     serviceCamera(
       context,
       type: "Bukti Foto",
-      kamera: () {
+      kamera: () async {
         if (!isOnline) {
-          Navigator.pop(context);
+          setState(() {
+            isSkeleton = true;
+          });
+          Navigator.of(context).pop();
           return;
         }
-        takePhoto().then(
-          (value) {
-            if (!isOnline) {
-              Navigator.pop(context);
-              return;
-            }
+        var value = await takePhoto();
+        if (value != null) {
+          UtilsPresensi.cropImage(imageFile: value).then((value) {
             if (value != null) {
-              UtilsPresensi.cropImage(imageFile: value).then((value) {
-                if (value != null) {
-                  setState(() {
-                    image = value;
-                  });
-                }
+              setState(() {
+                image = value;
               });
             }
-          },
-        );
+          });
+        }
+        if (!mounted) return;
         Navigator.pop(context);
       },
-      galeri: () {
-        if (isOnline) {
-          Navigator.pop(context);
+      galeri: () async {
+        if (!isOnline) {
+          setState(() {
+            isSkeleton = true;
+          });
+          Navigator.of(context).pop();
           return;
         }
-        pickImage().then(
-          (value) {
-            if (!isOnline) {
-              Navigator.pop(context);
-              return;
-            }
+        var value = await pickImage();
+        if (value != null) {
+          UtilsPresensi.cropImage(imageFile: value).then((value) {
             if (value != null) {
-              UtilsPresensi.cropImage(imageFile: value).then((value) {
-                if (value != null) {
-                  setState(() {
-                    image = value;
-                  });
-                }
+              setState(() {
+                image = value;
               });
             }
-          },
-        );
+          });
+        }
+        if (!mounted) return;
         Navigator.pop(context);
       },
       hapus: () {
