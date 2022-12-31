@@ -7,6 +7,8 @@ import 'package:app_presensi/app/services/validation.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/dialog_with_button.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:app_presensi/views/user/component/edit/skeleton.dart';
@@ -17,8 +19,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-import '../../resources/utils/skeleton.dart';
 
 class EditProfileStart extends StatefulWidget {
   const EditProfileStart({super.key});
@@ -277,24 +277,7 @@ class _EditProfileState extends State<EditProfileStart> {
                                   ),
                                   WtextField(
                                     onTap: () {
-                                      showDatePicker(
-                                        context: context,
-                                        initialDate:
-                                            DateTime.parse(tglLahir.text),
-                                        firstDate: DateTime(1990),
-                                        lastDate: DateTime(2100),
-                                        // initialEntryMode:
-                                        //     DatePickerEntryMode.calendarOnly,
-                                      ).then((value) {
-                                        if (value != null &&
-                                            value.isAfter(DateTime(1990))) {
-                                          setState(() {
-                                            tglLahir.text =
-                                                DateFormat('y-MM-dd')
-                                                    .format(value);
-                                          });
-                                        }
-                                      });
+                                      validateAge();
                                     },
                                     controller: tglLahir,
                                     primaryColor: Colors.black,
@@ -337,7 +320,8 @@ class _EditProfileState extends State<EditProfileStart> {
                                           builder: (context, value, child) {
                                         return Button(
                                           onPres: () {
-                                            btnSave(value);
+                                            validationAges();
+                                            // btnSave(value);
                                           },
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
@@ -497,6 +481,79 @@ class _EditProfileState extends State<EditProfileStart> {
         ),
       ),
     );
+  }
+
+  void validateAge() async {
+    DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.parse(tglLahir.text),
+      firstDate: DateTime(1990),
+      lastDate: DateTime(2100),
+      // initialEntryMode:
+      //     DatePickerEntryMode.calendarOnly,
+    );
+    if (date != null) {
+      print(date);
+      if (date.isBefore(DateTime.now().subtract(const Duration(days: 5475))) ||
+          date.isAfter(DateTime.now().subtract(const Duration(days: 6570)))) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => WillPopScope(
+            onWillPop: () async => false,
+            child: const CustomDialog(
+              title: "Gagal Tersimpan",
+              subtitle: "Umur Anda Tidak Sesuai",
+              image: "assets/icons/gagal.png",
+            ),
+          ),
+        );
+        return;
+      } else {
+        setState(() {
+          tglLahir.text = DateFormat('y-MM-dd').format(date);
+        });
+      }
+    }
+  }
+
+  void validationAges() {
+    if (tglLahir.text == "") {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: const CustomDialog(
+            title: "Gagal Tersimpan",
+            subtitle: "Umur Anda Tidak Sesuai",
+            image: "assets/icons/gagal.png",
+          ),
+        ),
+      );
+      return;
+    }
+    DateTime date = DateTime.parse(tglLahir.text);
+    if (date.isBefore(DateTime.now().subtract(const Duration(days: 5475))) ||
+        date.isAfter(DateTime.now().subtract(const Duration(days: 6570)))) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: const CustomDialog(
+            title: "Gagal Tersimpan",
+            subtitle: "Umur Anda Tidak Sesuai",
+            image: "assets/icons/gagal.png",
+          ),
+        ),
+      );
+      return;
+    } else {
+      setState(() {
+        tglLahir.text = DateFormat('y-MM-dd').format(date);
+      });
+    }
   }
 
   btnSave(UserProvider value) async {

@@ -23,7 +23,7 @@ class SelesaiPresensi extends StatelessWidget {
             ),
           ),
           Text(
-            DateFormat("dd MMMM y - hh.mm", "id_ID").format(
+            DateFormat("dd MMMM y - HH.mm", "id_ID").format(
               DateTime.parse(
                 value.findPresensi(id: id).akhirPresensi ??
                     DateTime.now().toString(),
