@@ -1,9 +1,8 @@
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/utils/skeleton.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/dialog_with_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-import '../../../../resources/widgets/shared/notification.dart';
 
 class LoadingAccount extends StatelessWidget {
   const LoadingAccount({

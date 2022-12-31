@@ -7,6 +7,8 @@ import 'package:app_presensi/app/services/validation.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/dialog_with_button.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:app_presensi/views/user/component/edit/skeleton.dart';
@@ -17,8 +19,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-
-import '../../resources/utils/skeleton.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -324,6 +324,14 @@ class _EditProfileState extends State<EditProfile> {
                                     sufixIcon1:
                                         const Icon(Icons.calendar_month),
                                   ),
+                                  const Text(
+                                    "Umur : 14 - 19 Tahun",
+                                    style: TextStyle(
+                                      color: Color(0XFF858585),
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
                                   const SizedBox(
                                     height: 10.5,
                                   ),
@@ -432,9 +440,6 @@ class _EditProfileState extends State<EditProfile> {
                                         pickImage().then(
                                           (value) {
                                             if (value != null) {
-                                              // setState(() {
-                                              //   foto = value;
-                                              // });
                                               _cropImage(imageFile: value)
                                                   .then((value) {
                                                 if (value != null) {
@@ -452,9 +457,6 @@ class _EditProfileState extends State<EditProfile> {
                                         takePhoto().then(
                                           (value) {
                                             if (value != null) {
-                                              // setState(() {
-                                              //   foto = value;
-                                              // });
                                               _cropImage(imageFile: value)
                                                   .then((value) {
                                                 if (value != null) {
@@ -531,6 +533,32 @@ class _EditProfileState extends State<EditProfile> {
           child: const CustomDialog(
             title: "Gagal Tersimpan",
             subtitle: "Periksa Kembali Data Anda",
+            image: "assets/icons/gagal.png",
+          ),
+        ),
+      );
+      setState(() {
+        isLoading = false;
+      });
+      Timer(
+        const Duration(seconds: 2),
+        () => Navigator.pop(context),
+      );
+      return;
+    }
+    DateTime date = DateTime.parse(tglLahir.text);
+    if (date.isAfter(
+            DateTime.now().subtract(Duration(days: (365.25 * 14).round()))) ||
+        date.isBefore(
+            DateTime.now().subtract(Duration(days: (365.25 * 19).round())))) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WillPopScope(
+          onWillPop: () async => false,
+          child: const CustomDialog(
+            title: "Gagal Tersimpan",
+            subtitle: "Umur Anda Tidak Sesuai",
             image: "assets/icons/gagal.png",
           ),
         ),

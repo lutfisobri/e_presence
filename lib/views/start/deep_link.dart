@@ -13,13 +13,9 @@ class DeepLinkObserver extends WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // get arguments from deep link
       final Uri deepLink = Uri.parse(window.defaultRouteName);
       final String path = deepLink.path;
       final Map<String, String> queryParameters = deepLink.queryParameters;
-      print(deepLink);
-      print(path);
-      print(queryParameters);
     }
   }
 }

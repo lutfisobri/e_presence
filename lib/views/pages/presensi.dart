@@ -9,6 +9,8 @@ import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
 import 'package:app_presensi/resources/widgets/shared/camera.dart';
 import 'package:app_presensi/resources/widgets/shared/notification.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/diluar_area.dart';
+import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/views/pages/component/presensi/is_present.dart';
 import 'package:app_presensi/views/pages/component/presensi/loading.dart';
 import 'package:app_presensi/views/pages/component/presensi/mata_pelajaran.dart';
@@ -74,12 +76,22 @@ class _PresensiState extends State<DetailPresensi> {
     super.dispose();
   }
 
+  void close() async {
+    final user = Provider.of<UserProvider>(context, listen: false);
+    final pelajaran = Provider.of<PelajaranProvider>(context, listen: false);
+    pelajaran.allPresensi(
+        idKelasAjaran: user.dataUser.idKelasAjaran!,
+        nis: user.dataUser.username);
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)!.settings.arguments;
     return WillPopScope(
       onWillPop: () async {
         subscription.cancel();
+        close();
         return true;
       },
       child: Stack(
@@ -283,6 +295,8 @@ class _PresensiState extends State<DetailPresensi> {
   }
 
   void notPresent(nis, time, koordinat, idPresensi) async {
+    final pelProv = Provider.of<PelajaranProvider>(context, listen: false);
+    final userProv = Provider.of<UserProvider>(context, listen: false);
     final presensi = Provider.of<PresensiProvider>(context, listen: false);
     if (_chose!.data == "Sakit") {
       bool status = await presensi.presensiSakit(
@@ -297,6 +311,9 @@ class _PresensiState extends State<DetailPresensi> {
           isLoading = false;
         });
         if (!mounted) return;
+        pelProv.allPresensi(
+            idKelasAjaran: userProv.dataUser.idKelasAjaran!,
+            nis: userProv.dataUser.username);
         Navigator.pop(context);
         return;
       }
@@ -314,6 +331,9 @@ class _PresensiState extends State<DetailPresensi> {
           isLoading = false;
         });
         if (!mounted) return;
+        pelProv.allPresensi(
+            idKelasAjaran: userProv.dataUser.idKelasAjaran!,
+            nis: userProv.dataUser.username);
         Navigator.pop(context);
         return;
       }
@@ -342,6 +362,12 @@ class _PresensiState extends State<DetailPresensi> {
     final idPresensi = pelProv.findPresensi(id: args).idPresensi;
     final nis = userProv.dataUser.username;
     final time = DateFormat("yyyy-MM-dd HH:mm:ss").format(DateTime.now());
+    if (lat == null || long == null) {
+      getLocation();
+      while (lat == null || long == null) {
+        await Future.delayed(const Duration(seconds: 1));
+      }
+    }
     final koordinat = "${lat!},${long!}";
     if (isPresent) {
       if (image == null) {
@@ -351,6 +377,7 @@ class _PresensiState extends State<DetailPresensi> {
       }
     }
     if (!isPresent) {
+      // validateDistance();
       bool status = await presensi.presensiHadir(
         idPresensi: idPresensi!,
         nis: nis,
@@ -362,6 +389,9 @@ class _PresensiState extends State<DetailPresensi> {
           isLoading = false;
         });
         if (!mounted) return;
+        pelProv.allPresensi(
+            idKelasAjaran: userProv.dataUser.idKelasAjaran!,
+            nis: userProv.dataUser.username);
         Navigator.pop(context);
         return;
       }
@@ -376,13 +406,56 @@ class _PresensiState extends State<DetailPresensi> {
     );
   }
 
+  validateDistance() {
+    if (distance!.round() > 100) {
+      setState(() {
+        isLoading = false;
+      });
+      return showDialog(
+        context: context,
+        builder: (context) {
+          return WillPopScope(
+            onWillPop: () async => false,
+            child: CustomDialogDiluarArea(
+              childbtn: Text("PERGI KE AREA"),
+              onTapbtn: () {
+                Navigator.pop(context);
+              },
+            ),
+          );
+        },
+      );
+    }
+  }
+
+  void getLocation() {
+    Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    ).then(
+      (value) {
+        setState(() {
+          lat = value.latitude;
+          long = value.longitude;
+        });
+      },
+    );
+  }
+
   void camera() {
     serviceCamera(
       context,
       type: "Bukti Foto",
       kamera: () {
+        if (!isOnline) {
+          Navigator.pop(context);
+          return;
+        }
         takePhoto().then(
           (value) {
+            if (!isOnline) {
+              Navigator.pop(context);
+              return;
+            }
             if (value != null) {
               UtilsPresensi.cropImage(imageFile: value).then((value) {
                 if (value != null) {
@@ -397,8 +470,16 @@ class _PresensiState extends State<DetailPresensi> {
         Navigator.pop(context);
       },
       galeri: () {
+        if (isOnline) {
+          Navigator.pop(context);
+          return;
+        }
         pickImage().then(
           (value) {
+            if (!isOnline) {
+              Navigator.pop(context);
+              return;
+            }
             if (value != null) {
               UtilsPresensi.cropImage(imageFile: value).then((value) {
                 if (value != null) {
