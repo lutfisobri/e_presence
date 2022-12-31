@@ -358,26 +358,15 @@ class _PresensiState extends State<DetailPresensi> {
     );
     if (!mounted) return;
     if (!date) {
-      showDialog(
-        context: context,
-        builder: (context) {
-          return WillPopScope(
-            onWillPop: () async => false,
-            child: const CustomDialog(
-              title: "Waktu Telah Habis",
-              subtitle: "Silahkan Presensi Di Lain Waktu",
-              image: "",
-            ),
-          );
-        },
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Waktu Presensi Sudah Berakhir"),
+        ),
       );
-      Timer(
-        const Duration(seconds: 2),
-        () {
-          Navigator.pop(context);
-          Navigator.pop(context);
-        },
-      );
+      setState(() {
+        isLoading = false;
+      });
+      Navigator.pop(context);
       return;
     }
     final idPresensi = pelProv.findPresensi(id: args).idPresensi;
