@@ -591,7 +591,7 @@ class _EditProfileState extends State<EditProfileStart> {
       tglLahir.text,
     )
         .then((value) {
-      if (value) {
+      if (value == 0) {
         setState(() {
           isLoading = false;
         });
