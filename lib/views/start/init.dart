@@ -1,8 +1,7 @@
-import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
 import 'package:app_presensi/views/pages/detail_informasi.dart';
 import 'package:app_presensi/views/pages/presensi.dart';
-import 'package:app_presensi/views/start/edit_profile.dart';
+import 'package:app_presensi/views/start/deep_link.dart';
 import 'package:app_presensi/views/start/main.dart';
 import 'package:app_presensi/views/start/splash_screen.dart';
 import 'package:app_presensi/views/user/change_password.dart';
@@ -14,7 +13,6 @@ import 'package:app_presensi/views/user/verification_otp.dart';
 import 'package:app_presensi/views/user/view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 
 class Main extends StatefulWidget {
   const Main({super.key});
@@ -23,19 +21,17 @@ class Main extends StatefulWidget {
   State<Main> createState() => _MainState();
 }
 
-class _MainState extends State<Main> {
-  loadData() async {
-    final user = Provider.of<UserProvider>(context, listen: false);
-    // if (user.dataUser.username.isNotEmpty &&
-    //     user.dataUser.password.isNotEmpty) {
-    //   user.loadProfile();
-    // }
-  }
-
+class _MainState extends State<Main> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    loadData();
+    WidgetsBinding.instance.addObserver(DeepLinkObserver());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(DeepLinkObserver());
+    super.dispose();
   }
 
   @override
@@ -57,7 +53,6 @@ class _MainState extends State<Main> {
             "/viewPhoto": (context) => const ViewPhoto(),
             "/verificationOTP": (context) => const VerificationOTP(),
             "/forgotChangePassword": (context) => const ForgetChangePassword(),
-            // "/EditProfileStart": (context) => const EditProfileStart(),
           },
           debugShowCheckedModeBanner: false,
           home: const SplashScreen(),

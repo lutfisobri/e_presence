@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'package:app_presensi/resources/widgets/shared/button.dart';
-import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 Future<Position> determinePosition() async {

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:app_presensi/app/models/mapel.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/utils/days.dart';
@@ -55,7 +54,6 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
   PageController pageController = PageController();
   int selectedTab = 1;
   String hari = "senin";
-  List<ModelMapel> data = [];
 
   @override
   void initState() {
@@ -74,7 +72,7 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
     final dataMapel = Provider.of<PelajaranProvider>(context, listen: false);
     final user = Provider.of<UserProvider>(context, listen: false);
     dataMapel.allMapel(idKelasAjaran: user.dataUser.idKelasAjaran ?? "");
-    bool isLogin = await user.checkAccount().then((value) => value);
+    bool isLogin = await user.checkAccount();
     if (!isLogin) {
       if (!mounted) return;
       showDialog(
@@ -92,22 +90,9 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
       );
     }
     if (!mounted) return;
+    bool check = await InternetConnectionChecker().hasConnection;
     setState(() {
-      data.clear();
-      data = dataMapel.listMapel.where((element) {
-        if (element.hari != null) {
-          return element.hari!.toLowerCase() == hari;
-        }
-        return false;
-      }).toList();
-      if (data.isNotEmpty) {
-        data.sort(
-          (a, b) => a.jamMulai!.compareTo(b.jamSelesai!),
-        );
-      }
-      setState(() {
-        isOnline = true;
-      });
+      isOnline = check;
     });
   }
 
@@ -158,7 +143,6 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                         selectedTab = newSelected;
                         hari = validator(selectedTab);
                       });
-                      getData();
                       pageController.animateToPage(
                         newSelected - 1,
                         duration: const Duration(milliseconds: 500),
@@ -174,39 +158,64 @@ class _MapelState extends State<Mapel> with TickerProviderStateMixin {
                     constraints: BoxConstraints(
                       minHeight: MediaQuery.of(context).size.height - 197,
                     ),
-                    child: PageView.builder(
-                      controller: pageController,
-                      onPageChanged: (value) {
-                        setState(() {
-                          selectedTab = value + 1;
-                          hari = validator(selectedTab);
-                        });
-                        getData();
-                        if (selectedTab >= 3) {
-                          scrollController.animateTo(
-                            100.00,
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.decelerate,
+                    child: Consumer<PelajaranProvider>(
+                        builder: (context, pelprov, child) {
+                      return PageView.builder(
+                        controller: pageController,
+                        onPageChanged: (value) {
+                          setState(() {
+                            selectedTab = value + 1;
+                            hari = validator(selectedTab);
+                          });
+                          if (selectedTab >= 3) {
+                            scrollController.animateTo(
+                              100.00,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.decelerate,
+                            );
+                          } else if (selectedTab < 4) {
+                            scrollController.animateTo(
+                              0,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.decelerate,
+                            );
+                          }
+                        },
+                        itemCount: tabItems.length,
+                        itemBuilder: (context, index) {
+                          if (hari == "senin") {
+                            if (pelprov.mapelSenin.isEmpty) {
+                              return const NullMatapelajaran();
+                            }
+                          }
+                          if (hari == "selasa") {
+                            if (pelprov.mapelSelasa.isEmpty) {
+                              return const NullMatapelajaran();
+                            }
+                          }
+                          if (hari == "rabu") {
+                            if (pelprov.mapelRabu.isEmpty) {
+                              return const NullMatapelajaran();
+                            }
+                          }
+                          if (hari == "kamis") {
+                            if (pelprov.mapelKamis.isEmpty) {
+                              return const NullMatapelajaran();
+                            }
+                          }
+                          if (hari == "jumat") {
+                            if (pelprov.mapelJumat.isEmpty) {
+                              return const NullMatapelajaran();
+                            }
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(left: 19, right: 19),
+                            child:
+                                ContentMapel(hari: hari, tickerProvider: this),
                           );
-                        } else if (selectedTab < 4) {
-                          scrollController.animateTo(
-                            0,
-                            duration: const Duration(milliseconds: 500),
-                            curve: Curves.decelerate,
-                          );
-                        }
-                      },
-                      itemCount: tabItems.length,
-                      itemBuilder: (context, index) {
-                        if (data.isEmpty) {
-                          return const NullMatapelajaran();
-                        }
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 19, right: 19),
-                          child: ContentMapel(hari: hari, tickerProvider: this),
-                        );
-                      },
-                    ),
+                        },
+                      );
+                    }),
                   ),
                 ],
               ),

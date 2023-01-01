@@ -10,7 +10,7 @@ class DetailInformasi extends StatefulWidget {
   const DetailInformasi({Key? key}) : super(key: key);
 
   @override
-  _DetailInformasiState createState() => _DetailInformasiState();
+  State<DetailInformasi> createState() => _DetailInformasiState();
 }
 
 class _DetailInformasiState extends State<DetailInformasi> {
@@ -62,7 +62,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
     return Stack(
       children: [
         Scaffold(
-          backgroundColor: Color.fromRGBO(250, 250, 250, 1),
+          backgroundColor: const Color.fromRGBO(250, 250, 250, 1),
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
@@ -72,10 +72,10 @@ class _DetailInformasiState extends State<DetailInformasi> {
           ),
           body: SingleChildScrollView(
             child: !isOnline
-                ? SkeletonInformasi()
+                ? const SkeletonInformasi()
                 : Column(
                     children: [
-                      Container(
+                      SizedBox(
                         height: 263,
                         child: Consumer<InformasiProvider>(
                             builder: (context, value, child) {
@@ -83,7 +83,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                             child: value.find(args).image == null ||
                                     value.find(args).image == "" ||
                                     value.find(args).image == "null"
-                                ? Image(
+                                ? const Image(
                                     image: AssetImage(
                                         'assets/image/icondefaultinformasi.png'),
                                   )
@@ -101,7 +101,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                             builder: (context, value, child) {
                           return Text(
                             value.find(args).judul ?? "",
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color.fromRGBO(0, 0, 0, 1),
                               fontSize: 16,
                               fontFamily: 'Roboto',
@@ -119,7 +119,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                             builder: (context, value, child) {
                           return Text(
                             value.find(args).desc ?? "",
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color.fromRGBO(0, 0, 0, 1),
                               fontSize: 14,
                               fontFamily: 'Roboto',
@@ -137,7 +137,7 @@ class _DetailInformasiState extends State<DetailInformasi> {
                             builder: (context, value, child) {
                           return Text(
                             value.find(args).createdAt ?? "",
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color.fromRGBO(0, 0, 0, 1),
                               fontSize: 13,
                               fontFamily: 'Roboto',

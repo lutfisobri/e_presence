@@ -35,7 +35,7 @@ class NoInternet extends StatelessWidget {
                     clipBehavior: Clip.none,
                     width: 60,
                     height: 3,
-                    color: Color.fromRGBO(208, 211, 216, 1),
+                    color: const Color.fromRGBO(208, 211, 216, 1),
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 28),

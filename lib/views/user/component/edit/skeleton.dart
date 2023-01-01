@@ -26,7 +26,7 @@ class SkeletonEditProfile extends StatelessWidget {
                     builder: (context, value, child) {
                   return ClipRRect(
                     borderRadius: BorderRadius.circular(100),
-                    child: Image(
+                    child: const Image(
                       image: AssetImage(
                           "assets/image/profil_default.png"),
                       width: 61,

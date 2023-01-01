@@ -1,24 +1,25 @@
 import 'dart:io';
+import 'package:app_presensi/utils/message.dart';
+// ignore: depend_on_referenced_packages
 import 'package:path_provider/path_provider.dart';
 
 class Cache {
   void getCache() async {
+    Log.i("Aplikasi Sedang Dimuat", color: Decoration.yellow);
     final cacheDirectory = (await getTemporaryDirectory()).path;
     final cacheDirectory2 = (await getApplicationDocumentsDirectory()).path;
-    final cacheDirectory3 = (await getExternalStorageDirectory())!.path;
-    final cacheDirectory4 = (await getApplicationSupportDirectory()).path;
 
     List<String> cache = [
       cacheDirectory,
       cacheDirectory2,
-      cacheDirectory3,
-      cacheDirectory4,
     ];
 
     for (var i = 0; i < cache.length; i++) {
       clear(cache[i]);
     }
-    
+    Future.delayed(const Duration(seconds: 1), () {
+      Log.i("Applikasi Siap digunakan", color: Decoration.green);
+    });
   }
 
   void clear(dir) async {
