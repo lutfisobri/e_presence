@@ -23,37 +23,31 @@ class NullJadwalUjian extends StatelessWidget {
             height: 114.53,
           ),
         ),
-        Container(
-          child: Text(
-            "Tidak Ada Ujian",
-            style: TextStyle(
-              fontSize: 17.sp,
-              color: Color.fromRGBO(114, 182, 108, 1),
-              fontWeight: FontWeight.w800,
-              fontFamily: "poppins",
-            ),
+        Text(
+          "Tidak Ada Ujian",
+          style: TextStyle(
+            fontSize: 17.sp,
+            color: const Color.fromRGBO(114, 182, 108, 1),
+            fontWeight: FontWeight.w800,
+            fontFamily: "poppins",
           ),
         ),
-        Container(
-          child: Text(
-            "Mohon Periksa Secara Berkala Untuk",
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Color.fromRGBO(100, 97, 97, 1),
-              fontWeight: FontWeight.w600,
-              fontFamily: "poppins",
-            ),
+        Text(
+          "Mohon Periksa Secara Berkala Untuk",
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: const Color.fromRGBO(100, 97, 97, 1),
+            fontWeight: FontWeight.w600,
+            fontFamily: "poppins",
           ),
         ),
-        Container(
-          child: Text(
-            "Informasi selanjutnya",
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Color.fromRGBO(100, 97, 97, 1),
-              fontWeight: FontWeight.w600,
-              fontFamily: "poppins",
-            ),
+        Text(
+          "Informasi selanjutnya",
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: const Color.fromRGBO(100, 97, 97, 1),
+            fontWeight: FontWeight.w600,
+            fontFamily: "poppins",
           ),
         )
       ],

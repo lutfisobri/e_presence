@@ -71,7 +71,7 @@ class _LupaPasswordState extends State<LupaPassword> {
           borderRadius: BorderRadius.vertical(
         top: Radius.circular(20),
       )),
-      builder: (context) => NoInternet(),
+      builder: (context) => const NoInternet(),
     );
   }
 
@@ -380,7 +380,7 @@ class _LupaPasswordState extends State<LupaPassword> {
                 ),
               );
               Timer(
-                Duration(seconds: 2),
+                const Duration(seconds: 2),
                 () => Navigator.pop(context),
               );
             });
@@ -390,7 +390,6 @@ class _LupaPasswordState extends State<LupaPassword> {
       }
       user.searchAccount(username.text).then(
         (value) {
-          print(value);
           if (value['nis'] == "") {
             Timer(
               const Duration(milliseconds: 300),
@@ -411,7 +410,7 @@ class _LupaPasswordState extends State<LupaPassword> {
                   isLoading = false;
                 });
                 Timer(
-                  Duration(seconds: 2),
+                  const Duration(seconds: 2),
                   () => Navigator.pop(context),
                 );
               },

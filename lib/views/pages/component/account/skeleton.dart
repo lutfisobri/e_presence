@@ -41,7 +41,7 @@ class LoadingAccount extends StatelessWidget {
                                       return ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(100),
-                                        child: Image(
+                                        child: const Image(
                                           image: AssetImage(
                                               "assets/image/profil_default.png"),
                                           width: 61,
@@ -202,8 +202,8 @@ class LoadingAccount extends StatelessWidget {
                                         Navigator.pop(context);
                                       },
                                       onPresRight: () async {
-                                        final snackBar = SnackBar(
-                                          content: const Text(
+                                        const snackBar = SnackBar(
+                                          content: Text(
                                             'Terjadi kesalahan, silahkan coba lagi!',
                                             style: TextStyle(
                                               color: Colors.white,

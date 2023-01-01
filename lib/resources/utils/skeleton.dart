@@ -8,8 +8,7 @@ class SkeletonContainer extends StatelessWidget {
   const SkeletonContainer._({
     this.width = double.infinity,
     this.height = double.infinity,
-    Key? key,
-  }) : super(key: key);
+  });
 
   const SkeletonContainer.square({
     required double height,
@@ -17,14 +16,16 @@ class SkeletonContainer extends StatelessWidget {
   }) : this._(width: width, height: height);
 
   @override
-  Widget build(BuildContext context) => SkeletonAnimation(
-        child: Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            color: Colors.grey[300],
-            borderRadius: BorderRadius.circular(5),
-          ),
+  Widget build(BuildContext context) {
+    return SkeletonAnimation(
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(5),
         ),
-      );
+      ),
+    );
+  }
 }

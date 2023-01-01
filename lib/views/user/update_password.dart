@@ -157,7 +157,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           ),
         );
         Timer(
-          Duration(seconds: 2),
+          const Duration(seconds: 2),
           () => Navigator.pop(context),
         );
       }
@@ -223,7 +223,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
-                          errorStyle: TextStyle(
+                          errorStyle: const TextStyle(
                             color: Color(0XFFC4C4C4),
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -264,7 +264,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
-                          errorStyle: TextStyle(
+                          errorStyle: const TextStyle(
                             color: Color(0XFFC4C4C4),
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -307,7 +307,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
-                          errorStyle: TextStyle(
+                          errorStyle: const TextStyle(
                             color: Color(0XFFC4C4C4),
                           ),
                           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -338,7 +338,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 if (isOnline) {
                                   validationPW();
                                 } else if (!isOnline) {
-                                  SkeletonUpadatePassword();
+                                  const SkeletonUpadatePassword();
                                   return;
                                 }
                                 // connectionError(context);
@@ -358,7 +358,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                   ),
                 ),
               )
-            : SkeletonUpadatePassword(),
+            : const SkeletonUpadatePassword(),
       ),
     );
   }
@@ -387,7 +387,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
       );
       Timer(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         () => Navigator.pop(context),
       );
       return;
@@ -424,7 +424,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         ),
       );
       Timer(
-        Duration(seconds: 2),
+        const Duration(seconds: 2),
         () => Navigator.pop(context),
       );
       return;

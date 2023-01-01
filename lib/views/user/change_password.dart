@@ -62,7 +62,7 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
           borderRadius: BorderRadius.vertical(
         top: Radius.circular(20),
       )),
-      builder: (context) => NoInternet(),
+      builder: (context) => const NoInternet(),
     );
   }
 
@@ -123,7 +123,7 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
                     obscure: true,
                     sufixIcon1: const Icon(Icons.visibility_off),
                     sufixIcon2: const Icon(Icons.visibility),
-                    errorStyle: TextStyle(
+                    errorStyle: const TextStyle(
                       color: Color(0XFFC4C4C4),
                     ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -155,7 +155,7 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
                     sufixIcon1: const Icon(Icons.visibility_off),
                     sufixIcon2: const Icon(Icons.visibility),
                     primaryColor: Colors.black,
-                    errorStyle: TextStyle(
+                    errorStyle: const TextStyle(
                       color: Color(0XFFC4C4C4),
                     ),
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -239,7 +239,6 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
         );
         return;
       }
-      print(dataUser);
       final usr = Provider.of<UserProvider>(context, listen: false);
       usr
           .forgotChangePassword(

@@ -363,6 +363,6 @@ class _AkunPageState extends State<AkunPage> {
               ),
             ],
           )
-        : LoadingAccount();
+        : const LoadingAccount();
   }
 }

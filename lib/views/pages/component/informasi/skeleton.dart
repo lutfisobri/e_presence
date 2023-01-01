@@ -10,7 +10,7 @@ class SkeletonInformasi extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
         children: [
-          Container(
+          SizedBox(
             height: 263,
             child: SkeletonContainer.square(
               height: 263,

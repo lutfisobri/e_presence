@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/widgets/shared/button.dart';
-import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:app_presensi/views/user/component/notifications/otp.dart';
 import 'package:flutter/material.dart';
@@ -111,7 +110,7 @@ class _VerificationOTPState extends State<VerificationOTP> {
           borderRadius: BorderRadius.vertical(
         top: Radius.circular(20),
       )),
-      builder: (context) => NoInternet(),
+      builder: (context) => const NoInternet(),
     );
   }
 
@@ -146,7 +145,6 @@ class _VerificationOTPState extends State<VerificationOTP> {
   }
 
   verification(String otp) async {
-    print(dataUser);
     bool check = await InternetConnectionChecker().hasConnection;
     if (!mounted) return;
     setState(() {
@@ -159,14 +157,13 @@ class _VerificationOTPState extends State<VerificationOTP> {
           isLoading = false;
         });
         Timer(
-          Duration(seconds: 2),
+          const Duration(seconds: 2),
           () => Navigator.pop(context),
         );
         return;
       }
       final userProv = Provider.of<UserProvider>(context, listen: false);
       await userProv.verificationOTP(otp, dataUser['nis']).then((value) {
-        print(value);
         if (value == 200) {
           setState(() {
             isLoading = false;
@@ -337,9 +334,9 @@ class _VerificationOTPState extends State<VerificationOTP> {
                 Row(
                   children: [
                     counter > 3
-                        ? Text(
+                        ? const Text(
                             "Kirim Ulang kode OTP",
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Color(0XFF999999),
@@ -361,7 +358,7 @@ class _VerificationOTPState extends State<VerificationOTP> {
                                   );
                                   timeSendBack();
                                 },
-                                child: Text(
+                                child: const Text(
                                   "Kirim Ulang kode OTP",
                                   style: TextStyle(
                                     fontSize: 14,

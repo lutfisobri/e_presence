@@ -33,10 +33,6 @@ class _BerandaState extends State<Beranda> {
         switch (status) {
           case InternetConnectionStatus.connected:
             if (!mounted) return;
-            loadData();
-            if (!mounted) return;
-            checkEmail();
-            if (!mounted) return;
             setState(() {
               isOnline = true;
             });
@@ -114,10 +110,8 @@ class _BerandaState extends State<Beranda> {
               image: "assets/icons/email.png",
               button: Button(
                 onPres: () {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
                     Navigator.pop(context);
                     Navigator.pushNamed(context, "/editProfile");
-                  });
                 },
                 minimunSize: const Size(double.infinity, 36.88),
                 textStyle:
@@ -188,7 +182,7 @@ class _BerandaState extends State<Beranda> {
                                   right: 13.62,
                                   top: 35,
                                 ),
-                                child: TopBarMain(),
+                                child: const TopBarMain(),
                               )
                             : Container(),
                         RefreshIndicator(

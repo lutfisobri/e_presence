@@ -55,15 +55,15 @@ class DialogSession extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          children: [
-                            const Text(
+                          children: const [
+                            Text(
                               "Peringatan ",
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
-                            const Text(
+                            Text(
                               "!!",
                               style: TextStyle(
                                 fontSize: 20,

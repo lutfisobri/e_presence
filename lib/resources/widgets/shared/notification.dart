@@ -351,7 +351,7 @@ class DialogPasswordIsSame extends StatelessWidget {
                           width: 21.97,
                         ),
                       ),
-                      Container(
+                      SizedBox(
                         width: 70,
                         height: 99.69,
                         child: Image.asset(
@@ -454,7 +454,7 @@ class DialogEmailIsSame extends StatelessWidget {
               color: Colors.white, borderRadius: BorderRadius.circular(14)),
           child: Column(
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               Row(
@@ -464,7 +464,7 @@ class DialogEmailIsSame extends StatelessWidget {
                     width: 74,
                     height: 74,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Padding(
@@ -473,7 +473,7 @@ class DialogEmailIsSame extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          children: [
+                          children: const [
                             Text(
                               "Gagal Tersimpan",
                               style: TextStyle(
@@ -483,12 +483,12 @@ class DialogEmailIsSame extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 1.89,
                         ),
                         SizedBox(
                           width: MediaQuery.of(context).size.width / 3,
-                          child: Text(
+                          child: const Text(
                             "Mohon maaf e-mail anda\ntelah digunakan",
                             textAlign: TextAlign.start,
                             style: TextStyle(
@@ -504,7 +504,7 @@ class DialogEmailIsSame extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               Padding(
@@ -517,13 +517,13 @@ class DialogEmailIsSame extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(7.77),
                         ),
-                        textStyle: TextStyle(
+                        textStyle: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
                           fontFamily: "Roboto",
                           letterSpacing: 0.85,
                         ),
-                        child: Text("MASUKKAN ULANG"),
+                        child: const Text("MASUKKAN ULANG"),
                       ),
                     ),
                   ],

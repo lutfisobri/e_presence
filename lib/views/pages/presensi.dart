@@ -425,7 +425,7 @@ class _PresensiState extends State<DetailPresensi> {
           return WillPopScope(
             onWillPop: () async => false,
             child: CustomDialogDiluarArea(
-              childbtn: Text("PERGI KE AREA"),
+              childbtn: const Text("PERGI KE AREA"),
               onTapbtn: () {
                 Navigator.pop(context);
               },
@@ -462,9 +462,10 @@ class _PresensiState extends State<DetailPresensi> {
           return;
         }
         var value = await takePhoto();
+        if (!mounted) return;
+        Navigator.pop(context);
         if (value != null) {
           UtilsPresensi.cropImage(imageFile: value).then((value) {
-            Navigator.pop(context);
             if (value != null) {
               setState(() {
                 image = value;
@@ -482,9 +483,10 @@ class _PresensiState extends State<DetailPresensi> {
           return;
         }
         var value = await pickImage();
+        if (!mounted) return;
+        Navigator.pop(context);
         if (value != null) {
           UtilsPresensi.cropImage(imageFile: value).then((value) {
-            Navigator.pop(context);
             if (value != null) {
               setState(() {
                 image = value;

@@ -56,7 +56,7 @@ class _EditProfileState extends State<EditProfileStart> {
         sourcePath: imageFile.path,
         maxHeight: 1080,
         maxWidth: 1080,
-        aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+        aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
         uiSettings: [
           AndroidUiSettings(
               toolbarTitle: 'Sunting Foto',
@@ -67,7 +67,7 @@ class _EditProfileState extends State<EditProfileStart> {
               dimmedLayerColor: Colors.black,
               cropFrameColor: Colors.white,
               cropGridColor: Colors.white,
-              activeControlsWidgetColor: Color.fromRGBO(104, 187, 97, 1),
+              activeControlsWidgetColor: const Color.fromRGBO(104, 187, 97, 1),
               showCropGrid: true,
               lockAspectRatio: false),
           IOSUiSettings(
@@ -81,7 +81,7 @@ class _EditProfileState extends State<EditProfileStart> {
         return null;
       }
     } catch (e) {
-      print(e);
+      return null;
     }
   }
 
@@ -150,7 +150,6 @@ class _EditProfileState extends State<EditProfileStart> {
 
   @override
   Widget build(BuildContext context) {
-    final usr = Provider.of<UserProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -177,7 +176,7 @@ class _EditProfileState extends State<EditProfileStart> {
               body: SafeArea(
                 child: SingleChildScrollView(
                   child: waiting
-                      ? SkeletonEditProfile()
+                      ? const SkeletonEditProfile()
                       : Stack(
                           children: [
                             Padding(
@@ -493,7 +492,6 @@ class _EditProfileState extends State<EditProfileStart> {
       //     DatePickerEntryMode.calendarOnly,
     );
     if (date != null) {
-      print(date);
       if (date.isBefore(DateTime.now().subtract(const Duration(days: 5475))) ||
           date.isAfter(DateTime.now().subtract(const Duration(days: 6570)))) {
         showDialog(

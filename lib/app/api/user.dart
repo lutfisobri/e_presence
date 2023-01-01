@@ -97,7 +97,6 @@ class User {
         Uri.parse("${Url.baseUrl}user/change-password"),
         headers: Url.headers,
         body: json);
-    print(response.body);
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['data'];
     } else {
@@ -141,7 +140,6 @@ class User {
   static Future verifyotp(Map<String, dynamic> json) async {
     final response = await http.post(Uri.parse("${Url.baseUrl}user/verify-otp"),
         headers: Url.headers, body: json);
-    print(response.body);
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['status'];
     } else if (response.statusCode == 401) {

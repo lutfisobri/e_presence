@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ContentMapel extends StatelessWidget {
-  ContentMapel({
+  const ContentMapel({
     Key? key,
     required this.hari,
     required this.tickerProvider,

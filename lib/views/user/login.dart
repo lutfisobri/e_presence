@@ -84,7 +84,7 @@ class _LoginState extends State<Login> {
           borderRadius: BorderRadius.vertical(
         top: Radius.circular(20),
       )),
-      builder: (context) => NoInternet(),
+      builder: (context) => const NoInternet(),
     );
   }
 

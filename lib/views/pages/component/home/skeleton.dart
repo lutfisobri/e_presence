@@ -49,7 +49,7 @@ class SkeletonHome extends StatelessWidget {
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: 56.6,
-            color: Color.fromRGBO(240, 240, 240, 1),
+            color: const Color.fromRGBO(240, 240, 240, 1),
           ),
         ),
         Container(
@@ -106,7 +106,7 @@ class SkeletonHome extends StatelessWidget {
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: 56.6,
-            color: Color.fromRGBO(240, 240, 240, 1),
+            color: const Color.fromRGBO(240, 240, 240, 1),
           ),
         ),
         Container(
@@ -163,7 +163,7 @@ class SkeletonHome extends StatelessWidget {
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: 56.6,
-            color: Color.fromRGBO(240, 240, 240, 1),
+            color: const Color.fromRGBO(240, 240, 240, 1),
           ),
         ),
         Container(
@@ -257,7 +257,7 @@ class SkeletonHome extends StatelessWidget {
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: 173,
-            color: Color.fromRGBO(255, 255, 255, 1),
+            color: const Color.fromRGBO(255, 255, 255, 1),
           ),
         ),
         Container(
@@ -323,7 +323,7 @@ class SkeletonHome extends StatelessWidget {
           child: Container(
             width: MediaQuery.of(context).size.width,
             height: 173,
-            color: Color.fromRGBO(255, 255, 255, 1),
+            color: const Color.fromRGBO(255, 255, 255, 1),
           ),
         ),
         Container(

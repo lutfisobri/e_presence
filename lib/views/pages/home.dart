@@ -1,16 +1,12 @@
 import 'dart:async';
-import 'package:animations/animations.dart';
 import 'package:app_presensi/app/providers/informasi.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
-import 'package:app_presensi/resources/widgets/shared/notification.dart';
 import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/views/pages/component/home/absensi.dart';
 import 'package:app_presensi/views/pages/component/home/informasi_akademik.dart';
-// import 'package:app_presensi/views/pages/component/home/noconnection.dart';
 import 'package:app_presensi/views/pages/component/home/null.dart';
 import 'package:app_presensi/views/pages/component/home/skeleton.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:ntp/ntp.dart';
@@ -117,7 +113,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? SkeletonHome()
+        ? const SkeletonHome()
         : isOnline
             ? Stack(
                 children: [
@@ -160,8 +156,8 @@ class _HomeState extends State<Home> {
                               height: 12.6,
                             ),
                             value.listPresensi.isEmpty
-                                ? NullPresensi()
-                                : ContentPresensi(),
+                                ? const NullPresensi()
+                                : const ContentPresensi(),
                             Padding(
                               padding: const EdgeInsets.only(
                                   top: 12.9, left: 19, right: 19, bottom: 6),
@@ -188,7 +184,7 @@ class _HomeState extends State<Home> {
                                 ],
                               ),
                             ),
-                            InformasiAkademik(),
+                            const InformasiAkademik(),
                           ],
                         ),
                       ),
@@ -197,7 +193,7 @@ class _HomeState extends State<Home> {
                 ],
               )
             : Container(
-                color: Color.fromRGBO(250, 250, 250, 1),
+                color: const Color.fromRGBO(250, 250, 250, 1),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -218,7 +214,7 @@ class _HomeState extends State<Home> {
                     const SizedBox(
                       height: 32,
                     ),
-                    Text(
+                    const Text(
                       "Tidak Ada Koneksi Internet",
                       style: TextStyle(
                         color: Color.fromRGBO(114, 182, 108, 1),
@@ -230,7 +226,7 @@ class _HomeState extends State<Home> {
                     const SizedBox(
                       height: 12,
                     ),
-                    Text(
+                    const Text(
                       "Mohon Periksa Kembali Koneksi Internet Anda.",
                       style: TextStyle(
                         color: Color.fromRGBO(100, 97, 97, 1),

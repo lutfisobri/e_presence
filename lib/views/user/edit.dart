@@ -11,6 +11,7 @@ import 'package:app_presensi/resources/widgets/shared/notifications/dialog_with_
 import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
+import 'package:app_presensi/utils/bridge.dart';
 import 'package:app_presensi/views/user/component/edit/skeleton.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -56,7 +57,7 @@ class _EditProfileState extends State<EditProfile> {
         sourcePath: imageFile.path,
         maxHeight: 1080,
         maxWidth: 1080,
-        aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+        aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
         uiSettings: [
           AndroidUiSettings(
               toolbarTitle: 'Sunting Foto',
@@ -67,7 +68,7 @@ class _EditProfileState extends State<EditProfile> {
               dimmedLayerColor: Colors.black,
               cropFrameColor: Colors.white,
               cropGridColor: Colors.white,
-              activeControlsWidgetColor: Color.fromRGBO(104, 187, 97, 1),
+              activeControlsWidgetColor: const Color.fromRGBO(104, 187, 97, 1),
               showCropGrid: true,
               lockAspectRatio: false),
           IOSUiSettings(
@@ -81,7 +82,7 @@ class _EditProfileState extends State<EditProfile> {
         return null;
       }
     } catch (e) {
-      print(e);
+      return null;
     }
   }
 
@@ -153,21 +154,9 @@ class _EditProfileState extends State<EditProfile> {
     final usr = Provider.of<UserProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: () async {
-        // usr.loadProfile();
         if (usr.dataUser.email == null || usr.dataUser.email == "null") {
           return false;
         }
-
-        if (usr.dataUser.email == "" ||
-            emailController.text != "" ||
-            usr.dataUser.email == "null") {
-          return false;
-        }
-
-        if (usr.dataUser.tglLahir == "" && tglLahir.text != "") {
-          return false;
-        }
-
         return true;
       },
       child: GestureDetector(
@@ -191,7 +180,7 @@ class _EditProfileState extends State<EditProfile> {
               body: SafeArea(
                 child: SingleChildScrollView(
                   child: waiting
-                      ? SkeletonEditProfile()
+                      ? const SkeletonEditProfile()
                       : Stack(
                           children: [
                             Padding(
