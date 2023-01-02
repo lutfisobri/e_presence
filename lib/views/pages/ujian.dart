@@ -207,7 +207,7 @@ class _JadwalPageState extends State<JadwalPage> {
                                 itemCount: data.length,
                                 itemBuilder: (context, i) {
                                   return Container(
-                                    height: 56.6,
+                                    height: 106,
                                     width: double.infinity,
                                     padding: const EdgeInsets.only(
                                         left: 12.6, right: 12.6),
@@ -226,8 +226,8 @@ class _JadwalPageState extends State<JadwalPage> {
                                     child: Row(
                                       children: [
                                         Container(
-                                          height: 35,
-                                          width: 35,
+                                          height: 85,
+                                          width: 85,
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(3.15),
@@ -260,6 +260,22 @@ class _JadwalPageState extends State<JadwalPage> {
                                                 fontFamily: "Roboto",
                                               ),
                                             ),
+                                            Text(
+                                              "24 Juli 2021",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: "Roboto",
+                                              ),
+                                            ),
+                                            Text(
+                                              "Ujian Tengah Semester Ganjil",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: "Roboto",
+                                              ),
+                                            )
                                           ],
                                         ),
                                       ],
