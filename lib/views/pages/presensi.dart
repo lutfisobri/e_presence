@@ -59,7 +59,7 @@ class _PresensiState extends State<DetailPresensi> {
   @override
   void initState() {
     super.initState();
-    location();
+    // location();
     init();
     hasConnect();
     Future.delayed(const Duration(seconds: 1), () {
@@ -200,9 +200,19 @@ class _PresensiState extends State<DetailPresensi> {
                             width: double.infinity,
                             child: Button(
                               onPres: () async {
-                                UtilsPresensi.hasPermission();
-                                hasLocation();
-                                processPresensi(args.toString());
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                var loct = await UtilsPresensi.hasService(
+                                    context: context);
+                                if (loct == true) {
+                                  await hasLocation();
+                                  await processPresensi(args.toString());
+                                } else {
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                }
                               },
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(7),
@@ -298,6 +308,7 @@ class _PresensiState extends State<DetailPresensi> {
     final pelProv = Provider.of<PelajaranProvider>(context, listen: false);
     final userProv = Provider.of<UserProvider>(context, listen: false);
     final presensi = Provider.of<PresensiProvider>(context, listen: false);
+    final String idKelasAjaran = userProv.dataUser.idKelasAjaran!;
     if (_chose!.data == "Sakit") {
       bool status = await presensi.presensiSakit(
         idPresensi: idPresensi!,
@@ -306,17 +317,13 @@ class _PresensiState extends State<DetailPresensi> {
         koordinat: koordinat,
         bukti: image!.path,
       );
-      if (status) {
-        setState(() {
-          isLoading = false;
-        });
-        if (!mounted) return;
-        pelProv.allPresensi(
-            idKelasAjaran: userProv.dataUser.idKelasAjaran!,
-            nis: userProv.dataUser.username);
-        Navigator.pop(context);
-        return;
-      }
+      statusPresensi(
+        status,
+        pelProv,
+        nis: nis,
+        idKelasAjaran: idKelasAjaran,
+        message: "Presensi Sakit berhasil, Terimakasih",
+      );
     }
     if (_chose!.data == "Izin") {
       bool status = await presensi.presensiIzin(
@@ -326,27 +333,78 @@ class _PresensiState extends State<DetailPresensi> {
         koordinat: koordinat,
         bukti: image!.path,
       );
-      if (status) {
-        setState(() {
-          isLoading = false;
-        });
-        if (!mounted) return;
-        pelProv.allPresensi(
-            idKelasAjaran: userProv.dataUser.idKelasAjaran!,
-            nis: userProv.dataUser.username);
-        Navigator.pop(context);
-        return;
-      }
+      statusPresensi(
+        status,
+        pelProv,
+        nis: nis,
+        idKelasAjaran: idKelasAjaran,
+        message: "Presensi Izin berhasil, Terimakasih",
+      );
     }
   }
 
-  void processPresensi(String args) async {
+  void statusPresensi(
+    bool status,
+    PelajaranProvider pelProv, {
+    String? message,
+    required String nis,
+    required String idKelasAjaran,
+  }) {
+    if (status) {
+      setState(() {
+        isLoading = false;
+      });
+      Timer(const Duration(milliseconds: 800), () {
+        pelProv.allPresensi(
+          idKelasAjaran: idKelasAjaran,
+          nis: nis,
+        );
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: colorGreen,
+          content: Text(
+            message ?? "Presensi berhasil, Terimakasih",
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: "Roboto",
+            ),
+          ),
+        ),
+      );
+      Navigator.pop(context);
+      return;
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+      Timer(const Duration(milliseconds: 800), () {
+        Navigator.pop(context);
+      });
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: colorGreen,
+          content: Text(
+            "Presensi gagal, Silahkan coba lagi",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: "Roboto",
+            ),
+          ),
+        ),
+      );
+      return;
+    }
+  }
+
+  processPresensi(String args) async {
     final pelProv = Provider.of<PelajaranProvider>(context, listen: false);
     final userProv = Provider.of<UserProvider>(context, listen: false);
     final presensi = Provider.of<PresensiProvider>(context, listen: false);
-    setState(() {
-      isLoading = true;
-    });
     validate();
     if (!mounted) return;
     UtilsPresensi.validation(context);
@@ -356,9 +414,17 @@ class _PresensiState extends State<DetailPresensi> {
     );
     if (!mounted) return;
     if (!date) {
+      ScaffoldMessenger.of(context).removeCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Waktu Presensi Sudah Berakhir"),
+          backgroundColor: colorGreen,
+          content: Text(
+            "Waktu Presensi Sudah Berakhir",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: "Roboto",
+            ),
+          ),
         ),
       );
       setState(() {
@@ -392,45 +458,13 @@ class _PresensiState extends State<DetailPresensi> {
         time: time,
         koordinat: koordinat,
       );
-      if (status) {
-        setState(() {
-          isLoading = false;
-        });
-        if (!mounted) return;
-        Timer(const Duration(milliseconds: 800), () {
-          pelProv.allPresensi(
-            idKelasAjaran: userProv.dataUser.idKelasAjaran!,
-            nis: userProv.dataUser.username,
-          );
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Presensi Berhasil"),
-          ),
-        );
-        Navigator.pop(context);
-        return;
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Presensi Gagal"),
-          ),
-        );
-        return;
-      }
+      statusPresensi(
+        status,
+        pelProv,
+        nis: nis,
+        idKelasAjaran: userProv.dataUser.idKelasAjaran!,
+      );
     }
-    Timer(
-      const Duration(seconds: 2),
-      () {
-        setState(() {
-          isLoading = false;
-        });
-      },
-    );
   }
 
   validateDistance() {
@@ -480,9 +514,9 @@ class _PresensiState extends State<DetailPresensi> {
           Navigator.of(context).pop();
           return;
         }
+        Navigator.pop(context);
         var value = await takePhoto();
         if (!mounted) return;
-        Navigator.pop(context);
         if (value != null) {
           UtilsPresensi.cropImage(imageFile: value).then((value) {
             if (value != null) {
@@ -501,9 +535,9 @@ class _PresensiState extends State<DetailPresensi> {
           Navigator.of(context).pop();
           return;
         }
+        Navigator.pop(context);
         var value = await pickImage();
         if (!mounted) return;
-        Navigator.pop(context);
         if (value != null) {
           UtilsPresensi.cropImage(imageFile: value).then((value) {
             if (value != null) {
@@ -558,7 +592,7 @@ class _PresensiState extends State<DetailPresensi> {
       _chose = items[0];
       checkAccount();
       isSkeleton = true;
-    } else {}
+    }
   }
 
   checkAccount() async {
@@ -583,7 +617,7 @@ class _PresensiState extends State<DetailPresensi> {
   }
 
   location() async {
-    UtilsPresensi.hasPermission();
+    UtilsPresensi.hasService();
     LocationPermission permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {}
 
@@ -601,7 +635,7 @@ class _PresensiState extends State<DetailPresensi> {
     setState(() {});
   }
 
-  void hasLocation() async {
+  hasLocation() async {
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
         .then((Position position) async {
       distance = Geolocator.distanceBetween(

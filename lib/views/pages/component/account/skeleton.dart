@@ -1,5 +1,6 @@
 import 'package:app_presensi/app/providers/user.dart';
 import 'package:app_presensi/resources/utils/skeleton.dart';
+import 'package:app_presensi/resources/utils/static.dart';
 import 'package:app_presensi/resources/widgets/shared/notifications/dialog_with_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -211,10 +212,11 @@ class LoadingAccount extends StatelessWidget {
                                             ),
                                           ),
                                           behavior: SnackBarBehavior.floating,
-                                          backgroundColor:
-                                              Color.fromRGBO(104, 187, 97, 1),
+                                          backgroundColor: colorGreen,
                                         );
                                         Navigator.pop(context);
+                                        ScaffoldMessenger.of(context)
+                                            .removeCurrentSnackBar();
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(snackBar);
                                       },

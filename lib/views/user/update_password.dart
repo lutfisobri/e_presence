@@ -94,10 +94,6 @@ class _ChangePasswordState extends State<ChangePassword> {
     }
   }
 
-  UserProvider user() {
-    return Provider.of<UserProvider>(context, listen: false);
-  }
-
   clearText() {
     pwLama.clear();
     pwBaru.clear();
@@ -381,7 +377,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           onWillPop: () async => false,
           child: const CustomDialog(
             title: "Gagal Tersimpan",
-            subtitle: "Periksa Kembali Kata Sandi Anda",
+            subtitle: "Kata Sandi Tidak Boleh Kosong",
             image: "assets/icons/gagal.png",
           ),
         ),

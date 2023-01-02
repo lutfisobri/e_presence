@@ -285,8 +285,8 @@ class _EditProfileState extends State<EditProfile> {
                                             DateTime.parse(tglLahir.text),
                                         firstDate: DateTime(1990),
                                         lastDate: DateTime(2100),
-                                        // initialEntryMode:
-                                        //     DatePickerEntryMode.calendarOnly,
+                                        initialEntryMode:
+                                            DatePickerEntryMode.calendarOnly,
                                       ).then((value) {
                                         if (value != null &&
                                             value.isAfter(DateTime(1990))) {

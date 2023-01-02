@@ -159,9 +159,6 @@ class _LoginState extends State<Login> {
             Timer(
               const Duration(seconds: 2),
               () {
-                setState(() {
-                  // back = true;
-                });
                 Navigator.pop(context);
               },
             );
@@ -396,7 +393,6 @@ class _LoginState extends State<Login> {
                     width: 100,
                     height: 100,
                   ),
-                  // CircularProgressIndicator(),
                   const SizedBox(
                     height: 2.63,
                   ),
