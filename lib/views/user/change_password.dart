@@ -209,7 +209,7 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
             onWillPop: () async => false,
             child: const CustomDialog(
               title: "Gagal Tersimpan",
-              subtitle: "Periksa kembali Kata Sandi Anda",
+              subtitle: "Konfirmasi Kata Sandi Harus Sama",
               image: "assets/icons/gagal.png",
             ),
           ),
@@ -228,7 +228,7 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
             onWillPop: () async => false,
             child: const CustomDialog(
               title: "Gagal Tersimpan",
-              subtitle: "Periksa kembali Kata Sandi Anda",
+              subtitle: "Kata Sandi Minimal 8 Karakter",
               image: "assets/icons/gagal.png",
             ),
           ),
@@ -275,7 +275,7 @@ class _ForgetChangePasswordState extends State<ForgetChangePassword> {
               onWillPop: () async => false,
               child: const CustomDialog(
                 title: "Gagal Tersimpan",
-                subtitle: "Periksa kembali Kata Sandi Anda",
+                subtitle: "Silahkan Coba Lagi",
                 image: "assets/icons/gagal.png",
               ),
             ),

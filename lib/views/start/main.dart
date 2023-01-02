@@ -110,8 +110,8 @@ class _BerandaState extends State<Beranda> {
               image: "assets/icons/email.png",
               button: Button(
                 onPres: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, "/editProfile");
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, "/editProfile");
                 },
                 minimunSize: const Size(double.infinity, 36.88),
                 textStyle:
@@ -231,8 +231,12 @@ class _BerandaState extends State<Beranda> {
         if (isEnable == false)
           ViewPermissionLocation(
             onTap: () async {
-              await determinePosition();
-              await cekPermission();
+              var permission = await determinePosition();
+              if (permission == true) {
+                setState(() {
+                  isEnable = true;
+                });
+              }
             },
           ),
       ],
