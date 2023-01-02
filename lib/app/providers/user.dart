@@ -197,4 +197,13 @@ class UserProvider with ChangeNotifier {
     });
     return user;
   }
+
+  Future verifyToken(String token) async {
+    final user = await User.verifyToken(token).then((value) {
+      return value;
+    }).catchError((e) {
+      return null;
+    });
+    return user;
+  }
 }

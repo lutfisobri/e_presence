@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:app_presensi/app/models/presensi.dart';
 import 'package:app_presensi/app/providers/informasi.dart';
 import 'package:app_presensi/app/providers/pelajaran.dart';
 import 'package:app_presensi/app/providers/user.dart';
@@ -27,6 +28,7 @@ class _HomeState extends State<Home> {
   late StreamSubscription<InternetConnectionStatus> listener;
   bool isOnline = false;
   bool isLoading = true;
+  List<ModelPresensi> isPresensi = [];
 
   void hasConnect() async {
     listener = InternetConnectionChecker().onStatusChange.listen(
@@ -72,6 +74,19 @@ class _HomeState extends State<Home> {
     loadPresen.allPresensi(
         idKelasAjaran: user.dataUser.idKelasAjaran ?? "",
         nis: user.dataUser.username);
+    if (loadPresen.listPresensi.isNotEmpty) {
+      Timer(const Duration(milliseconds: 300), () {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    } else {
+      Timer(const Duration(milliseconds: 500), () {
+        setState(() {
+          isLoading = false;
+        });
+      });
+    }
     bool isLogin = await user.checkAccount().then((value) => value);
     if (!isLogin) {
       if (!mounted) return;
@@ -96,12 +111,6 @@ class _HomeState extends State<Home> {
     super.initState();
     hasConnect();
     init();
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!mounted) return;
-      setState(() {
-        isLoading = false;
-      });
-    });
   }
 
   @override

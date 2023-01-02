@@ -397,10 +397,29 @@ class _PresensiState extends State<DetailPresensi> {
           isLoading = false;
         });
         if (!mounted) return;
-        pelProv.allPresensi(
+        Timer(const Duration(milliseconds: 800), () {
+          pelProv.allPresensi(
             idKelasAjaran: userProv.dataUser.idKelasAjaran!,
-            nis: userProv.dataUser.username);
+            nis: userProv.dataUser.username,
+          );
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Presensi Berhasil"),
+          ),
+        );
         Navigator.pop(context);
+        return;
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Presensi Gagal"),
+          ),
+        );
         return;
       }
     }

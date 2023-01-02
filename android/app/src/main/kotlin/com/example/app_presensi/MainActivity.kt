@@ -15,13 +15,14 @@ class MainActivity : FlutterActivity() {
   private val CHANNEL = "com.nekoid.presensi"
 
   override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+    deeplink = null
     GeneratedPluginRegistrant.registerWith(flutterEngine)
     MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "com.nekoid.presensi")
         .setMethodCallHandler { call, result ->
           when (call.method) {
             "startApplication" -> startApplication(call, result)
             "log" -> log(call, result)
-            "getDeelink" -> result.success(getDeelink())
+            "getDeeplink" -> result.success(getDeeplink())
             else -> result.notImplemented()
           }
         }
@@ -90,13 +91,13 @@ class MainActivity : FlutterActivity() {
         else -> "$text"
       }
     } catch (e: Exception) {
-      print(e)
       return "$text"
     }
   }
 
   override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
+    deeplink = null
     val data = intent.data
     if (data != null) {
       deeplink = data
@@ -107,13 +108,14 @@ class MainActivity : FlutterActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+    deeplink = null
     val data = intent.data
     if (data != null) {
       deeplink = data
     }
   }
 
-  private fun getDeelink(): String {
+  private fun getDeeplink(): String {
     return deeplink.toString()
   }
 }
