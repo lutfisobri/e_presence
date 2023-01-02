@@ -11,8 +11,8 @@ import 'package:provider/provider.dart';
 import 'component/login/is_online.dart';
 
 class ForgetChangePassword extends StatefulWidget {
-  const ForgetChangePassword({super.key});
-
+  const ForgetChangePassword({super.key, this.data});
+  final Map<String, dynamic>? data;
   @override
   State<ForgetChangePassword> createState() => _ForgetChangePasswordState();
 }

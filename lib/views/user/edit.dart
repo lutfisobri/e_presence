@@ -11,7 +11,6 @@ import 'package:app_presensi/resources/widgets/shared/notifications/dialog_with_
 import 'package:app_presensi/resources/widgets/shared/notifications/session.dart';
 import 'package:app_presensi/resources/widgets/shared/text_fields.dart';
 import 'package:app_presensi/resources/widgets/shared/theme.dart';
-import 'package:app_presensi/utils/bridge.dart';
 import 'package:app_presensi/views/user/component/edit/skeleton.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';

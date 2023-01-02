@@ -33,17 +33,17 @@ class Log {
   /// {@template log}
   /// String [message] adalah pesan yang akan ditampilkan
   ///
-  /// [Decoration.green] [color] adalah warna yang akan digunakan untuk menampilkan pesan
+  /// [Warna.green] [color] adalah warna yang akan digunakan untuk menampilkan pesan
   /// {@endtemplate}
   ///
   /// Example:
   /// ```dart
   /// Log.i("Ini adalah log info");
   ///
-  /// Log.v("Ini adalah log verbose", color: Decoration.green);
+  /// Log.v("Ini adalah log verbose", color: Warna.green);
   /// ```
   /// {@macro output}
-  static void i(String message, {Decoration color = Decoration.green}) {
+  static void i(String message, {Warna color = Warna.green}) {
     _handler(message, color, type: "i");
   }
 
@@ -53,10 +53,10 @@ class Log {
   /// ```dart
   /// Log.d("Ini adalah log debug", "blue");
   ///
-  /// Log.v("Ini adalah log verbose", color: Decoration.blue);
+  /// Log.v("Ini adalah log verbose", color: Warna.blue);
   /// ```
   /// {@macro output}
-  static void d(String message, {Decoration color = Decoration.blue}) {
+  static void d(String message, {Warna color = Warna.blue}) {
     _handler(message, color, type: "d");
   }
 
@@ -66,11 +66,11 @@ class Log {
   /// ```dart
   /// Log.e("Ini adalah log error");
   ///
-  /// Log.v("Ini adalah log verbose", color: Decoration.red);
+  /// Log.v("Ini adalah log verbose", color: Warna.red);
   /// ```
   ///
   /// {@macro output}
-  static void e(String message, {Decoration color = Decoration.red}) {
+  static void e(String message, {Warna color = Warna.red}) {
     _handler(message, color, type: "e");
   }
 
@@ -80,11 +80,11 @@ class Log {
   /// ```dart
   /// Log.w("Ini adalah log warning");
   ///
-  /// Log.v("Ini adalah log verbose", color: Decoration.orange);
+  /// Log.v("Ini adalah log verbose", color: Warna.orange);
   /// ```
   ///
   /// {@macro output}
-  static void w(String message, {Decoration color = Decoration.orange}) {
+  static void w(String message, {Warna color = Warna.orange}) {
     _handler(message, color, type: "w");
   }
 
@@ -94,35 +94,35 @@ class Log {
   /// ```dart
   /// Log.v("Ini adalah log verbose");
   ///
-  /// Log.v("Ini adalah log verbose", color: Decoration.purple);
+  /// Log.v("Ini adalah log verbose", color: Warna.purple);
   /// ```
   ///
   /// {@macro output}
-  static void v(String message, {Decoration color = Decoration.purple}) {
+  static void v(String message, {Warna color = Warna.purple}) {
     _handler(message, color, type: "v");
   }
 
-  static _validationColors(Decoration color) {
+  static _validationColors(Warna color) {
     switch (color) {
-      case Decoration.red:
+      case Warna.red:
         return "red";
-      case Decoration.green:
+      case Warna.green:
         return "green";
-      case Decoration.yellow:
+      case Warna.yellow:
         return "yellow";
-      case Decoration.blue:
+      case Warna.blue:
         return "blue";
-      case Decoration.magenta:
+      case Warna.magenta:
         return "magenta";
-      case Decoration.cyan:
+      case Warna.cyan:
         return "cyan";
-      case Decoration.white:
+      case Warna.white:
         return "white";
-      case Decoration.black:
+      case Warna.black:
         return "black";
-      case Decoration.orange:
+      case Warna.orange:
         return "orange";
-      case Decoration.purple:
+      case Warna.purple:
         return "purple";
       default:
         return "red";
@@ -130,7 +130,7 @@ class Log {
   }
 
   static const _platform = MethodChannel('com.nekoid.presensi');
-  static void _handler(String message, Decoration color, {String? type}) {
+  static void _handler(String message, Warna color, {String? type}) {
     String colors = _validationColors(color);
     try {
       _platform.invokeMethod('log', <String, dynamic>{
@@ -171,19 +171,19 @@ class Log {
 /// 
 /// Contoh penggunaan:
 /// ```dart
-/// Log.i("Ini adalah log info", color: Decoration.green);
+/// Log.i("Ini adalah log info", color: Warna.green);
 /// 
-/// Log.d("Ini adalah log debug", color: Decoration.blue);
+/// Log.d("Ini adalah log debug", color: Warna.blue);
 /// 
-/// Log.e("Ini adalah log error", color: Decoration.red);
+/// Log.e("Ini adalah log error", color: Warna.red);
 /// 
-/// Log.w("Ini adalah log warning", color: Decoration.orange);
+/// Log.w("Ini adalah log warning", color: Warna.orange);
 /// 
-/// Log.v("Ini adalah log verbose", color: Decoration.purple);
+/// Log.v("Ini adalah log verbose", color: Warna.purple);
 /// 
 /// ```
 /// {@macro output}
-enum Decoration {
+enum Warna {
   red,
   green,
   yellow,

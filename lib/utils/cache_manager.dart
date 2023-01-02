@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 
 class Cache {
   void getCache() async {
-    Log.i("Aplikasi Sedang Dimuat", color: Decoration.yellow);
+    Log.i("Aplikasi Sedang Dimuat", color: Warna.yellow);
     final cacheDirectory = (await getTemporaryDirectory()).path;
     final cacheDirectory2 = (await getApplicationDocumentsDirectory()).path;
 
@@ -18,7 +18,7 @@ class Cache {
       clear(cache[i]);
     }
     Future.delayed(const Duration(seconds: 1), () {
-      Log.i("Applikasi Siap digunakan", color: Decoration.green);
+      Log.i("Applikasi Siap digunakan", color: Warna.green);
     });
   }
 
