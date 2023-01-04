@@ -153,7 +153,7 @@ class User {
 
   static Future verifyToken(String token) async {
     final response = await http.get(
-        Uri.parse("${Url.baseUrl}user/verify-token=$token"),
+        Uri.parse("${Url.baseUrl}user/otp?token=$token"),
         headers: Url.headers);
     if (response.statusCode == 200) {
       return jsonDecode(response.body);

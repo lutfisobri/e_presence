@@ -50,7 +50,7 @@ class _JadwalPageState extends State<JadwalPage> {
     if (!mounted) return;
     if (check) {
       getData();
-    } else {}
+    }
   }
 
   StyleThemeData styleThemeData = StyleThemeData();
@@ -97,11 +97,11 @@ class _JadwalPageState extends State<JadwalPage> {
     setState(() {
       data.clear();
       data = dataMapel.listUjian
-          .where((element) => element.hari?.toLowerCase() == hari)
+          .where((element) => element.days?.toLowerCase() == hari)
           .toList();
-      data.sort(
-        (a, b) => a.jamAwal!.compareTo(b.jamAwal!),
-      );
+      // data.sort(
+      //   (a, b) => a.jamAwal!.compareTo(b.jamAwal!),
+      // );
       isOnline = true;
     });
   }
@@ -195,79 +195,7 @@ class _JadwalPageState extends State<JadwalPage> {
                             if (data.isEmpty) {
                               return const NullJadwalUjian();
                             }
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 19, right: 19),
-                              child: ListView.separated(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                separatorBuilder: (context, index) => Container(
-                                  height: 12.6,
-                                ),
-                                itemCount: data.length,
-                                itemBuilder: (context, i) {
-                                  return Container(
-                                    height: 56.6,
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.only(
-                                        left: 12.6, right: 12.6),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(6),
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: const Color(0XFF909090)
-                                              .withOpacity(0.20),
-                                          offset: const Offset(0, 1),
-                                          blurRadius: 2,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          height: 35,
-                                          width: 35,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(3.15),
-                                          ),
-                                          child: iconMapel(pelProv, i,
-                                              jenis: Pelajaran.ujian),
-                                        ),
-                                        const SizedBox(
-                                          width: 12.6,
-                                        ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              data[i].namaMapel ?? "",
-                                              style: const TextStyle(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600,
-                                                fontFamily: "Roboto",
-                                              ),
-                                            ),
-                                            Text(
-                                              "Jam ${data[i].jamAwal} - ${data[i].jamAkhir} WIB",
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: "Roboto",
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            );
+                            return ContentMapel(data: data);
                           },
                         );
                       },
@@ -297,5 +225,90 @@ class _JadwalPageState extends State<JadwalPage> {
       default:
         return "minggu";
     }
+  }
+}
+
+class ContentMapel extends StatelessWidget {
+  const ContentMapel({
+    Key? key,
+    required this.data,
+  }) : super(key: key);
+
+  final List<ModelUjian> data;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding:
+          const EdgeInsets.only(left: 19, right: 19),
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        separatorBuilder: (context, index) => Container(
+          height: 12.6,
+        ),
+        itemCount: data.length,
+        itemBuilder: (context, i) {
+          return Container(
+            height: 56.6,
+            width: double.infinity,
+            padding: const EdgeInsets.only(
+                left: 12.6, right: 12.6),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(6),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0XFF909090)
+                      .withOpacity(0.20),
+                  offset: const Offset(0, 1),
+                  blurRadius: 2,
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  height: 35,
+                  width: 35,
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(3.15),
+                  ),
+                  child: icons(nama: data[i].name ?? ""),
+                ),
+                const SizedBox(
+                  width: 12.6,
+                ),
+                Column(
+                  mainAxisAlignment:
+                      MainAxisAlignment.center,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data[i].name ?? "",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: "Roboto",
+                      ),
+                    ),
+                    Text(
+                      "Jam ${data[i].date} WIB",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "Roboto",
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }

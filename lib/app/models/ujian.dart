@@ -1,25 +1,21 @@
 class ModelUjian {
-  final String? idMapel, idKelas, namaMapel, hari, jamAwal, jamAkhir, kelas;
+  final String? id, name, days, date, type;
 
   ModelUjian({
-    this.idMapel,
-    this.idKelas,
-    this.namaMapel,
-    this.hari,
-    this.jamAwal,
-    this.jamAkhir,
-    this.kelas,
+    this.id,
+    this.name,
+    this.days,
+    this.date,
+    this.type,
   });
 
   factory ModelUjian.formJson(Map<String, dynamic> json) {
     return ModelUjian(
-      idMapel: json['id_mapel'],
-      idKelas: json['id_kelas'],
-      namaMapel: json['nama_mapel'],
-      hari: json['hari'],
-      jamAwal: json['jam_awal'],
-      jamAkhir: json['jam_akhir'],
-      kelas: json['kelas'],
+      id: json['id'],
+      name: json['name'],
+      days: json['days'],
+      date: json['date'],
+      type: json['type'],
     );
   }
 }
