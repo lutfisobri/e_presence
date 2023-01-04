@@ -195,7 +195,95 @@ class _JadwalPageState extends State<JadwalPage> {
                             if (data.isEmpty) {
                               return const NullJadwalUjian();
                             }
-                            return ContentMapel(data: data);
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 19, right: 19),
+                              child: ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                separatorBuilder: (context, index) => Container(
+                                  height: 12.6,
+                                ),
+                                itemCount: data.length,
+                                itemBuilder: (context, i) {
+                                  return Container(
+                                    height: 106,
+                                    width: double.infinity,
+                                    padding: const EdgeInsets.only(
+                                        left: 12.6, right: 12.6),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(6),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: const Color(0XFF909090)
+                                              .withOpacity(0.20),
+                                          offset: const Offset(0, 1),
+                                          blurRadius: 2,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          height: 85,
+                                          width: 85,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(3.15),
+                                          ),
+                                          child: iconMapel(pelProv, i,
+                                              jenis: Pelajaran.ujian),
+                                        ),
+                                        const SizedBox(
+                                          width: 12.6,
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              data[i].namaMapel ?? "",
+                                              style: const TextStyle(
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: "Roboto",
+                                              ),
+                                            ),
+                                            Text(
+                                              "Jam ${data[i].jamAwal} - ${data[i].jamAkhir} WIB",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: "Roboto",
+                                              ),
+                                            ),
+                                            Text(
+                                              "24 Juli 2021",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: "Roboto",
+                                              ),
+                                            ),
+                                            Text(
+                                              "Ujian Tengah Semester Ganjil",
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: "Roboto",
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
                           },
                         );
                       },
