@@ -52,25 +52,25 @@ class PelajaranProvider with ChangeNotifier {
 
   allUjian({required String idKelasAjaran}) async {
     Iterable iterable = await ApiPelajaran.jadwalUjian(idKelasAjaran);
-    listUjian = iterable.map((e) => ModelUjian.formJson(e)).toList();
+      listUjian = iterable.map((e) => ModelUjian.formJson(e)).toList();
     notifyListeners();
   }
 
   distributionUjian() {
     ujianSenin = listUjian
-        .where((element) => element.hari?.toLowerCase() == "senin")
+        .where((element) => element.days?.toLowerCase() == "senin")
         .toList();
     ujianSelasa = listUjian
-        .where((element) => element.hari?.toLowerCase() == "selasa")
+        .where((element) => element.days?.toLowerCase() == "selasa")
         .toList();
     ujianRabu = listUjian
-        .where((element) => element.hari?.toLowerCase() == "rabu")
+        .where((element) => element.days?.toLowerCase() == "rabu")
         .toList();
     ujianKamis = listUjian
-        .where((element) => element.hari?.toLowerCase() == "kamis")
+        .where((element) => element.days?.toLowerCase() == "kamis")
         .toList();
     ujianJumat = listUjian
-        .where((element) => element.hari?.toLowerCase() == "jumat")
+        .where((element) => element.days?.toLowerCase() == "jumat")
         .toList();
     notifyListeners();
   }
