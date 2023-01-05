@@ -86,9 +86,14 @@ class _DetailInformasiState extends State<DetailInformasi> {
                                 ? const Image(
                                     image: AssetImage(
                                         'assets/image/icondefaultinformasi.png'),
+                                    height: 263,
+                                    fit: BoxFit.cover,
                                   )
                                 : CachedNetworkImage(
-                                    imageUrl: value.find(args).image!),
+                                    imageUrl: value.find(args).image!,
+                                    height: 263,
+                                    fit: BoxFit.cover,
+                                  ),
                           );
                         }),
                       ),
